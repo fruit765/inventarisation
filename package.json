@@ -9,6 +9,7 @@
     "checkjs": "npx tsc --allowJs --checkJs --noEmit --moduleResolution node --target ES6 src/*.js"
   },
   "dependencies": {
+    "ajv": "^6.12.6",
     "express": "^4.17.1",
     "fluture": "^13.0.1",
     "knex": "^0.21.6",
