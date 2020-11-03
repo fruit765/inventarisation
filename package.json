@@ -17,10 +17,12 @@
     "mysql2": "^2.2.5",
     "objection": "^2.2.3",
     "objection-password": "^3.0.0",
+    "sanctuary": "^3.1.0",
     "session": "^0.1.0"
   },
   "devDependencies": {
     "@types/node": "^14.14.2",
+    "@types/sanctuary": "^3.0.3",
     "axios": "^0.20.0",
     "chai": "^4.2.0",
     "gulp-nodemon": "^2.5.0",

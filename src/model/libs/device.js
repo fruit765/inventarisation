@@ -1,7 +1,9 @@
-const { attemptP } = require("Fluture")
+const { attemptP } = require("fluture")
+const fresolve = require("fluture").resolve
+const { cloneDeep, flow } = require("lodash")
+const { Right, Left, map, either, chain, ap, lift2 } = require("sanctuary")
 const Device = require("../orm/device")
-const ajv = new require("ajv")()
-const { getDeviceRelatedSubtable } = require("./command")
+const { getDeviceRelatedSubtable, cutPropsInObjByJson, eitherToFluture } = require("./command")
 
 function getDeviceAll() {
     return attemptP(
@@ -13,18 +15,17 @@ function getDeviceAll() {
 const getManufacturer = getDeviceRelatedSubtable(Manufacturer)
 const getSupplier = getDeviceRelatedSubtable(Supplier)
 
-/**
-bodyToDevData :: (reqBody a, deviceData b) => a -> Either Error b 
- */
-const bodyToDevData = reqBody => ajv.compile(deviceJson)(reqBody)
+const parseSpecDataFromObjByCatIdOrDevId = catId => devId => parseObj => {
+    const getSpecJsonByCatId = id => attemptP(Category.query().findById(id).select("schema"))
+    const getSpecJsonByDevId = id => attemptP(Device.query().joinRelated("category").findById(id).select("schema"))
+    const schemaJson = catId ? getSpecJsonByCatId(catId) : getSpecJsonByDevId(devId)
+    const jsonData = lift2(cutPropsInObjByJson)(schemaJson)(resolve(parseObj))
+    return chain(eitherToFluture)(jsonData)
+}
 
-/**
-bodyToSpecData :: (reqBody a, specifications b) => a -> Either Error b 
- */
-const bodyToSpecData = reqBody => 
+const editDevice = id => newData => {
+    const deviceData = cutPropsInObjByJson(deviceCommonJson)(newData)
+    parseSpecDataFromObjByCatIdOrDevId()()()
+}
 
-const editDevice = id => deviceData => specifications => attemptP(
-    Device.query().findById(id).patch(deviceData)
-)
-
-    const addDevice = deviceData => attemptP(Device.query().insert(deviceData))
+const addDevice = deviceData => attemptP(Device.query().insert(deviceData))
