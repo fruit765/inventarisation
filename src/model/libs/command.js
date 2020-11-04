@@ -1,12 +1,11 @@
 "use strict"
 
-const { attemptP } = require("fluture")
-const fresolve = require("fluture").resolve
-const freject = require("fluture").reject
-const { cloneDeep, flow } = require("lodash")
-const { Right, Left, map, either, chain, I } = require("sanctuary")
+const F = require("fluture")
+const fp = require("lodash/fp")
+const S = require("sanctuary")
 const Ajv = new require("ajv")
 const ajv = Ajv({ removeAdditional: "all" })
+
 /**
 getDeviceRelatedSubtable :: ObjectionClass a => a -> Future Error b  
 */
