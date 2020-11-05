@@ -10,7 +10,7 @@ const ajv = Ajv({ removeAdditional: "all" })
 *Получает все поля из таблицы
 *getTabAllData :: ObjectionClass a => a -> Future Error b  
 */
-const getTabAllData = objectionTableClass => F.attemptP(objectionTableClass.query())
+const getTabAllData = objectionTableClass => F.attemptP(fp.bind(objectionTableClass.query,objectionTableClass))
 
 /**
  * Вырезает данные из объекта по json schema
@@ -24,6 +24,6 @@ const cutPropsFromObjByJson = jsonSchema => incObj => {
 /**
 eitherToFluture :: (Either a, Fluture b) => a -> b
  */
-const eitherToFluture = either(freject)(fresolve)
+const eitherToFluture = S.either(F.reject)(F.resolve)
 
 module.exports.getTabAllData = getTabAllData

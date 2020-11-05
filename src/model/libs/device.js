@@ -2,31 +2,34 @@
 
 const F = require("fluture")
 const fp = require("lodash/fp")
-const { Right, Left, map, either, chain, ap, lift2 } = require("sanctuary")
+const S = require("sanctuary")
 const Device = require("../orm/device")
+const Brand = require("../orm/brand")
 const { getTabAllData } = require("./command")
 
 /**
 * Получает все поля из таблицы связанной с таблицей device и id категории, если catId пустой возвращает таблицу со всеми данными
 *getDevRelatedTabValue :: (ObjectionClass a, catId b) => a -> b -> Future Error c  
 */
-const getDevRelatedTabValue = objectionTableClass => catId => {
+// const getDevRelatedTabValue = objectionTableClass => catId => {
 
-    /**
-    *Получает все поля из таблицы связанной с таблицей device и id категории 
-    *getDevRelatedTabValueAssociatedCatId :: ObjectionClass a => a -> Future Error b  
-    */
-    const getDevRelatedTabValueAssociatedCatId = objectionTableClass => catId => F.attemptP(
-        objectionTableClass.query()
-            .joinRelated("device.category")
-            .where("category.id", catId)
-            .select(objectionTableClass.tableName + ".*")
-    )
+//     /**
+//     *Получает все поля из таблицы связанной с таблицей device и id категории 
+//     *getDevRelatedTabValueAssociatedCatId :: ObjectionClass a => a -> Future Error b  
+//     */
+//     const getDevRelatedTabValueAssociatedCatId = objectionTableClass => catId => F.attemptP(
+//         objectionTableClass.query()
+//             .joinRelated("device.category")
+//             .where("category.id", catId)
+//             .select(objectionTableClass.tableName + ".*")
+//     )
 
-    return catId ? getDevRelatedTabValueAssociatedCatId(objectionTableClass)(catId) : getTabAllData(objectionTableClass)
-}
+//     return catId ? getDevRelatedTabValueAssociatedCatId(objectionTableClass)(catId) : getTabAllData(objectionTableClass)
+// }
 
-const getBrand = getDevRelatedTabValue(brand)
+// const getBrandByCatId = getDevRelatedTabValue(Brand)
+
+const getBrand = getTabAllData(Brand)
 // const getSupplier = getDevRelatedTabValue(Supplier)
 
 // const getDeviceAll = attemptP(
@@ -49,3 +52,5 @@ const getBrand = getDevRelatedTabValue(brand)
 // }
 
 // const addDevice = deviceData => attemptP(Device.query().insert(deviceData))
+
+module.exports = { getBrand }
