@@ -9,16 +9,16 @@ Model.knex(knex)
 
 module.exports = class Device extends Model {
     static get tableName() {
-        return "device"
+        return "brand"
     }
 
     static get relationMappings() {
-        const Brand = require("./brand")
+        const Device = require("./device")
 
         return {
-            brand: {
+            device: {
                 relation: Model.HasManyRelation,
-                modelClass: Brand,
+                modelClass: Device,
                 join: {
                     from: "brand.id",
                     to: "device.brand_id"
@@ -26,5 +26,4 @@ module.exports = class Device extends Model {
             }
         }
     }
-
 }

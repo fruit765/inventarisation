@@ -1,0 +1,37 @@
+openapi: 3.0.0
+info:
+  title: apiSpec
+  version: '1.0'
+servers:
+  - url: 'http://localhost:3000'
+paths:
+  '/getBrand/{id}':
+    get:
+      summary: ''
+      tags: []
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    brand:
+                      type: string
+      operationId: get-getBrand
+      description: 'Получает все поля из таблицы brand связанной с id категории, если catId пустой возвращает таблицу со всеми данными'
+    parameters:
+      - schema:
+          type: integer
+        name: id
+        in: path
+        description: id Категории
+components:
+  schemas: {}
+  securitySchemes: {}
