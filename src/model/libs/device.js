@@ -5,31 +5,43 @@ const fp = require("lodash/fp")
 const S = require("sanctuary")
 const Device = require("../orm/device")
 const Brand = require("../orm/brand")
-const { getTabAllData } = require("./command")
+const Supplier = require("../orm/supplier")
+const { getTabAllData, upsertTableRow } = require("./command")
+const Category = require("../orm/category")
 
 /**
 * Получает все поля из таблицы связанной с таблицей device и id категории, если catId пустой возвращает таблицу со всеми данными
 *getDevRelatedTabValue :: (ObjectionClass a, catId b) => a -> b -> Future Error c  
 */
-// const getDevRelatedTabValue = objectionTableClass => catId => {
+const getDevRelatedTabValue = objectionTableClass => catId => {
 
-//     /**
-//     *Получает все поля из таблицы связанной с таблицей device и id категории 
-//     *getDevRelatedTabValueAssociatedCatId :: ObjectionClass a => a -> Future Error b  
-//     */
-//     const getDevRelatedTabValueAssociatedCatId = objectionTableClass => catId => F.attemptP(
-//         objectionTableClass.query()
-//             .joinRelated("device.category")
-//             .where("category.id", catId)
-//             .select(objectionTableClass.tableName + ".*")
-//     )
+    /**
+    *Получает все поля из таблицы связанной с таблицей device и id категории 
+    *getDevRelatedTabValueAssociatedCatId :: ObjectionClass a => a -> Future Error b  
+    */
+    const getDevRelatedTabValueAssociatedCatId = objectionTableClass => catId => F.attemptP(() =>
+        objectionTableClass.query()
+            .joinRelated("device")
+            .where("category_id", catId)
+            .select(objectionTableClass.tableName + ".*")
+    )
 
-//     return catId ? getDevRelatedTabValueAssociatedCatId(objectionTableClass)(catId) : getTabAllData(objectionTableClass)
-// }
+    return catId ? getDevRelatedTabValueAssociatedCatId(objectionTableClass)(catId) : getTabAllData(objectionTableClass)
+}
 
-// const getBrandByCatId = getDevRelatedTabValue(Brand)
+const getBrandByCatId = getDevRelatedTabValue(Brand)
+const upsertBrand = upsertTableRow(Brand)
 
-const getBrand = getTabAllData(Brand)
+const getSupplierByCatId = getDevRelatedTabValue(Supplier)
+const upsertSupplier = upsertTableRow(Supplier)
+
+const getCategory = getTabAllData(Category)
+
+const getDevice = F.attemptP(() => {
+    Device.query()
+        .joinRelated("[brand, supplier, status, category, location]")
+        .select("device.id,parent_id,category_id,status,user_id,supplier,location,brand,model,comments,price,isArchive,specifications,date_receipt,date_warranty")
+})
 // const getSupplier = getDevRelatedTabValue(Supplier)
 
 // const getDeviceAll = attemptP(
@@ -53,4 +65,4 @@ const getBrand = getTabAllData(Brand)
 
 // const addDevice = deviceData => attemptP(Device.query().insert(deviceData))
 
-module.exports = { getBrand }
+module.exports = { getBrandByCatId, upsertBrand, getSupplierByCatId, upsertSupplier, getCategory }

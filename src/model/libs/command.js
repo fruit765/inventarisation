@@ -6,11 +6,23 @@ const S = require("sanctuary")
 const Ajv = new require("ajv")
 const ajv = Ajv({ removeAdditional: "all" })
 
+const send = next => res => F.fork(next)(fp.bind(res.json, res))
+
 /**
 *Получает все поля из таблицы
 *getTabAllData :: ObjectionClass a => a -> Future Error b  
 */
-const getTabAllData = objectionTableClass => F.attemptP(fp.bind(objectionTableClass.query,objectionTableClass))
+const getTabAllData = objectionTableClass => F.attemptP(() => objectionTableClass.query())
+
+/**
+ * Добовляет/редактирует данные в таблице, если отправлены данные с id будет произведенно редактирование
+ * если без будет произведенно добавление
+ * upsertTableRow :: a -> b -> Fluture reject resolve
+ */
+const upsertTableRow = objectionTableClass => data => F.attemptP(
+    () => objectionTableClass.transaction(
+        trx => objectionTableClass.query(trx).upsertGraph(data)
+    ))
 
 /**
  * Вырезает данные из объекта по json schema
@@ -26,4 +38,4 @@ eitherToFluture :: (Either a, Fluture b) => a -> b
  */
 const eitherToFluture = S.either(F.reject)(F.resolve)
 
-module.exports.getTabAllData = getTabAllData
+module.exports = { getTabAllData, send, upsertTableRow }

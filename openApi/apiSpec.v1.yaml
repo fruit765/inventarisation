@@ -26,6 +26,12 @@ paths:
                       type: string
       operationId: get-getBrand
       description: 'Получает все поля из таблицы brand связанной с id категории, если catId пустой возвращает таблицу со всеми данными'
+      parameters:
+        - schema:
+            type: integer
+          in: query
+          name: id
+          description: id Категории
     parameters: []
 components:
   schemas: {}

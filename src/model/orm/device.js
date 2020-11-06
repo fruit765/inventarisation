@@ -3,6 +3,7 @@
 const Knex = require("knex")
 const dbConfig = require("../../../serverConfig").db
 const { Model } = require("objection")
+
 const knex = Knex(dbConfig)
 
 Model.knex(knex)
@@ -14,16 +15,72 @@ module.exports = class Device extends Model {
 
     static get relationMappings() {
         const Brand = require("./brand")
+        const Category = require("./category")
+        const Supplier = require("./supplier")
 
         return {
             brand: {
-                relation: Model.HasManyRelation,
+                relation: Model.BelongsToOneRelation,
                 modelClass: Brand,
                 join: {
-                    from: "brand.id",
-                    to: "device.brand_id"
+                    from: "device.brand_id",
+                    to: "brand.id"
                 }
-            }
+            },
+
+            category: {
+                relation: Model.BelongsToOneRelation,
+                modelClass: Category,
+                join: {
+                    from: "device.category_id",
+                    to: "category.id"
+                }
+            },
+
+            status: {
+                relation: Model.BelongsToOneRelation,
+                modelClass: Status,
+                join: {
+                    from: "device.status_id",
+                    to: "status.id"
+                }
+            },
+
+            supplier: {
+                relation: Model.BelongsToOneRelation,
+                modelClass: Supplier,
+                join: {
+                    from: "device.supplier_id",
+                    to: "supplier.id"
+                }
+            },
+
+            location: {
+                relation: Model.BelongsToOneRelation,
+                modelClass: Location,
+                join: {
+                    from: "device.location_id",
+                    to: "location.id"
+                }
+            },
+
+            user: {
+                relation: Model.BelongsToOneRelation,
+                modelClass: User,
+                join: {
+                    from: "device.user_id",
+                    to: "user.id"
+                }
+            },
+
+            // history: {
+            //     relation: Model.HasManyRelation,
+            //     modelClass: History,
+            //     join: {
+            //         from: "device.history_id",
+            //         to: "history.id"
+            //     }
+            // }
         }
     }
 
