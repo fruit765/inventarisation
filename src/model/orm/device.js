@@ -17,6 +17,10 @@ module.exports = class Device extends Model {
         const Brand = require("./brand")
         const Category = require("./category")
         const Supplier = require("./supplier")
+        const Status = require("./status")
+        const Location = require("./location")
+        const User = require("./user")
+        const History = require("./history")
 
         return {
             brand: {
@@ -73,14 +77,32 @@ module.exports = class Device extends Model {
                 }
             },
 
-            // history: {
-            //     relation: Model.HasManyRelation,
-            //     modelClass: History,
-            //     join: {
-            //         from: "device.history_id",
-            //         to: "history.id"
-            //     }
-            // }
+            history: {
+                relation: Model.HasManyRelation,
+                modelClass: History,
+                join: {
+                    from: "device.id",
+                    to: "history.device_id"
+                }
+            },
+
+            parent: {
+                relation: Model.BelongsToOneRelation,
+                modelClass: Device,
+                join: {
+                    from: "device.parent_id",
+                    to: "device.id"
+                }
+            },
+
+            children: {
+                relation: Model.HasManyRelation,
+                modelClass: Device,
+                join: {
+                    from: "device.id",
+                    to: "device.parent_id"
+                }
+            }
         }
     }
 
