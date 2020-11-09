@@ -1,14 +1,16 @@
 openapi: 3.0.0
 info:
+  contact:
+    name: karmy
   title: apiSpec
   version: '1.0'
+  description: Сервер авторизации
 servers:
   - url: 'http://localhost:3000'
 paths:
   /getBrand:
     get:
       summary: ''
-      tags: []
       responses:
         '200':
           description: OK
@@ -32,7 +34,48 @@ paths:
           in: query
           name: id
           description: id Категории
+      tags:
+        - device
     parameters: []
+  /upsertBrand:
+    post:
+      summary: Добовляет/редактирует бренд
+      tags:
+        - device
+      responses:
+        '200':
+          description: Возвращает id и brand добавленного значения
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  brand:
+                    type: string
+                required:
+                  - id
+                  - brand
+        '409':
+          description: Так как значения уникальные при добавлении уже существующей записи возвращает ошибку
+      operationId: post-upsertBrand
+      description: 'Добовляет нового производителя если отправляется свойство brand без id, редактирует если отправляется запрос с полем id'
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                brand:
+                  type: string
+              required:
+                - brand
 components:
   schemas: {}
   securitySchemes: {}
+tags:
+  - name: device
