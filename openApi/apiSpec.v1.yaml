@@ -8,74 +8,112 @@ info:
 servers:
   - url: 'http://localhost:3000'
 paths:
-  /getBrand:
+  '/getTabRowsByCatId/{tabName}/{catId}':
     get:
-      summary: ''
+      summary: 'Получает все поля из таблицы, соответствующие catId'
+      tags:
+        - device
       responses:
         '200':
           description: OK
-          headers: {}
           content:
             application/json:
               schema:
                 type: array
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                    brand:
-                      type: string
-      operationId: get-getBrand
-      description: 'Получает все поля из таблицы brand связанной с id категории, если catId пустой возвращает таблицу со всеми данными'
-      parameters:
-        - schema:
-            type: integer
-          in: query
-          name: id
-          description: id Категории
+                items: {}
+      operationId: get-getTabRowsByCatId
+      description: 'Получает все поля из таблицы, соответствующие связанному значению id категории.'
+      parameters: []
+    parameters:
+      - schema:
+          type: string
+          enum:
+            - status
+            - brand
+            - supplier
+            - device
+        name: tabName
+        in: path
+        required: true
+        description: 'название таблицы, см. разрешенные таблицы в свойстве enum'
+      - schema:
+          type: integer
+        name: catId
+        in: path
+        description: id категории
+        required: true
+  '/getTable/{tabName}':
+    get:
+      summary: Получает все поля из таблицы
       tags:
-        - device
-    parameters: []
-  /upsertBrand:
-    post:
-      summary: Добовляет/редактирует бренд
-      tags:
-        - device
+        - other
       responses:
         '200':
-          description: Возвращает id и brand добавленного значения
-          headers: {}
+          description: OK
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                  brand:
-                    type: string
-                required:
-                  - id
-                  - brand
-        '409':
-          description: Так как значения уникальные при добавлении уже существующей записи возвращает ошибку
-      operationId: post-upsertBrand
-      description: 'Добовляет нового производителя если отправляется свойство brand без id, редактирует если отправляется запрос с полем id'
+                type: array
+                items: {}
+        '400':
+          description: Нет такой таблицы
+      operationId: get-getTable
+      description: Получает все поля из запрошенной таблицы
+    parameters:
+      - schema:
+          type: string
+        name: tabName
+        in: path
+        required: true
+  '/addRowInTab/{tabName}':
+    post:
+      summary: Добавление новой строки в таблицу
+      operationId: post-addRowInTab
+      responses:
+        '200':
+          description: OK
+      description: Добавление новой строки в таблицу
+      tags:
+        - other
       requestBody:
         content:
           application/x-www-form-urlencoded:
-            schema:
-              type: object
-              properties:
-                id:
-                  type: integer
-                brand:
-                  type: string
-              required:
-                - brand
+            schema: {}
+        description: ''
+    parameters:
+      - schema:
+          type: string
+        name: tabName
+        in: path
+        required: true
+  '/updRowInTab/{tabName}/{id}':
+    post:
+      summary: Редактирование строки таблицы
+      operationId: post-updRowInTab
+      responses:
+        '200':
+          description: OK
+      tags:
+        - other
+      description: Редактирование строки таблицы
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema: {}
+    parameters:
+      - schema:
+          type: string
+        name: tabName
+        in: path
+        required: true
+      - schema:
+          type: integer
+        name: id
+        in: path
+        required: true
 components:
   schemas: {}
   securitySchemes: {}
 tags:
   - name: device
+  - name: other
