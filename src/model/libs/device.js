@@ -8,11 +8,41 @@ const Brand = require("../orm/brand")
 const Supplier = require("../orm/supplier")
 const { getTable, upsertTableRow } = require("./command")
 const Category = require("../orm/category")
- 
-const getBrands = getTable(Brand)
+const Status = require("../orm/status")
+
+/**
+*Получает все поля из таблицы связанной с таблицей device и id категории 
+*getDevRelatedTabValueAssociatedCatId :: ObjectionClass a => a -> Future Error b  
+*/
+const getDevRelatedTabValueAssociatedCatId = objectionTableClass => catId => F.attemptP(() =>
+    objectionTableClass.query()
+        .joinRelated("device")
+        .where("category_id", catId)
+        .select(objectionTableClass.tableName + ".*")
+)
+
+const getAllOrOnlyCatIdRelated = objectionTableClass => catId => catId ?
+    getDevRelatedTabValueAssociatedCatId(objectionTableClass)(catId) :
+    getTable(objectionTableClass)
+
+const getBrands = getAllOrOnlyCatIdRelated(Brand)
 const insertBrands = insertTable(Brand)
 const updateBrands = updateTable(Brand)
 const deleteBrands = deleteTable(Brand)
+
+const getSuppliers = getAllOrOnlyCatIdRelated(Supplier)
+const insertSuppliers = insertTable(Supplier)
+const updateSuppliers = updateTable(Supplier)
+const deleteSuppliers = deleteTable(Supplier)
+
+const getCategories = getTable(Category)
+const insertCategories = insertTable(Category)
+const updateCategories = updateTable(Category)
+const deleteCategories = deleteTable(Category)
+
+const getStatuses = getTable(Status)
+
+const getDevices = getTable(Device)
 
 // /**
 // * Получает все поля из таблицы связанной с таблицей device и id категории, если catId пустой возвращает таблицу со всеми данными
