@@ -5,8 +5,36 @@ const { send } = require("./model/libs/command")
 
 module.exports = function (app) {
     
-    app.get("/getTable/:tableName", (req, res, next) => {
-        send(next)(res)(getBrandByCatId(req.query.id))
+    app.get("/brands", (req, res, next) => {
+        send(next)(res)(getBrands)
+    })
+
+    app.post("/brands", (req, res, next) => {
+        send(next)(res)(insertBrands(req.body))
+    })
+
+    app.patch("/brands", (req, res, next) => {
+        send(next)(res)(updateBrands(req.body))
+    })
+
+    app.delete("/brands", (req, res, next) => {
+        send(next)(res)(deleteBrands(req.body.id))
+    })
+
+    app.get("/brands", (req, res, next) => {
+        send(next)(res)(getBrands)
+    })
+
+    app.post("/brands", (req, res, next) => {
+        send(next)(res)(insertBrands(req.body))
+    })
+
+    app.patch("/brands", (req, res, next) => {
+        send(next)(res)(updateBrands(req.body))
+    })
+
+    app.delete("/brands", (req, res, next) => {
+        send(next)(res)(deleteBrands(req.body.id))
     })
 
     app.use((err, req, res, next) => {

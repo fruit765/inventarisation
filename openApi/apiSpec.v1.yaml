@@ -8,9 +8,9 @@ info:
 servers:
   - url: 'http://localhost:3000'
 paths:
-  '/getTabRowsByCatId/{tabName}/{catId}':
+  /devices:
     get:
-      summary: 'Получает все поля из таблицы, соответствующие catId'
+      summary: Получить список оборудования
       tags:
         - device
       responses:
@@ -20,33 +20,119 @@ paths:
             application/json:
               schema:
                 type: array
-                items: {}
-      operationId: get-getTabRowsByCatId
-      description: 'Получает все поля из таблицы, соответствующие связанному значению id категории.'
-      parameters: []
-    parameters:
-      - schema:
-          type: string
-          enum:
-            - status
-            - brand
-            - supplier
-            - device
-        name: tabName
-        in: path
-        required: true
-        description: 'название таблицы, см. разрешенные таблицы в свойстве enum'
-      - schema:
-          type: integer
-        name: catId
-        in: path
-        description: id категории
-        required: true
-  '/getTable/{tabName}':
-    get:
-      summary: Получает все поля из таблицы
+                items:
+                  $ref: '#/components/schemas/device'
+      operationId: get-devices
+      description: Получить список оборудования
+    post:
+      summary: ''
+      operationId: post-devices
+      responses:
+        '200':
+          description: Возвращает вставленные данные
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/device'
       tags:
-        - other
+        - device
+      description: Добавить оборудование
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/device'
+    patch:
+      summary: ''
+      operationId: patch-devices
+      responses:
+        '200':
+          description: Возвращает измененные данные
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  parent_id:
+                    type: integer
+                  category_id:
+                    type: integer
+                  status_id:
+                    type: integer
+                  user_id:
+                    type: integer
+                  supplier_id:
+                    type: integer
+                  location_id:
+                    type: integer
+                  brand_id:
+                    type: integer
+                  model:
+                    type: string
+                  comments:
+                    type: string
+                  price:
+                    type: integer
+                  isArchive:
+                    type: integer
+                  specifications: {}
+                  date_ purchase:
+                    type: string
+                    format: date
+                  date_warranty_end:
+                    type: string
+                    format: date
+                required:
+                  - id
+      tags:
+        - device
+      description: Редактировать оборудование
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                parent_id:
+                  type: integer
+                category_id:
+                  type: integer
+                status_id:
+                  type: integer
+                user_id:
+                  type: integer
+                supplier_id:
+                  type: integer
+                location_id:
+                  type: integer
+                brand_id:
+                  type: integer
+                model:
+                  type: string
+                comments:
+                  type: string
+                price:
+                  type: integer
+                isArchive:
+                  type: integer
+                specifications: {}
+                date_ purchase:
+                  type: string
+                  format: date
+                date_warranty_end:
+                  type: string
+                  format: date
+              required:
+                - id
+  /brands:
+    get:
+      summary: Получить данные из таблицы brand
+      tags:
+        - device
       responses:
         '200':
           description: OK
@@ -54,65 +140,438 @@ paths:
             application/json:
               schema:
                 type: array
-                items: {}
-        '400':
-          description: Нет такой таблицы
-      operationId: get-getTable
-      description: Получает все поля из запрошенной таблицы
-    parameters:
-      - schema:
-          type: string
-        name: tabName
-        in: path
-        required: true
-  '/addRowInTab/{tabName}':
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    brand:
+                      type: string
+      operationId: get-brands
+      description: 'Получает все данные из таблицы, если задан catId ответ будет содержать только колонки связанные с отправленной категорией'
+      parameters:
+        - schema:
+            type: integer
+          in: query
+          name: catId
+          description: ID категори
     post:
-      summary: Добавление новой строки в таблицу
-      operationId: post-addRowInTab
+      summary: Добавить данные в таблицу brand
+      operationId: post-brands
       responses:
         '200':
-          description: OK
-      description: Добавление новой строки в таблицу
+          description: Данные добавленной стоки
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  brand:
+                    type: string
+                required:
+                  - id
+                  - brand
       tags:
-        - other
+        - device
+      description: Добавляет новую строку в таблицу
       requestBody:
         content:
           application/x-www-form-urlencoded:
-            schema: {}
+            schema:
+              type: object
+              properties:
+                brand:
+                  type: string
+              required:
+                - brand
         description: ''
-    parameters:
-      - schema:
-          type: string
-        name: tabName
-        in: path
-        required: true
-  '/updRowInTab/{tabName}/{id}':
-    post:
-      summary: Редактирование строки таблицы
-      operationId: post-updRowInTab
+    patch:
+      summary: Редактировать данные в таблице brand
+      operationId: patch-brands
       responses:
         '200':
-          description: OK
+          description: Данные измененной стоки
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  brand:
+                    type: string
       tags:
-        - other
-      description: Редактирование строки таблицы
+        - device
+      description: Редактирует запись
       requestBody:
         content:
           application/x-www-form-urlencoded:
-            schema: {}
-    parameters:
-      - schema:
-          type: string
-        name: tabName
-        in: path
-        required: true
-      - schema:
-          type: integer
-        name: id
-        in: path
-        required: true
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                brand:
+                  type: string
+              required:
+                - id
+                - brand
+        description: ''
+    parameters: []
+    delete:
+      summary: Удлаить строку с таблицы brand
+      operationId: delete-brands
+      responses:
+        '200':
+          description: id уделенной строки
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: id удаленного устройства
+                required:
+                  - id
+      description: В бд определенны внешние ключи которые не дадут удалить запись если она связанна с каким нибудь оборудованием
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+              required:
+                - id
+        description: ''
+      tags:
+        - device
+  /suppliers:
+    get:
+      summary: Получить данные из таблицы supplier
+      tags:
+        - device
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    supplier:
+                      type: string
+      operationId: get-suppliers
+      description: 'Получает все данные из таблицы, если задан catId ответ будет содержать только колонки связанные с отправленной категорией'
+      parameters:
+        - schema:
+            type: integer
+          in: query
+          name: catId
+          description: ID категори
+    post:
+      summary: Добавить данные в таблицу supplier
+      operationId: post-suppliers
+      responses:
+        '200':
+          description: Данные добавленной стоки
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  supplier:
+                    type: string
+                required:
+                  - id
+                  - supplier
+      tags:
+        - device
+      description: Добавляет новую строку в таблицу
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                supplier:
+                  type: string
+              required:
+                - supplier
+        description: ''
+    patch:
+      summary: Редактировать данные в таблице supplier
+      operationId: patch-suppliers
+      responses:
+        '200':
+          description: Данные измененной стоки
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  supplier:
+                    type: string
+      tags:
+        - device
+      description: Редактирует запись
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                supplier:
+                  type: string
+              required:
+                - id
+                - supplier
+        description: ''
+    parameters: []
+    delete:
+      summary: Удлаить строку с таблицы supplier
+      operationId: delete-suppliers
+      responses:
+        '200':
+          description: id уделенной строки
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: id удаленного устройства
+                required:
+                  - id
+      description: В бд определенны внешние ключи которые не дадут удалить запись если она связанна с каким нибудь оборудованием
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+              required:
+                - id
+      tags:
+        - device
+  /categories:
+    get:
+      summary: Получить данные из таблицы category
+      tags:
+        - device
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    category:
+                      type: string
+                    parent_id:
+                      type: integer
+                    schema:
+                      description: Схема дополнительный полей устройст категории
+                  required:
+                    - id
+                    - category
+              examples: {}
+      operationId: get-categories
+      description: Получает все данные из таблицы
+      parameters: []
+    post:
+      summary: Добавить данные в таблицу category
+      operationId: post-categories
+      responses:
+        '200':
+          description: Данные добавленной стоки
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  category:
+                    type: string
+                required:
+                  - id
+                  - category
+      tags:
+        - device
+      description: Добавляет новую строку в таблицу
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                category:
+                  type: string
+                schema: {}
+                parent_id:
+                  type: integer
+              required:
+                - category
+        description: ''
+    patch:
+      summary: Редактировать данные в таблице category
+      operationId: patch-categories
+      responses:
+        '200':
+          description: Данные измененной стоки
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  category:
+                    type: string
+      tags:
+        - device
+      description: Редактирует запись
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                category:
+                  type: string
+                parent_id:
+                  type: integer
+                schema: {}
+              required:
+                - id
+        description: ''
+    parameters: []
+    delete:
+      summary: Удлаить строку с таблицы category
+      operationId: delete-categories
+      responses:
+        '200':
+          description: id уделенной строки
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: ''
+                required:
+                  - id
+      description: В бд определенны внешние ключи которые не дадут удалить запись если она связанна с каким нибудь оборудованием
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+              required:
+                - id
+      tags:
+        - device
+  /statuses:
+    get:
+      summary: Получить данные таблицы status
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    status:
+                      type: string
+                  required:
+                    - id
+                    - status
+      operationId: get-statuses
+      description: Получить данные с таблицы status
 components:
-  schemas: {}
+  schemas:
+    device:
+      title: device
+      type: object
+      properties:
+        id:
+          type: integer
+        parent_id:
+          type: integer
+        category_id:
+          type: integer
+        status_id:
+          type: integer
+        user_id:
+          type: integer
+        supplier_id:
+          type: integer
+        location_id:
+          type: integer
+        brand_id:
+          type: integer
+        model:
+          type: string
+        comments:
+          type: string
+        price:
+          type: integer
+        isArchive:
+          type: integer
+        specifications: {}
+        date_ purchase:
+          type: string
+          format: date
+        date_warranty_end:
+          type: string
+          format: date
+      required:
+        - id
+        - category_id
+        - status_id
+        - user_id
+        - supplier_id
+        - location_id
+        - brand_id
+        - model
+        - isArchive
+        - date_ purchase
+        - date_warranty_end
   securitySchemes: {}
 tags:
   - name: device

@@ -12,7 +12,7 @@ const send = next => res => F.fork(next)(fp.bind(res.json, res))
 *Получает все поля из таблицы
 *getTabAllData :: ObjectionClass a => a -> Future Error b  
 */
-const getTabAllData = objectionTableClass => F.attemptP(() => objectionTableClass.query())
+const getTable = objectionTableClass => F.attemptP(() => objectionTableClass.query())
 
 /**
  * Добовляет/редактирует данные в таблице, если отправлены данные с id будет произведенно редактирование
@@ -38,4 +38,4 @@ eitherToFluture :: (Either a, Fluture b) => a -> b
  */
 const eitherToFluture = S.either(F.reject)(F.resolve)
 
-module.exports = { getTabAllData, send, upsertTableRow }
+module.exports = { getTable, send, upsertTableRow }

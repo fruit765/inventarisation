@@ -6,10 +6,13 @@ const S = require("sanctuary")
 const Device = require("../orm/device")
 const Brand = require("../orm/brand")
 const Supplier = require("../orm/supplier")
-const { getTabAllData, upsertTableRow } = require("./command")
+const { getTable, upsertTableRow } = require("./command")
 const Category = require("../orm/category")
  
-const getTable = tableName => getTabAllData(tableName)
+const getBrands = getTable(Brand)
+const insertBrands = insertTable(Brand)
+const updateBrands = updateTable(Brand)
+const deleteBrands = deleteTable(Brand)
 
 // /**
 // * Получает все поля из таблицы связанной с таблицей device и id категории, если catId пустой возвращает таблицу со всеми данными
