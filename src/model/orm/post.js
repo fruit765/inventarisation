@@ -14,26 +14,17 @@ module.exports = class Post extends Model {
 
     static get relationMappings() {
         const User = require("./user")
-        const Department_has_location = require("./department_has_location")
+        const Post_dep_loc = require("./post_dep_loc")
 
         return {
-            department_has_location: {
-                relation: Model.BelongsToOneRelation,
-                modelClass: Department_has_location,
-                join: {
-                    from: "post.department_has_location_id",
-                    to: "department_has_location.id"
-                }
-            },
-
-            user: {
+            post_dep_loc: {
                 relation: Model.HasManyRelation,
-                modelClass: User,
+                modelClass: Post_dep_loc,
                 join: {
                     from: "post.id",
-                    to: "user.post_id"
+                    to: "post_dep_loc.post_id"
                 }
-            },
+            }
         }
     }
 }

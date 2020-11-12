@@ -13,15 +13,15 @@ module.exports = class Department extends Model {
     }
 
     static get relationMappings() {
-        const Department_has_location = require("./department_has_location")
+        const Post_dep_loc = require("./post_dep_loc")
 
         return {
-            Department_has_location: {
+            post_dep_loc: {
                 relation: Model.HasManyRelation,
-                modelClass: Department_has_location,
+                modelClass: Post_dep_loc,
                 join: {
                     from: "department.id",
-                    to: "department_has_location.department_id"
+                    to: "post_dep_loc.department_id"
                 }
             }
         }

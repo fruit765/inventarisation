@@ -15,7 +15,7 @@ module.exports = class Location extends Model {
     static get relationMappings() {
         const Device = require("./device")
         const User = require("./user")
-        const Department_has_location = require("./department_has_location")
+        const Post_dep_loc = require("./post_dep_loc")
 
         return {
             device: {
@@ -36,12 +36,12 @@ module.exports = class Location extends Model {
                 }
             },
 
-            department_has_location: {
+            post_dep_loc: {
                 relation: Model.HasManyRelation,
-                modelClass: Department_has_location,
+                modelClass: Post_dep_loc,
                 join: {
                     from: "location.id",
-                    to: "department_has_location.location_id"
+                    to: "post_dep_loc.location_id"
                 }
             }
         }

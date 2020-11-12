@@ -126,6 +126,8 @@ paths:
                 date_warranty_end:
                   type: string
                   format: date
+                inv_number:
+                  type: string
               required:
                 - id
   /brands:
@@ -523,6 +525,80 @@ paths:
                     - status
       operationId: get-statuses
       description: Получить данные с таблицы status
+  /login:
+    get:
+      summary: Возвращает данные об авторизации
+      tags:
+        - authorization
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId:
+                    type: integer
+                    enum:
+                      - 1
+                  isAuth:
+                    type: integer
+                    enum:
+                      - 1
+                  role:
+                    type: string
+                    enum:
+                      - admin
+                required:
+                  - userId
+                  - isAuth
+                  - role
+      operationId: get-login
+      description: Возвращает данные об авторизации
+    post:
+      summary: Авторизация
+      operationId: post-login
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId:
+                    type: integer
+                    enum:
+                      - 1
+                  isAuth:
+                    type: integer
+                    enum:
+                      - 1
+                  role:
+                    type: string
+                    enum:
+                      - admin
+                required:
+                  - userId
+                  - isAuth
+                  - role
+      description: Авторизация
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                login:
+                  type: string
+                password:
+                  type: string
+              required:
+                - login
+                - password
+      tags:
+        - authorization
 components:
   schemas:
     device:
@@ -560,6 +636,8 @@ components:
         date_warranty_end:
           type: string
           format: date
+        inv_number:
+          type: string
       required:
         - id
         - category_id
@@ -572,7 +650,9 @@ components:
         - isArchive
         - date_ purchase
         - date_warranty_end
+        - inv_number
   securitySchemes: {}
 tags:
   - name: device
   - name: other
+  - name: authorization

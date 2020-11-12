@@ -1,0 +1,240 @@
+\documentclass[11pt]{article}
+\usepackage[T2A]{fontenc} 
+\usepackage{tikz}   
+    \title{\textbf{Техническое задание }}
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+\section{Основные таблицы}
+\begin{description}
+	\addtolength{\itemindent}{0.8cm}
+	\itemsep0em 
+	\item Таблица по сотрудникам
+	\begin{itemize}
+		\item id - ид сотрудника
+		\item employer - наниматель (опционально)
+		\item post - должность
+		\item location - местоположение
+		\item full\_name - полное имя
+		\item isArchive - в архиве или нет
+		\item appointment - дата найма (опционально)
+		\item contact - кантактные данные (опционально)
+	\end{itemize}
+	\item Таблица сервисов/аккаунтов
+	\begin{itemize}
+		\item id
+		\item service - имя сервиса
+		\item user - пользователь сервиса
+		\item login - логин
+		\item password - пароль
+		\item comments - комментарии(опционально)
+		\item isArchive - находится ли сервис в архиве или нет
+	\end{itemize}
+	\item[Таблица должностей]
+	\item[Таблица актов]
+	\item[Таблица категорий]
+	\item[Сущность должность.] Сущность должности представляет собой обьеденение 3х таблиц, Должности, Отделы, Местоположения.
+	
+	\begin{tikzpicture}[thick, main/.style = {draw, rectangle}] 
+		\node[main] (1) at (0,0) {Сотрудники};
+		\node[main] (2) at (4,0) {Cущность должность};
+		\node[main] (3) at (8,0) {Должности};
+		\node[main] (4) at (7, -1) {Местоположения};
+		\node[main] (5) at (4, -1) {Отделы};
+		\draw[<-,draw=blue] (1) to (2);
+		\draw[<-,draw=blue] (2) to (3);
+		\draw[<-,draw=blue] (2) to (4);
+		\draw[<-,draw=blue] (2) to (5);
+	\end{tikzpicture} 
+		
+	Сойства таблиц:
+	\begin{itemize}
+		\item Должности
+		\begin{itemize}
+			\item id
+			\item наименование должности
+		\end{itemize}
+		\item Отделы
+		\begin{itemize}
+			\item id
+			\item наименование отдела
+		\end{itemize}
+		\item Местоположения
+		\begin{itemize}
+			\item id
+			\item местоположение
+		\end{itemize}
+	\end{itemize}
+	\item [Сущность сотрудники.]Содержит список всех сотрудников.
+	
+	\begin{tikzpicture}[thick, main/.style = {draw, rectangle}] 
+		\node[main] (1) at (0,0) {Пользователи(Сотрудники)};
+		\node[main] (2) at (-5,0) {Наниматель};
+		\node[main] (3) at (5,0) {Учетные данные};
+		\node[main] (4) at (4, -1) {Местоположение};
+		\node[main] (5) at (-4, -1) {Сущность должность};
+		\node[main] (6) at (0, -1) {Сервисы};
+		\node[main] (7) at (5, 1) {Роли};
+		\draw[<-,draw=blue] (1) to (2);
+		\draw[<-,draw=blue] (1) to (3);
+		\draw[<-,draw=blue] (1) to (4);
+		\draw[<-,draw=blue] (1) to (5);
+		\draw[<-,draw=blue] (1) to (6);
+		\draw[<-,draw=blue] (3) to (7);
+	\end{tikzpicture} 
+		
+	Свойства таблиц:
+	\begin{itemize}
+		\item Оборудование
+		\begin{itemize}
+			\item id - ид оборудования
+			\item inv\_number - инвентарный номер 
+			\item category - категория
+			\item status\_id - один из статусов из таблицы статусов
+			\item user\_id - пользователь за которым закрепленно оборудование, выбирается из таблицы user
+			\item supplier\_id - один из поставщиков из таблицы поставщиков
+			\item location\_id - одно из местоположений из таблицы местоположений
+			\item brand\_id - один из брендов из таблицы брендов
+			\item model - модель
+			\item comments - комменты (опционально)
+			\item price - цена (опционально)
+			\item isArchive - в архиве или нет
+			\item specifications - дополнительные свойства, специфичные для каждогой категории оборудования
+			\item date\_purchase - дата покупки
+			\item date\_warranty\_end - дата окончания гарантии
+			\item parent\_id - обеспечивает иерархию в устройствах, благодаря этой колонке возможны состовные устройства
+		\end{itemize}
+		\item Категории
+		\begin{itemize}
+			\item id
+			\item category - имя категории
+			\item schema - схема категории, содержит схему всех дополнительных свойств устройств в этой категории
+			\item parent\_id - обеспечивает иерархию в категориях  
+		\end{itemize}
+		\item Поставщик
+		\begin{itemize}
+			\item id
+			\item supplier - имя поставщика
+		\end{itemize}
+		\item Производитель
+		\begin{itemize}
+			\item id
+			\item brand - имя бренда
+		\end{itemize}
+		\item Статус
+		\begin{itemize}
+			\item id
+			\item status -склад, выдано, архив, гарантийное обслуживание 
+		\end{itemize}
+	\end{itemize}
+	
+	\item [Сущность оборудования.]Содержит список всего оборудования.
+	
+	\begin{tikzpicture}[thick, main/.style = {draw, rectangle}] 
+		\node[main] (1) at (0,0) {Оборудование};
+		\node[main] (2) at (-4,0) {Производитель};
+		\node[main] (3) at (4,0) {Поставщик};
+		\node[main] (4) at (3, -1) {Статус};
+		\node[main] (5) at (-3, -1) {Категории};
+		\node[main] (6) at (0, -1) {Пользователи};
+		\draw[<-,draw=blue] (1) to (2);
+		\draw[<-,draw=blue] (1) to (3);
+		\draw[<-,draw=blue] (1) to (4);
+		\draw[<-,draw=blue] (1) to (5);
+		\draw[<-,draw=blue] (1) to (6);
+	\end{tikzpicture} 
+		
+	Свойства таблиц:
+	\begin{itemize}
+		\item Оборудование
+		\begin{itemize}
+			\item id - ид оборудования
+			\item inv\_number - инвентарный номер 
+			\item category - категория
+			\item status\_id - один из статусов из таблицы статусов
+			\item user\_id - пользователь за которым закрепленно оборудование, выбирается из таблицы user
+			\item supplier\_id - один из поставщиков из таблицы поставщиков
+			\item location\_id - одно из местоположений из таблицы местоположений
+			\item brand\_id - один из брендов из таблицы брендов
+			\item model - модель
+			\item comments - комменты (опционально)
+			\item price - цена (опционально)
+			\item isArchive - в архиве или нет
+			\item specifications - дополнительные свойства, специфичные для каждогой категории оборудования
+			\item date\_purchase - дата покупки
+			\item date\_warranty\_end - дата окончания гарантии
+			\item parent\_id - обеспечивает иерархию в устройствах, благодаря этой колонке возможны состовные устройства
+		\end{itemize}
+		\item Категории
+		\begin{itemize}
+			\item id
+			\item category - имя категории
+			\item schema - схема категории, содержит схему всех дополнительных свойств устройств в этой категории
+			\item parent\_id - обеспечивает иерархию в категориях  
+		\end{itemize}
+		\item Поставщик
+		\begin{itemize}
+			\item id
+			\item supplier - имя поставщика
+		\end{itemize}
+		\item Производитель
+		\begin{itemize}
+			\item id
+			\item brand - имя бренда
+		\end{itemize}
+		\item Статус
+		\begin{itemize}
+			\item id
+			\item status -склад, выдано, архив, гарантийное обслуживание 
+		\end{itemize}
+	\end{itemize}
+	\item [Сущность сервисы.]Содержит список всех сервисов всех пользователей.
+	
+	\begin{tikzpicture}[thick, main/.style = {draw, rectangle}] 
+		\node[main] (1) at (0,0) {Сервисы};
+		\node[main] (2) at (-4,0) {Имя сервиса};
+		\node[main] (3) at (4,0) {Пользователи};
+		\draw[<-,draw=blue] (1) to (2);
+		\draw[<-,draw=blue] (1) to (3);
+	\end{tikzpicture} 
+		
+	Свойства таблиц:
+	\begin{itemize}
+		\item Сервисы
+		\begin{itemize}
+			\item id
+			\item service\_id - имя сервиса из списка имен сервисов
+			\item user\_id - пользователь свервиса, выбирается из таблицы всех пользователей
+			\item login - логин сервиса
+			\item password - пароль сервиса
+			\item isArchive - в архиве или нет
+		\end{itemize}
+		\item Имя сервиса
+		\begin{itemize}
+			\item id
+			\item service - имя сервиса
+		\end{itemize}
+	\end{itemize}
+\end{description}
+\section{Contributing}
+If you'd like to contribute to this project, here's some ideas:
+\begin{description}
+\addtolength{\itemindent}{0.80cm}
+\itemsep0em 
+\item[Development] fix bugs or add features to our C/GTK codebase
+\item[Documentation] edit the user guide to improve user experience
+\item[Localization] translate Gummi in your native language
+\item[Testing] try out the latest and report your findings
+\end{description}
+Refer to the \emph{Getting Involved}\footnote{https://github.com/alexandervdm/gummi/wiki/Getting-Involved} section on our wiki for more information. 
+
+\section{What's next}
+Within the 0.8.x release series we will focus on adding minor features but mostly fixing bugs. New functionality will be integrated into the next major release. An overview of currently accepted features can be found on the 0.9.0 milestone\footnote{https://github.com/alexandervdm/gummi/milestone/3} page.
+
+\section{In closing}
+We hope you will enjoy using this release as much as we enjoyed creating it. If you have any further comments, suggestions or wish to report an issue, please visit \emph{\textbf{https://gummi.app}}. 
+
+\end{document}
+

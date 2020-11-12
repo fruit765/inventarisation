@@ -7,9 +7,9 @@ const knex = Knex(dbConfig)
 
 Model.knex(knex)
 
-module.exports = class Department_has_location extends Model {
+module.exports = class Post_dep_loc extends Model {
     static get tableName() {
-        return "department_has_location"
+        return "post_dep_loc"
     }
 
     static get relationMappings() {
@@ -22,17 +22,17 @@ module.exports = class Department_has_location extends Model {
                 relation: Model.BelongsToOneRelation,
                 modelClass: Department,
                 join: {
-                    from: "department_has_location.department_id",
+                    from: "post_dep_loc.department_id",
                     to: "department.id"
                 }
             },
 
             post: {
-                relation: Model.HasManyRelation,
+                relation: Model.BelongsToOneRelation,
                 modelClass: Post,
                 join: {
-                    from: "department_has_location.id",
-                    to: "post.department_has_location_id"
+                    from: "post_dep_loc.post_id",
+                    to: "post.id"
                 }
             },
 
@@ -40,10 +40,19 @@ module.exports = class Department_has_location extends Model {
                 relation: Model.BelongsToOneRelation,
                 modelClass: Location,
                 join: {
-                    from: "department_has_location.location_id",
+                    from: "post_dep_loc.location_id",
                     to: "location.id"
                 }
-            }
+            },
+
+            user: {
+                relation: Model.HasManyRelation,
+                modelClass: User,
+                join: {
+                    from: "post_dep_loc.id",
+                    to: "user.post_dep_loc_id"
+                }
+            },
         }
     }
 }

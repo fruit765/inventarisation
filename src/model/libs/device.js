@@ -6,7 +6,7 @@ const S = require("sanctuary")
 const Device = require("../orm/device")
 const Brand = require("../orm/brand")
 const Supplier = require("../orm/supplier")
-const { getTable, upsertTableRow } = require("./command")
+const { getTable, insertTable, updateTable, deleteTable } = require("./command")
 const Category = require("../orm/category")
 const Status = require("../orm/status")
 
@@ -43,6 +43,27 @@ const deleteCategories = deleteTable(Category)
 const getStatuses = getTable(Status)
 
 const getDevices = getTable(Device)
+const insertDevices = insertTable(Device)
+const updateDevices = updateTable(Device)
+
+module.exports = {
+    getBrands,
+    insertBrands,
+    updateBrands,
+    deleteBrands,
+    getSuppliers,
+    insertSuppliers,
+    updateSuppliers,
+    deleteSuppliers,
+    getCategories,
+    insertCategories,
+    updateCategories,
+    deleteCategories,
+    getStatuses,
+    getDevices,
+    insertDevices,
+    updateDevices
+}
 
 // /**
 // * Получает все поля из таблицы связанной с таблицей device и id категории, если catId пустой возвращает таблицу со всеми данными

@@ -104,9 +104,8 @@ DROP TABLE IF EXISTS `category`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `category` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(320) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `category` varchar(320) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `schema` json DEFAULT NULL,
-  `isLatest` tinyint DEFAULT NULL,
   `parent_id` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_category_category_idx` (`parent_id`),
@@ -158,7 +157,7 @@ DROP TABLE IF EXISTS `department`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `department` (
   `id` int NOT NULL,
-  `name` varchar(256) NOT NULL,
+  `department` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -170,34 +169,6 @@ CREATE TABLE `department` (
 LOCK TABLES `department` WRITE;
 /*!40000 ALTER TABLE `department` DISABLE KEYS */;
 /*!40000 ALTER TABLE `department` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `post_dep_loc`
---
-
-DROP TABLE IF EXISTS `post_dep_loc`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `post_dep_loc` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `department_id` int NOT NULL,
-  `location_id` int NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_post_dep_loc_location1_idx` (`location_id`),
-  KEY `fk_post_dep_loc_department1_idx` (`department_id`),
-  CONSTRAINT `fk_post_dep_loc_department1` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`),
-  CONSTRAINT `fk_post_dep_loc_location1` FOREIGN KEY (`location_id`) REFERENCES `location` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `post_dep_loc`
---
-
-LOCK TABLES `post_dep_loc` WRITE;
-/*!40000 ALTER TABLE `post_dep_loc` DISABLE KEYS */;
-/*!40000 ALTER TABLE `post_dep_loc` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -221,8 +192,9 @@ CREATE TABLE `device` (
   `price` int DEFAULT NULL,
   `isArchive` tinyint NOT NULL DEFAULT '0',
   `specifications` json NOT NULL,
-  `date_receipt` date DEFAULT NULL,
-  `date_warranty` date DEFAULT NULL,
+  `date_purchase` date DEFAULT NULL,
+  `date_warranty_end` date DEFAULT NULL,
+  `inv_number` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_device_device1_idx` (`parent_id`),
   KEY `fk_device_status1_idx` (`status_id`),
@@ -322,7 +294,7 @@ DROP TABLE IF EXISTS `location`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `location` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(256) NOT NULL,
+  `location` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -345,11 +317,8 @@ DROP TABLE IF EXISTS `post`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `post` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(256) DEFAULT NULL,
-  `post_dep_loc_id` int NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_post_post_dep_loc1_idx` (`post_dep_loc_id`),
-  CONSTRAINT `fk_post_post_dep_loc1` FOREIGN KEY (`post_dep_loc_id`) REFERENCES `post_dep_loc` (`id`)
+  `post` varchar(128) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -360,6 +329,37 @@ CREATE TABLE `post` (
 LOCK TABLES `post` WRITE;
 /*!40000 ALTER TABLE `post` DISABLE KEYS */;
 /*!40000 ALTER TABLE `post` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `post_dep_loc`
+--
+
+DROP TABLE IF EXISTS `post_dep_loc`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `post_dep_loc` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `department_id` int NOT NULL,
+  `location_id` int NOT NULL,
+  `post_id` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_department_has_location_location1_idx` (`location_id`),
+  KEY `fk_department_has_location_department1_idx` (`department_id`),
+  KEY `post_dep_loc_FK` (`post_id`),
+  CONSTRAINT `fk_department_has_location_department1` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`),
+  CONSTRAINT `post_dep_loc_FK` FOREIGN KEY (`post_id`) REFERENCES `post` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `post_dep_loc_FK_1` FOREIGN KEY (`location_id`) REFERENCES `location` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `post_dep_loc`
+--
+
+LOCK TABLES `post_dep_loc` WRITE;
+/*!40000 ALTER TABLE `post_dep_loc` DISABLE KEYS */;
+/*!40000 ALTER TABLE `post_dep_loc` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -467,7 +467,7 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `id` int NOT NULL AUTO_INCREMENT,
   `employer_id` int DEFAULT NULL,
-  `post_id` int NOT NULL,
+  `post_dep_loc_id` int NOT NULL,
   `location_id` int NOT NULL,
   `full_name` varchar(128) NOT NULL,
   `isArchive` tinyint NOT NULL DEFAULT '0',
@@ -475,11 +475,11 @@ CREATE TABLE `user` (
   `contact` json DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_user_location1_idx` (`location_id`),
-  KEY `fk_user_post1_idx` (`post_id`),
+  KEY `fk_user_post1_idx` (`post_dep_loc_id`),
   KEY `fk_user_employer1_idx` (`employer_id`),
   CONSTRAINT `fk_user_employer1` FOREIGN KEY (`employer_id`) REFERENCES `employer` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `fk_user_location1` FOREIGN KEY (`location_id`) REFERENCES `location` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT `fk_user_post1` FOREIGN KEY (`post_id`) REFERENCES `post` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+  CONSTRAINT `user_FK` FOREIGN KEY (`post_dep_loc_id`) REFERENCES `post_dep_loc` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -505,4 +505,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-11-10 17:58:07
+-- Dump completed on 2020-11-12 18:02:51

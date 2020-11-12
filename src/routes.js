@@ -1,10 +1,30 @@
-const { getBrandByCatId, upsertBrand } = require("./model/libs/device")
+"use strict"
+
+const {
+    getBrands,
+    insertBrands,
+    updateBrands,
+    deleteBrands,
+    getSuppliers,
+    insertSuppliers,
+    updateSuppliers,
+    deleteSuppliers,
+    getCategories,
+    insertCategories,
+    updateCategories,
+    deleteCategories,
+    getStatuses,
+    getDevices,
+    insertDevices,
+    updateDevices
+} = require("./model/libs/device")
+
 const F = require("fluture")
 const fp = require("lodash/fp")
 const { send } = require("./model/libs/command")
 
 module.exports = function (app) {
-    
+
     app.get("/brands", (req, res, next) => {
         send(next)(res)(getBrands(req.query.catId))
     })
@@ -62,11 +82,11 @@ module.exports = function (app) {
     })
 
     app.post("/devices", (req, res, next) => {
-        send(next)(res)(getDevices)
+        send(next)(res)(insertDevices(req.body))
     })
 
     app.patch("/devices", (req, res, next) => {
-        send(next)(res)(getDevices)
+        send(next)(res)(updateDevices(req.body.id))
     })
 
     app.use((err, req, res, next) => {
