@@ -11,52 +11,28 @@
 \begin{description}
 	\addtolength{\itemindent}{0.8cm}
 	\itemsep0em 
-	\item Таблица по сотрудникам
-	\begin{itemize}
-		\item id - ид сотрудника
-		\item employer - наниматель (опционально)
-		\item post - должность
-		\item location - местоположение
-		\item full\_name - полное имя
-		\item isArchive - в архиве или нет
-		\item appointment - дата найма (опционально)
-		\item contact - кантактные данные (опционально)
-	\end{itemize}
-	\item Таблица сервисов/аккаунтов
-	\begin{itemize}
-		\item id
-		\item service - имя сервиса
-		\item user - пользователь сервиса
-		\item login - логин
-		\item password - пароль
-		\item comments - комментарии(опционально)
-		\item isArchive - находится ли сервис в архиве или нет
-	\end{itemize}
-	\item[Таблица должностей]
-	\item[Таблица актов]
-	\item[Таблица категорий]
-	\item[Сущность должность.] Сущность должности представляет собой обьеденение 3х таблиц, Должности, Отделы, Местоположения.
+	\item[Сущность должность.] Содержит конкретные должности сотрудников
 	
 	\begin{tikzpicture}[thick, main/.style = {draw, rectangle}] 
-		\node[main] (1) at (0,0) {Сотрудники};
-		\node[main] (2) at (4,0) {Cущность должность};
-		\node[main] (3) at (8,0) {Должности};
-		\node[main] (4) at (7, -1) {Местоположения};
-		\node[main] (5) at (4, -1) {Отделы};
+		\node[main] (1) at (4,0) {Должности};
+		\node[main] (2) at (8,0) {Отделы};
+		\node[main] (3) at (0,-1) {Имена должностей};
+		\node[main] (4) at (8, -1) {Местоположения};
+		\node[main] (5) at (4, -1) {Имена отделов};
 		\draw[<-,draw=blue] (1) to (2);
-		\draw[<-,draw=blue] (2) to (3);
+		\draw[->,draw=blue] (3) to (1);
 		\draw[<-,draw=blue] (2) to (4);
 		\draw[<-,draw=blue] (2) to (5);
 	\end{tikzpicture} 
 		
 	Сойства таблиц:
 	\begin{itemize}
-		\item Должности
+		\item Имена должностей
 		\begin{itemize}
 			\item id
 			\item наименование должности
 		\end{itemize}
-		\item Отделы
+		\item Именя отделов
 		\begin{itemize}
 			\item id
 			\item наименование отдела
@@ -65,6 +41,18 @@
 		\begin{itemize}
 			\item id
 			\item местоположение
+		\end{itemize}
+		\item Отделы
+		\begin{itemize}
+			\item id
+			\item department\_id - отделы из списка отделов
+			\item location\_id - местоположения из списка местоположений
+		\end{itemize}
+		\item Должности
+		\begin{itemize}
+			\item id
+			\item post\_id - Должность из списка имен должности
+			\item dep\_loc\_id - отделы из списка отделов
 		\end{itemize}
 	\end{itemize}
 	\item [Сущность сотрудники.]Содержит список всех сотрудников.
@@ -87,46 +75,34 @@
 		
 	Свойства таблиц:
 	\begin{itemize}
-		\item Оборудование
+		\item Пользователи
 		\begin{itemize}
-			\item id - ид оборудования
-			\item inv\_number - инвентарный номер 
-			\item category - категория
-			\item status\_id - один из статусов из таблицы статусов
-			\item user\_id - пользователь за которым закрепленно оборудование, выбирается из таблицы user
-			\item supplier\_id - один из поставщиков из таблицы поставщиков
-			\item location\_id - одно из местоположений из таблицы местоположений
-			\item brand\_id - один из брендов из таблицы брендов
-			\item model - модель
-			\item comments - комменты (опционально)
-			\item price - цена (опционально)
+			\item id - ид сотрудника
+			\item employer\_id - наниматель из таблицы нанимателей (опционально)
+			\item post\_dep\_loc\_id - должность из таблицы сущностей должности
+			\item location\_id - местоположение из таблицы местоположений
+			\item full\_name - полное имя
 			\item isArchive - в архиве или нет
-			\item specifications - дополнительные свойства, специфичные для каждогой категории оборудования
-			\item date\_purchase - дата покупки
-			\item date\_warranty\_end - дата окончания гарантии
-			\item parent\_id - обеспечивает иерархию в устройствах, благодаря этой колонке возможны состовные устройства
+			\item appointment - дата найма (опционально)
+			\item contact - кантактные данные (опционально)
 		\end{itemize}
-		\item Категории
+		\item Наниметель
 		\begin{itemize}
 			\item id
-			\item category - имя категории
-			\item schema - схема категории, содержит схему всех дополнительных свойств устройств в этой категории
-			\item parent\_id - обеспечивает иерархию в категориях  
+			\item employer - имя нанимателя
 		\end{itemize}
-		\item Поставщик
+		\item Учетные данные
+		\begin{itemize}
+			\item id - id учетных данных, привязанна к id сотрудников, связью 1:1
+			\item login - логин
+			\item password - пароль
+			\item role\_id - роль из таблицы ролей
+		\end{itemize}
+		\item Роли
 		\begin{itemize}
 			\item id
-			\item supplier - имя поставщика
-		\end{itemize}
-		\item Производитель
-		\begin{itemize}
-			\item id
-			\item brand - имя бренда
-		\end{itemize}
-		\item Статус
-		\begin{itemize}
-			\item id
-			\item status -склад, выдано, архив, гарантийное обслуживание 
+			\item role - имя роли
+			\item Еще в стадии разработки, будут дополнительные столбцы описывающие права ролей
 		\end{itemize}
 	\end{itemize}
 	
@@ -190,14 +166,19 @@
 			\item status -склад, выдано, архив, гарантийное обслуживание 
 		\end{itemize}
 	\end{itemize}
-	\item [Сущность сервисы.]Содержит список всех сервисов всех пользователей.
+	\item [Сущность сервисы.]Связывает пользователей и отделы с сервисами
 	
 	\begin{tikzpicture}[thick, main/.style = {draw, rectangle}] 
 		\node[main] (1) at (0,0) {Сервисы};
 		\node[main] (2) at (-4,0) {Имя сервиса};
 		\node[main] (3) at (4,0) {Пользователи};
-		\draw[<-,draw=blue] (1) to (2);
-		\draw[<-,draw=blue] (1) to (3);
+		\node[main] (4) at (4,-1) {Владельцы сервисов};
+		\node[main] (5) at (0,-1) {Отделы};
+		\draw[->,draw=blue] (1) to (4);
+		\draw[->,draw=blue] (3) to (4);
+		\draw[->,draw=blue] (3) to (4);
+		\draw[->,draw=blue] (5) to (4);
+		\draw[->,draw=blue] (2) to (1);
 	\end{tikzpicture} 
 		
 	Свойства таблиц:
@@ -216,25 +197,130 @@
 			\item id
 			\item service - имя сервиса
 		\end{itemize}
+		\item Владельцы сервисов
+		\begin{itemize}
+			\item id
+			\item account\_id - сервисы из таблицы сервисов
+			\item user\_id - пользователь из таблицы пользователей
+			\item dep\_loc\_id - отдел из таблицы отделов
+		\end{itemize}
+	\end{itemize}
+	
+	\item [Сущность акты.]Содержит список всех актов.
+	
+	\begin{tikzpicture}[thick, main/.style = {draw, rectangle}] 
+		\node[main] (1) at (-3,0) {Акты};
+		\node[main] (2) at (0,0) {Тип акта};
+		\node[main] (3) at (-4,-1) {Пользователи};
+		\node[main] (4) at (4,-1) {Оборудование};
+		\node[main] (5) at (0,-1) {Свойство description};
+		\draw[<-,draw=blue] (1) to (2);
+		\draw[<-,draw=blue] (1) to (3);
+		\draw[-,draw=red] (1) to (5);
+		\draw[->,draw=blue] (4) to (5);
+	\end{tikzpicture} 
+		
+	Свойства таблиц:
+	\begin{itemize}
+		\item Акты
+		\begin{itemize}
+			\item id
+			\item user\_id - пользователи из списка пользователей
+			\item act\_type\_id - Тип акта из списка типов акта
+			\item ref - ссылка на файл
+			\item description - описание акта, тут будут хранится дополнительные поля акта, в случае с актами выдачи тут будут id оборудования
+			\item comments - комментарии (опционально)
+		\end{itemize}
 	\end{itemize}
 \end{description}
-\section{Contributing}
-If you'd like to contribute to this project, here's some ideas:
+\section{Бизнес процессы}
+
 \begin{description}
 \addtolength{\itemindent}{0.80cm}
 \itemsep0em 
-\item[Development] fix bugs or add features to our C/GTK codebase
-\item[Documentation] edit the user guide to improve user experience
-\item[Localization] translate Gummi in your native language
-\item[Testing] try out the latest and report your findings
+\item[Занесение оборудования в базу]:
+\begin{itemize}
+		\item Пришло новое оборудование
+		\item Заносим в базу (Можем занести оборудование только на склад)
+		\item Выбираем ответственного на складе (один из сотрудников из IT отдела, ответственный за склад)
+		\item Формируется карточка устройства
+\end{itemize}
+\item[Выдача оборудования]:
+\begin{itemize}
+		\item Находим в базе оборудование
+		\item Выбираем сотрудника, за которым закрепляем оборудование
+		\item Подписываем акт, загружаем
+\end{itemize}
+\item[Сдача оборудования]:
+\begin{itemize}
+		\item Находим в базе сотрудника (который сдает оборудование)
+		\item Выбираем склад (местоположение)
+		\item Выбираем ответственнго за складом
+		\item Подписываем, загружаем акт
+\end{itemize}
+\item[Ремонт оборудования]:
+\begin{itemize}
+		\item Находим в базе сотрудника (который сдает оборудование для ремонта)
+		\item Выбираем статус ремонт (кнопка)
+		\item Выбираем сотрудника ответственного за складом (один из сотрудников из IT отдела, ответственный за склад)
+		\item Подписываем, загружаем акт
+\end{itemize}
+\item[Редактирование оборудование]:
+\begin{itemize}
+		\item Возможность редактирование всех полей оборудования
+\end{itemize}
+\item[Перемещение оборудования в архив]:
+\begin{itemize}
+		\item Возможность помещения  оборудования в архив
+\end{itemize}
 \end{description}
-Refer to the \emph{Getting Involved}\footnote{https://github.com/alexandervdm/gummi/wiki/Getting-Involved} section on our wiki for more information. 
 
-\section{What's next}
-Within the 0.8.x release series we will focus on adding minor features but mostly fixing bugs. New functionality will be integrated into the next major release. An overview of currently accepted features can be found on the 0.9.0 milestone\footnote{https://github.com/alexandervdm/gummi/milestone/3} page.
+\section{Сотрудники}
 
-\section{In closing}
-We hope you will enjoy using this release as much as we enjoyed creating it. If you have any further comments, suggestions or wish to report an issue, please visit \emph{\textbf{https://gummi.app}}. 
+\begin{description}
+\addtolength{\itemindent}{0.80cm}
+\itemsep0em 
+\item[Новый сотрудник]:
+\begin{itemize}
+		\item Заносим в базу сотрудника
+		\item Создаем и привязываем сервисы
+		\item Если нужно прикрепляем оборудование 
+\end{itemize}
+\item[Увольнение сотрудника]:
+\begin{itemize}
+		\item Находим в базе сотрудника
+		\item Открепляем оборудование
+		\item Блокируем все закрепленные за сотрудником сервисы (ИТ отдел получает уведомление что требуется вмешательство, после блокировки подтверждает что сервисы заблокированы)
+		\item Перемещаем сотрудника в статус “Архив”
+		\item Загружаем подписанные акты
+\end{itemize}
+\item[Редактирование сотрудника]:
+\begin{itemize}
+		\item Возможность редактирования, всех полей сотрудника
+\end{itemize}
+\end{description}
+
+\section{Сервисы}
+
+\begin{description}
+\addtolength{\itemindent}{0.80cm}
+\itemsep0em 
+\item[Добавление нового сервиса]:
+\begin{itemize}
+		\item Заносим новый сервис в базу
+		\item Возможность закрепления сервиса за Отделом/ за Сотрудником
+\end{itemize}
+\item[Блокирование сервиса]:
+\begin{itemize}
+		\item Находим сервис в базе или сотрудника
+		\item Блокируем сервис
+		\item Отправляем в архив
+\end{itemize}
+\item[Редактирование сервиса]:
+\begin{itemize}
+		\item Возможность редактирования, всех полей сервиса
+\end{itemize}
+\end{description}
 
 \end{document}
 

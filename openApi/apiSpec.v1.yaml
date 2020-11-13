@@ -599,6 +599,49 @@ paths:
                 - password
       tags:
         - authorization
+    delete:
+      summary: Выход(logout)
+      operationId: delete-login
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  login:
+                    type: integer
+                    nullable: true
+                  isAuth:
+                    type: integer
+                    enum:
+                      - 0
+                  role:
+                    type: integer
+                    nullable: true
+                required:
+                  - login
+                  - isAuth
+                  - role
+      description: Выход(logout)
+      tags:
+        - authorization
+  /aa:
+    get:
+      summary: sdsds
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+      operationId: get-aa
+      description: dsdd
 components:
   schemas:
     device:

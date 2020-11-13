@@ -14,6 +14,7 @@ module.exports = class Credentials extends Model {
 
     static get relationMappings() {
         const User = require("./user")
+        const Role = require("./role")
 
         return {
             user: {
@@ -22,6 +23,15 @@ module.exports = class Credentials extends Model {
                 join: {
                     from: "credentials.id",
                     to: "user.id"
+                }
+            },
+
+            role: {
+                relation: Model.BelongsToOneRelation,
+                modelClass: Role,
+                join: {
+                    from: "credentials.role_id",
+                    to: "role.id"
                 }
             }
         }
