@@ -11,6 +11,7 @@
   "dependencies": {
     "ajv": "^6.12.6",
     "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-openapi-validator": "^4.4.0",
     "fluture": "^13.0.1",
@@ -19,6 +20,7 @@
     "mysql2": "^2.2.5",
     "objection": "^2.2.3",
     "objection-password": "^3.0.0",
+    "passport": "^0.4.1",
     "sanctuary": "^3.1.0",
     "session": "^0.1.0"
   },
