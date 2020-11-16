@@ -538,20 +538,14 @@ paths:
               schema:
                 type: object
                 properties:
-                  userId:
-                    type: integer
-                    enum:
-                      - 1
+                  login:
+                    type: string
                   isAuth:
                     type: integer
-                    enum:
-                      - 1
                   role:
                     type: string
-                    enum:
-                      - admin
                 required:
-                  - userId
+                  - login
                   - isAuth
                   - role
       operationId: get-login
@@ -567,20 +561,14 @@ paths:
               schema:
                 type: object
                 properties:
-                  userId:
-                    type: integer
-                    enum:
-                      - 1
+                  login:
+                    type: string
                   isAuth:
                     type: integer
-                    enum:
-                      - 1
                   role:
                     type: string
-                    enum:
-                      - admin
                 required:
-                  - userId
+                  - login
                   - isAuth
                   - role
       description: Авторизация
@@ -612,15 +600,13 @@ paths:
                 type: object
                 properties:
                   login:
-                    type: integer
                     nullable: true
+                    type: string
                   isAuth:
                     type: integer
-                    enum:
-                      - 0
                   role:
-                    type: integer
                     nullable: true
+                    type: string
                 required:
                   - login
                   - isAuth
@@ -628,10 +614,11 @@ paths:
       description: Выход(logout)
       tags:
         - authorization
-  /aa:
+  /users:
     get:
-      summary: sdsds
-      tags: []
+      summary: Получить список пользователей
+      tags:
+        - users
       responses:
         '200':
           description: OK
@@ -639,9 +626,79 @@ paths:
             application/json:
               schema:
                 type: object
-                properties: {}
-      operationId: get-aa
-      description: dsdd
+                properties:
+                  id:
+                    type: integer
+                  employer_id:
+                    type: integer
+                  post_dep_loc_id:
+                    type: integer
+                  location_id:
+                    type: integer
+                  full_name:
+                    type: string
+                  is_archive:
+                    type: integer
+                  appointment_date:
+                    type: string
+                    format: date
+                  contact: {}
+                required:
+                  - id
+                  - post_dep_loc_id
+                  - location_id
+                  - full_name
+                  - is_archive
+      operationId: get-users
+      description: Получить список пользователей
+  /credentials:
+    post:
+      summary: Добавление учетных данных
+      operationId: post-credentials
+      responses:
+        '200':
+          description: Возвращает информацию по созданному пользователю
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  login:
+                    type: string
+                  password:
+                    type: string
+                  role_id:
+                    type: integer
+                required:
+                  - id
+                  - login
+                  - password
+                  - role_id
+      description: Добавление учетных данных и привязка к ним роли
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                login:
+                  type: string
+                password:
+                  type: string
+                role_id:
+                  type: integer
+              required:
+                - id
+                - login
+                - password
+                - role_id
+        description: ''
+      tags:
+        - authorization
 components:
   schemas:
     device:
@@ -699,3 +756,4 @@ tags:
   - name: device
   - name: other
   - name: authorization
+  - name: users

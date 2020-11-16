@@ -2,12 +2,13 @@
 
 const Knex = require("knex")
 const dbConfig = require("../../../serverConfig").db
+const Password = require('objection-password')()
 const { Model } = require("objection")
 const knex = Knex(dbConfig)
 
 Model.knex(knex)
 
-module.exports = class Credentials extends Model {
+module.exports = class Credentials extends Password(Model) {
     static get tableName() {
         return "credentials"
     }

@@ -18,7 +18,7 @@ module.exports = class User extends Model {
         const Credentials = require("./credentials")
         const Device = require("./device")
         const History = require("./history")
-        const Account = require("./account")
+        const Account_owner = require("./account_owner")
         const Location = require("./location")
 
         return {
@@ -40,12 +40,12 @@ module.exports = class User extends Model {
                 }
             },
 
-            account: {
+            account_owner: {
                 relation: Model.HasManyRelation,
-                modelClass: Account,
+                modelClass: Account_owner,
                 join: {
                     from: "user.id",
-                    to: "account.user_id"
+                    to: "account_owner.user_id"
                 }
             },
 

@@ -11,11 +11,8 @@ const send = next => res => F.fork(next)(fp.bind(res.json, res))
 
 /**
 *Получает все поля из таблицы
-*getTabAllData :: ObjectionClass a => a -> Future Error b  
+*getTable :: ObjectionClass a => a -> Future Error b  
 */
-
-const getCredentialsData = credId => F.attemptP(() => Credentials.query().findById(credId))
-
 const getTable = objectionTableClass => F.attemptP(() => objectionTableClass.query())
 
 const insertTable = objectionTableClass => data => F.attemptP(
@@ -54,4 +51,4 @@ const deleteTable = objectionTableClass => id => F.attemptP(
 //  */
 // const eitherToFluture = S.either(F.reject)(F.resolve)
 
-module.exports = { getTable, send, insertTable, updateTable, deleteTable, getCredentialsData }
+module.exports = { getTable, send, insertTable, updateTable, deleteTable }

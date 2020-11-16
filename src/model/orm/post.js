@@ -13,7 +13,6 @@ module.exports = class Post extends Model {
     }
 
     static get relationMappings() {
-        const User = require("./user")
         const Post_dep_loc = require("./post_dep_loc")
 
         return {

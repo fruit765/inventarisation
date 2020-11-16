@@ -16,14 +16,36 @@ const {
     getStatuses,
     getDevices,
     insertDevices,
-    updateDevices
+    updateDevices,
+    insertCredentials
 } = require("./model/libs/device")
-
-const F = require("fluture")
-const fp = require("lodash/fp")
+const passport = require("passport")
 const { send } = require("./model/libs/command")
+const { getUsers } = require("./model/libs/user")
 
 module.exports = function (app) {
+
+    app.post("/credentials", (req, res, next) => {
+        send(next)(res)(insertCredentials(req.body))
+    })
+
+    app.get("/login", (req, res, next) => {
+        const response = req.isAuthenticated() ?
+            { login: req.user.login, isAuth: 1, role: req.user.role } :
+            { login: null, isAuth: 0, role: null } 
+        res.json(response)
+    })
+
+    app.post("/login", passport.authenticate('local'), (req, res, next) => {
+        res.json({ login: req.user.login, isAuth: 1, role: req.user.role })
+    })
+
+    app.delete("/login", (req, res, next) => {
+        req.session.destroy(() => {
+            res.cookie("connect.sid", "", { expires: new Date(0) })
+            res.json({ login: null, isAuth: 0, role: null })
+        })
+    })
 
     app.get("/brands", (req, res, next) => {
         send(next)(res)(getBrands(req.query.catId))
@@ -87,6 +109,10 @@ module.exports = function (app) {
 
     app.patch("/devices", (req, res, next) => {
         send(next)(res)(updateDevices(req.body.id))
+    })
+
+    app.get("/users", (req, res, next) => {
+        send(next)(res)(getUsers)
     })
 
     app.use((err, req, res, next) => {
