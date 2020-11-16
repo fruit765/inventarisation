@@ -550,6 +550,7 @@ paths:
                   - role
       operationId: get-login
       description: Возвращает данные об авторизации
+      security: []
     post:
       summary: Авторизация
       operationId: post-login
@@ -587,6 +588,7 @@ paths:
                 - password
       tags:
         - authorization
+      security: []
     delete:
       summary: Выход(logout)
       operationId: delete-login
@@ -614,6 +616,7 @@ paths:
       description: Выход(logout)
       tags:
         - authorization
+      security: []
   /users:
     get:
       summary: Получить список пользователей

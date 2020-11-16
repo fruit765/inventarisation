@@ -2,10 +2,6 @@
 
 const F = require("fluture")
 const fp = require("lodash/fp")
-const S = require("sanctuary")
-const Credentials = require("../orm/credentials")
-const Ajv = new require("ajv")
-const ajv = Ajv({ removeAdditional: "all" })
 
 const send = next => res => F.fork(next)(fp.bind(res.json, res))
 

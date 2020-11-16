@@ -8,8 +8,8 @@ module.exports = {
         connection: {
             host: "127.0.0.1",
             user: "root",
-            password: "",
-            database: "mydb",
+            password: "admin",
+            database: "inv",
             timezone: '+00:00'
         }
     },

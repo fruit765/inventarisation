@@ -3,17 +3,22 @@
 const Credentials = require("../orm/credentials")
 const LocalStrategy = require("passport-local").Strategy
 
-const getAuthUserDataById = id => Credentials.query().findById(id).joinRelated("role").select("credentials.id","login","role")
+const getAuthUserDataById = id =>
+    Credentials
+        .query()
+        .findById(id)
+        .joinRelated("role")
+        .select("credentials.id", "login", "role")
 
 const checkLoginPassword = login => password =>
     Credentials
         .query()
         .first()
         .where("login", login)
-        .then(x => x ? x.verifyPassword(password) : false)
+        .then(x => (x && x.verifyPassword(password)) ? x : false)
 
 const serializeUser = function (user, done) {
-    done(null, credentials.id)
+    done(null, user.id)
 }
 
 const deserializeUser = function (id, done) {
@@ -26,9 +31,9 @@ const deserializeUser = function (id, done) {
 
 const localStrategy = new LocalStrategy(
     { usernameField: 'login' },
-    (login, password, done) => checkLoginPassword(login, password)
-        .then(x => x ?
-            done(null, getAuthUserDataById(x.id)) :
+    (login, password, done) => checkLoginPassword(login)(password)
+        .then(async x => x ?
+            done(null, await getAuthUserDataById(x.id)) :
             done(null, false)
         )
         .catch()

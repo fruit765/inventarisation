@@ -46,7 +46,16 @@ module.exports = function (app) {
     app.use(passport.initialize())
     app.use(passport.session())
 
+    app.use(/^(?!\/login)/,(req, res, next) => {
+        const err = new Error("Unauthorized")
+        err.status = 401
+        req.isAuthenticated() ? next() : next(err)
+    })
+
     app.use(
-        OpenApiValidator.middleware({ apiSpec: "./openApi/apiSpec.v1.yaml" })
+        OpenApiValidator.middleware({
+            apiSpec: "./openApi/apiSpec.v1.yaml",
+            validateSecurity: false
+        })
     )
 }
