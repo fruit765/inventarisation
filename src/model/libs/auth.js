@@ -2,6 +2,7 @@
 
 const Credentials = require("../orm/credentials")
 const LocalStrategy = require("passport-local").Strategy
+const createError = require('http-errors')
 
 const getAuthUserDataById = id =>
     Credentials
@@ -9,6 +10,7 @@ const getAuthUserDataById = id =>
         .findById(id)
         .joinRelated("role")
         .select("credentials.id", "login", "role")
+        .catch(ifEither(map()))
 
 const checkLoginPassword = login => password =>
     Credentials
@@ -25,7 +27,8 @@ const deserializeUser = function (id, done) {
     getAuthUserDataById(id)
         .then(x => x ? x : false)
         .then(x => done(null, x))
-        .catch()
+        .catch((x) => x.custom ? x : Promise.reject("deserializeUser"))
+        .catch((x) => done(createError(500, "x")))
 
 }
 
@@ -36,7 +39,7 @@ const localStrategy = new LocalStrategy(
             done(null, await getAuthUserDataById(x.id)) :
             done(null, false)
         )
-        .catch()
+        .catch(() => done(createError(500, "authLocalStrategyError")))
 )
 
 module.exports = {

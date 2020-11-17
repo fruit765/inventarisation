@@ -3,6 +3,7 @@ const corsConf = require("../serverConfig").cors
 const dbConfig = require("../serverConfig").db
 
 const session = require("express-session")
+const express = require("express")
 const KnexSessionStore = require('connect-session-knex')(session)
 const bodyParser = require("body-parser")
 const OpenApiValidator = require("express-openapi-validator")
@@ -21,7 +22,7 @@ module.exports = function (app) {
 
     app.use(cors(corsConf))
 
-    app.use(bodyParser.urlencoded({ extended: false }))
+    app.use(express.json())
 
     app.use(
         session({
