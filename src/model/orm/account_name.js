@@ -7,21 +7,21 @@ const knex = Knex(dbConfig)
 
 Model.knex(knex)
 
-module.exports = class Service extends Model {
+module.exports = class Account_name extends Model {
     static get tableName() {
-        return "service"
+        return "account_name"
     }
 
     static get relationMappings() {
         const Account = require("./account")
 
         return {
-            service: {
+            account_name: {
                 relation: Model.HasManyRelation,
                 modelClass: Account,
                 join: {
-                    from: "service.id",
-                    to: "account.service_id"
+                    from: "account_name.id",
+                    to: "account.account_name_id"
                 }
             }
         }

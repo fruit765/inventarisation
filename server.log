@@ -1,11 +1,198 @@
-{"originalErr":{},"level":"error"}
-{"originalErr":{},"level":"error"}
-{"originalErr":{},"level":"error"}
-{"originalErr":{},"level":"error"}
-{"originalErr":{},"level":"error"}
-{"originalErr":{},"level":"error"}
-{"originalErr":{},"level":"error"}
-{"originalErr":{},"level":"error"}
-{"message":"gghg","level":"error"}
-{"message":"gghg","level":"error"}
-{"message":"gghg","level":"error"}
+{
+  path: 'yy => ee',
+  customErr: Error: yy
+      at /home/nikita/git/inventarisation/src/model/libs/exceptionHandling.js:51:25
+      at processTicksAndRejections (node:internal/process/task_queues:93:5),
+  level: 'error',
+  timestamp: '2020-11-19T08:31:38.515Z',
+  ms: '+0ms',
+  message: 'ddd',
+  stack: 'Error: ddd\n' +
+    '    at Object.<anonymous> (/home/nikita/git/inventarisation/src/test.js:3:16)\n' +
+    '    at Module._compile (node:internal/modules/cjs/loader:1083:30)\n' +
+    '    at Object.Module._extensions..js (node:internal/modules/cjs/loader:1112:10)\n' +
+    '    at Module.load (node:internal/modules/cjs/loader:948:32)\n' +
+    '    at Function.Module._load (node:internal/modules/cjs/loader:789:14)\n' +
+    '    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:72:12)\n' +
+    '    at node:internal/main/run_main_module:17:47'
+}
+{
+  path: 'yy => ee',
+  customErr: Error: yy
+      at /home/nikita/git/inventarisation/src/model/libs/exceptionHandling.js:51:25
+      at processTicksAndRejections (node:internal/process/task_queues:93:5),
+  level: 'error',
+  timestamp: '2020-11-19T08:32:08.718Z',
+  ms: '+0ms',
+  message: 'ddd',
+  stack: 'Error: ddd\n' +
+    '    at Object.<anonymous> (/home/nikita/git/inventarisation/src/test.js:3:16)\n' +
+    '    at Module._compile (node:internal/modules/cjs/loader:1083:30)\n' +
+    '    at Object.Module._extensions..js (node:internal/modules/cjs/loader:1112:10)\n' +
+    '    at Module.load (node:internal/modules/cjs/loader:948:32)\n' +
+    '    at Function.Module._load (node:internal/modules/cjs/loader:789:14)\n' +
+    '    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:72:12)\n' +
+    '    at node:internal/main/run_main_module:17:47'
+}
+{
+  path: 'yy => ee',
+  customErr: Error: yy
+      at /home/nikita/git/inventarisation/src/model/libs/exceptionHandling.js:51:25
+      at processTicksAndRejections (node:internal/process/task_queues:93:5),
+  level: 'error',
+  timestamp: '2020-11-19T08:32:21.582Z',
+  ms: '+0ms',
+  message: 'ddd',
+  stack: 'Error: ddd\n' +
+    '    at Object.<anonymous> (/home/nikita/git/inventarisation/src/test.js:3:16)\n' +
+    '    at Module._compile (node:internal/modules/cjs/loader:1083:30)\n' +
+    '    at Object.Module._extensions..js (node:internal/modules/cjs/loader:1112:10)\n' +
+    '    at Module.load (node:internal/modules/cjs/loader:948:32)\n' +
+    '    at Function.Module._load (node:internal/modules/cjs/loader:789:14)\n' +
+    '    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:72:12)\n' +
+    '    at node:internal/main/run_main_module:17:47'
+}
+{
+  level: 'error',
+  timestamp: '2020-11-19T09:19:29.120Z',
+  ms: '+0ms',
+  message: "Cannot read property 'app' of undefined",
+  stack: "TypeError: Cannot read property 'app' of undefined\n" +
+    '    at json (/home/nikita/git/inventarisation/node_modules/express/lib/response.js:256:18)\n' +
+    '    at processTicksAndRejections (node:internal/process/task_queues:93:5)'
+}
+{
+  level: 'error',
+  timestamp: '2020-11-19T09:19:29.162Z',
+  ms: '+42ms',
+  message: "Cannot read property 'app' of undefined",
+  stack: "TypeError: Cannot read property 'app' of undefined\n" +
+    '    at json (/home/nikita/git/inventarisation/node_modules/express/lib/response.js:256:18)\n' +
+    '    at processTicksAndRejections (node:internal/process/task_queues:93:5)'
+}
+{
+  level: 'error',
+  timestamp: '2020-11-19T09:19:29.172Z',
+  ms: '+10ms',
+  message: "Cannot read property 'app' of undefined",
+  stack: "TypeError: Cannot read property 'app' of undefined\n" +
+    '    at json (/home/nikita/git/inventarisation/node_modules/express/lib/response.js:256:18)\n' +
+    '    at processTicksAndRejections (node:internal/process/task_queues:93:5)'
+}
+{
+  level: 'error',
+  timestamp: '2020-11-19T09:19:39.416Z',
+  ms: '+10s',
+  message: "Cannot read property 'app' of undefined",
+  stack: "TypeError: Cannot read property 'app' of undefined\n" +
+    '    at json (/home/nikita/git/inventarisation/node_modules/express/lib/response.js:256:18)\n' +
+    '    at processTicksAndRejections (node:internal/process/task_queues:93:5)'
+}
+{
+  level: 'error',
+  timestamp: '2020-11-19T09:19:39.449Z',
+  ms: '+33ms',
+  message: "Cannot read property 'app' of undefined",
+  stack: "TypeError: Cannot read property 'app' of undefined\n" +
+    '    at json (/home/nikita/git/inventarisation/node_modules/express/lib/response.js:256:18)\n' +
+    '    at processTicksAndRejections (node:internal/process/task_queues:93:5)'
+}
+{
+  level: 'error',
+  timestamp: '2020-11-19T09:19:39.453Z',
+  ms: '+4ms',
+  message: "Cannot read property 'app' of undefined",
+  stack: "TypeError: Cannot read property 'app' of undefined\n" +
+    '    at json (/home/nikita/git/inventarisation/node_modules/express/lib/response.js:256:18)\n' +
+    '    at processTicksAndRejections (node:internal/process/task_queues:93:5)'
+}
+{
+  level: 'error',
+  timestamp: '2020-11-19T09:20:00.775Z',
+  ms: '+21s',
+  message: "Cannot read property 'app' of undefined",
+  stack: "TypeError: Cannot read property 'app' of undefined\n" +
+    '    at json (/home/nikita/git/inventarisation/node_modules/express/lib/response.js:256:18)\n' +
+    '    at processTicksAndRejections (node:internal/process/task_queues:93:5)'
+}
+{
+  level: 'error',
+  timestamp: '2020-11-19T09:20:00.785Z',
+  ms: '+10ms',
+  message: "Cannot read property 'app' of undefined",
+  stack: "TypeError: Cannot read property 'app' of undefined\n" +
+    '    at json (/home/nikita/git/inventarisation/node_modules/express/lib/response.js:256:18)\n' +
+    '    at processTicksAndRejections (node:internal/process/task_queues:93:5)'
+}
+{
+  level: 'error',
+  timestamp: '2020-11-19T09:20:00.790Z',
+  ms: '+5ms',
+  message: "Cannot read property 'app' of undefined",
+  stack: "TypeError: Cannot read property 'app' of undefined\n" +
+    '    at json (/home/nikita/git/inventarisation/node_modules/express/lib/response.js:256:18)\n' +
+    '    at processTicksAndRejections (node:internal/process/task_queues:93:5)'
+}
+{
+  level: 'error',
+  timestamp: '2020-11-19T09:21:31.120Z',
+  ms: '+2m',
+  message: "Cannot read property 'app' of undefined",
+  stack: "TypeError: Cannot read property 'app' of undefined\n" +
+    '    at json (/home/nikita/git/inventarisation/node_modules/express/lib/response.js:256:18)\n' +
+    '    at processTicksAndRejections (node:internal/process/task_queues:93:5)'
+}
+{
+  level: 'error',
+  timestamp: '2020-11-19T09:21:31.130Z',
+  ms: '+10ms',
+  message: "Cannot read property 'app' of undefined",
+  stack: "TypeError: Cannot read property 'app' of undefined\n" +
+    '    at json (/home/nikita/git/inventarisation/node_modules/express/lib/response.js:256:18)\n' +
+    '    at processTicksAndRejections (node:internal/process/task_queues:93:5)'
+}
+{
+  level: 'error',
+  timestamp: '2020-11-19T09:21:31.135Z',
+  ms: '+5ms',
+  message: "Cannot read property 'app' of undefined",
+  stack: "TypeError: Cannot read property 'app' of undefined\n" +
+    '    at json (/home/nikita/git/inventarisation/node_modules/express/lib/response.js:256:18)\n' +
+    '    at processTicksAndRejections (node:internal/process/task_queues:93:5)'
+}
+{
+  level: 'error',
+  timestamp: '2020-11-19T09:22:03.664Z',
+  ms: '+0ms',
+  message: "Cannot read property 'app' of undefined",
+  stack: "TypeError: Cannot read property 'app' of undefined\n" +
+    '    at json (/home/nikita/git/inventarisation/node_modules/express/lib/response.js:256:18)\n' +
+    '    at processTicksAndRejections (node:internal/process/task_queues:93:5)'
+}
+{
+  level: 'error',
+  timestamp: '2020-11-19T09:22:03.711Z',
+  ms: '+47ms',
+  message: "Cannot read property 'app' of undefined",
+  stack: "TypeError: Cannot read property 'app' of undefined\n" +
+    '    at json (/home/nikita/git/inventarisation/node_modules/express/lib/response.js:256:18)\n' +
+    '    at processTicksAndRejections (node:internal/process/task_queues:93:5)'
+}
+{
+  level: 'error',
+  timestamp: '2020-11-19T09:22:03.716Z',
+  ms: '+5ms',
+  message: "Cannot read property 'app' of undefined",
+  stack: "TypeError: Cannot read property 'app' of undefined\n" +
+    '    at json (/home/nikita/git/inventarisation/node_modules/express/lib/response.js:256:18)\n' +
+    '    at processTicksAndRejections (node:internal/process/task_queues:93:5)'
+}
+{
+  level: 'error',
+  timestamp: '2020-11-19T09:22:40.441Z',
+  ms: '+37s',
+  message: "Cannot read property 'app' of undefined",
+  stack: "TypeError: Cannot read property 'app' of undefined\n" +
+    '    at json (/home/nikita/git/inventarisation/node_modules/express/lib/response.js:256:18)\n' +
+    '    at processTicksAndRejections (node:internal/process/task_queues:93:5)'
+}

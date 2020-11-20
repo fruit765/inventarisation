@@ -1,50 +1,23 @@
 "use strict"
 
-const F = require("fluture")
 const fp = require("lodash/fp")
+const { valueError, packError } = require("./exceptionHandling")
 
-const send = next => res => F.fork(next)(fp.bind(res.json, res))
+const send = next => res => promise => promise.then((x) => res.json(x)).catch(valueError(next))
 
-/**
-*Получает все поля из таблицы
-*getTable :: ObjectionClass a => a -> Future Error b  
-*/
-const getTable = objectionTableClass => F.attemptP(() => objectionTableClass.query())
+const getTable = objectionTableClass =>
+    objectionTableClass.query().catch(packError("getTable: " + objectionTableClass.tableName))
 
-const insertTable = objectionTableClass => data => F.attemptP(
-    () => objectionTableClass.query().insert(data)
-)
+const insertTable = objectionTableClass => data =>
+    objectionTableClass.query().insertAndFetch(data)
+        .catch(packError("insertTable: " + objectionTableClass.tableName))
 
-const updateTable = objectionTableClass => data => F.attemptP(
-    () => objectionTableClass.query().findById(data.id).patch(fp.omit("id")(data)).then(() => data)
-)
+const updateTable = objectionTableClass => data =>
+    objectionTableClass.query().findById(data.id).patch(fp.omit("id")(data)).then(() => data)
+        .catch(packError("updateTable: " + objectionTableClass.tableName))
 
-const deleteTable = objectionTableClass => id => F.attemptP(
-    () => objectionTableClass.query().deleteById(id).then(() => id)
-)
-
-// /**
-//  * Добовляет/редактирует данные в таблице, если отправлены данные с id будет произведенно редактирование
-//  * если без будет произведенно добавление
-//  * upsertTableRow :: a -> b -> Fluture reject resolve
-//  */
-// const upsertTableRow = objectionTableClass => data => F.attemptP(
-//     () => objectionTableClass.transaction(
-//         trx => objectionTableClass.query(trx).upsertGraph(data)
-//     ))
-
-// /**
-//  * Вырезает данные из объекта по json schema
-// *cutPropsFromObjByJson :: (jsonSchema a) => a -> Object -> Either Error Object
-// */
-// const cutPropsFromObjByJson = jsonSchema => incObj => {
-//     const cloneObj = cloneDeepWith(incObj)
-//     const valid = ajv.compile(jsonSchema)(cloneObj)
-//     return valid ? Right(cloneObj) : Left(valid.errors)
-// }
-// /**
-// eitherToFluture :: (Either a, Fluture b) => a -> b
-//  */
-// const eitherToFluture = S.either(F.reject)(F.resolve)
+const deleteTable = objectionTableClass => id =>
+    objectionTableClass.query().deleteById(id).then(() => id)
+        .catch(packError("deleteTable: " + objectionTableClass.tableName))
 
 module.exports = { getTable, send, insertTable, updateTable, deleteTable }

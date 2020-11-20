@@ -2,18 +2,41 @@
 
 const fp = require("lodash/fp")
 const winston = require("winston")
-const { server } = require("../../../serverConfig")
+const { consoleFormat } = require("winston-console-format")
+const { log } = require("../../../serverConfig")
 
 const logger = winston.createLogger({
+    format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.ms(),
+        winston.format.errors({ stack: true }),
+        // winston.format.splat(),
+        winston.format.json(),
+        winston.format.prettyPrint()
+    ),
     transports: [
-        new winston.transports.File({
-            filename: "server.log",
-            maxsize: "10000000",
-            maxFiles: "1",
-            tailable: true
+        new winston.transports.File(log.file),
+        new winston.transports.Console({
+            ...{
+                format: winston.format.combine(
+                    winston.format.colorize({ all: true }),
+                    winston.format.padLevels(),
+                    consoleFormat({
+                        inspectOptions: {
+                            depth: Infinity,
+                            colors: true,
+                            maxArrayLength: Infinity,
+                            breakLength: 120,
+                            compact: Infinity,
+                        },
+                    })
+                ),
+            },
+            ...log.console
         })
     ]
 })
+
 
 /**
  * Создает обьект содержащий новое название пользовательской ошибки, и старый объект ошибки.
@@ -21,12 +44,12 @@ const logger = winston.createLogger({
  */
 const packError = customErrName => err => {
     if (err.customErr) {
+        err.path = err.path + " => " + customErrName
         return Promise.reject(err)
     } else {
-        const newError = {}
-        newError.customErr = new Error(customErrName)
-        newError.originalErr = err
-        return Promise.reject(newError)
+        err.path = customErrName
+        err.customErr = new Error(customErrName)
+        return Promise.reject(err)
     }
 }
 
@@ -34,12 +57,8 @@ const packError = customErrName => err => {
  * Обрабатывает запакованные ошибки, полную ошибку отправляет в лог, колбэк получает пользовательскую ошибку
  */
 const valueError = callback => err => {
-    const callbackResponse = fp.flow(
-        fp.omit("originalErr"),
-        callback
-    )(err)
-    logger.error("gghg")
-    return callbackResponse
+    logger.error(err)
+    return callback(err.customErr)
 }
 
 module.exports = { packError, valueError } 

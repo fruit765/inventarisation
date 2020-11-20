@@ -14,17 +14,17 @@ module.exports = class Account extends Model {
     }
 
     static get relationMappings() {
-        const Service = require("./service")
+        const Account_name = require("./account_name")
         const History = require("./history")
         const Account_owner = require("./account_owner")
 
         return {
-            service: {
+            account_name: {
                 relation: Model.BelongsToOneRelation,
-                modelClass: Service,
+                modelClass: Account_name,
                 join: {
-                    from: "account.service_id",
-                    to: "service.id"
+                    from: "account.account_name_id",
+                    to: "account_name.id"
                 }
             },
 

@@ -21,11 +21,57 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/device'
+                  type: object
+                  properties:
+                    parent_id:
+                      type: integer
+                    category_id:
+                      type: integer
+                    status_id:
+                      type: integer
+                    user_id:
+                      type: integer
+                    supplier_id:
+                      type: integer
+                    location_id:
+                      type: integer
+                    brand_id:
+                      type: integer
+                    model:
+                      type: string
+                    comments:
+                      type: string
+                    price:
+                      type: integer
+                    isArchive:
+                      type: integer
+                    specifications: {}
+                    date_ purchase:
+                      type: string
+                      format: date
+                    date_warranty_end:
+                      type: string
+                      format: date
+                    inv_number:
+                      type: string
+                    id:
+                      type: integer
+                  required:
+                    - category_id
+                    - status_id
+                    - user_id
+                    - supplier_id
+                    - location_id
+                    - brand_id
+                    - model
+                    - isArchive
+                    - date_ purchase
+                    - date_warranty_end
+                    - inv_number
       operationId: get-devices
       description: Получить список оборудования
     post:
-      summary: ''
+      summary: Добавить оборудование
       operationId: post-devices
       responses:
         '200':
@@ -33,7 +79,54 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/device'
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  parent_id:
+                    type: integer
+                  category_id:
+                    type: integer
+                  status_id:
+                    type: integer
+                  user_id:
+                    type: integer
+                  supplier_id:
+                    type: integer
+                  location_id:
+                    type: integer
+                  brand_id:
+                    type: integer
+                  model:
+                    type: string
+                  comments:
+                    type: string
+                  price:
+                    type: integer
+                  isArchive:
+                    type: integer
+                  specifications: {}
+                  date_ purchase:
+                    type: string
+                    format: date
+                  date_warranty_end:
+                    type: string
+                    format: date
+                  inv_number:
+                    type: string
+                required:
+                  - id
+                  - category_id
+                  - status_id
+                  - user_id
+                  - supplier_id
+                  - location_id
+                  - brand_id
+                  - model
+                  - isArchive
+                  - date_ purchase
+                  - date_warranty_end
+                  - inv_number
       tags:
         - device
       description: Добавить оборудование
@@ -41,10 +134,54 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/device'
-        description: ''
+              type: object
+              properties:
+                parent_id:
+                  type: integer
+                category_id:
+                  type: integer
+                status_id:
+                  type: integer
+                user_id:
+                  type: integer
+                supplier_id:
+                  type: integer
+                location_id:
+                  type: integer
+                brand_id:
+                  type: integer
+                model:
+                  type: string
+                comments:
+                  type: string
+                price:
+                  type: integer
+                isArchive:
+                  type: integer
+                specifications: {}
+                date_ purchase:
+                  type: string
+                  format: date
+                date_warranty_end:
+                  type: string
+                  format: date
+                inv_number:
+                  type: string
+              required:
+                - category_id
+                - status_id
+                - user_id
+                - supplier_id
+                - location_id
+                - brand_id
+                - model
+                - isArchive
+                - date_ purchase
+                - date_warranty_end
+                - inv_number
+    description: ''
     patch:
-      summary: ''
+      summary: Редактировать оборудование
       operationId: patch-devices
       responses:
         '200':
@@ -539,14 +676,14 @@ paths:
               schema:
                 type: object
                 properties:
-                  login:
-                    type: string
+                  userId:
+                    type: integer
                   isAuth:
                     type: integer
                   role:
                     type: string
                 required:
-                  - login
+                  - userId
                   - isAuth
                   - role
       operationId: get-login
@@ -563,14 +700,14 @@ paths:
               schema:
                 type: object
                 properties:
-                  login:
-                    type: string
+                  userId:
+                    type: integer
                   isAuth:
                     type: integer
                   role:
                     type: string
                 required:
-                  - login
+                  - userId
                   - isAuth
                   - role
       description: Авторизация
@@ -602,16 +739,16 @@ paths:
               schema:
                 type: object
                 properties:
-                  login:
+                  userId:
                     nullable: true
-                    type: string
+                    type: integer
                   isAuth:
                     type: integer
                   role:
                     nullable: true
                     type: string
                 required:
-                  - login
+                  - userId
                   - isAuth
                   - role
       description: Выход(logout)
@@ -656,17 +793,120 @@ paths:
       operationId: get-users
       description: Получить список пользователей
     post:
-      summary: ''
+      summary: Добавление пользователя
       operationId: post-users
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  employer_id:
+                    type: integer
+                  post_dep_loc_id:
+                    type: integer
+                  location_id:
+                    type: integer
+                  full_name:
+                    type: string
+                  is_archive:
+                    type: integer
+                  appointment_data:
+                    type: string
+                    format: date
+                  contact: {}
+                  id:
+                    type: integer
+                required:
+                  - post_dep_loc_id
+                  - location_id
+                  - full_name
+                  - id
+      description: Добавить пользователя
+      tags:
+        - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                employer_id:
+                  type: integer
+                post_dep_loc_id:
+                  type: integer
+                location_id:
+                  type: integer
+                full_name:
+                  type: string
+                is_archive:
+                  type: integer
+                appointment_data:
+                  type: string
+                  format: date
+                contact: {}
+              required:
+                - post_dep_loc_id
+                - location_id
+                - full_name
     patch:
-      summary: ''
+      summary: Редактировать пользователя
       operationId: patch-users
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  employer_id:
+                    type: integer
+                  post_dep_loc_id:
+                    type: integer
+                  location_id:
+                    type: integer
+                  full_name:
+                    type: string
+                  is_archive:
+                    type: integer
+                  appointment_date:
+                    type: string
+                    format: date
+                  contact: {}
+                required:
+                  - id
+      description: Редактировать пользователя
+      tags:
+        - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                employer_id:
+                  type: integer
+                post_dep_loc_id:
+                  type: integer
+                location_id:
+                  type: integer
+                full_name:
+                  type: string
+                is_archive:
+                  type: integer
+                appointment_date:
+                  type: string
+                  format: date
+                contact: {}
+              required:
+                - id
   /credentials:
     post:
       summary: Добавление учетных данных
@@ -715,61 +955,65 @@ paths:
         description: ''
       tags:
         - authorization
+  /accounts:
+    get:
+      summary: Изменить аккаунт
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  account_name_id:
+                    type: integer
+                  login:
+                    type: string
+                  password:
+                    type: string
+                  comments:
+                    type: string
+                  is_archive:
+                    type: integer
+                required:
+                  - id
+                  - account_name_id
+                  - login
+                  - password
+                  - is_archive
+      operationId: get-account
+      description: Получение списка всех аккаунтов
+      tags:
+        - accounts
+      parameters: []
+    parameters: []
+    post:
+      summary: Добавить аккаунт
+      operationId: post-accounts
+      responses:
+        '200':
+          description: OK
+      description: Добавить аккаунт
+      tags:
+        - accounts
+    patch:
+      summary: Изменить аккаунт
+      operationId: patch-accounts
+      responses:
+        '200':
+          description: OK
+      description: Изменить аккаунт
+      tags:
+        - accounts
 components:
-  schemas:
-    device:
-      title: device
-      type: object
-      properties:
-        id:
-          type: integer
-        parent_id:
-          type: integer
-        category_id:
-          type: integer
-        status_id:
-          type: integer
-        user_id:
-          type: integer
-        supplier_id:
-          type: integer
-        location_id:
-          type: integer
-        brand_id:
-          type: integer
-        model:
-          type: string
-        comments:
-          type: string
-        price:
-          type: integer
-        isArchive:
-          type: integer
-        specifications: {}
-        date_ purchase:
-          type: string
-          format: date
-        date_warranty_end:
-          type: string
-          format: date
-        inv_number:
-          type: string
-      required:
-        - id
-        - category_id
-        - status_id
-        - user_id
-        - supplier_id
-        - location_id
-        - brand_id
-        - model
-        - isArchive
-        - date_ purchase
-        - date_warranty_end
-        - inv_number
+  schemas: {}
   securitySchemes: {}
 tags:
   - name: device
   - name: other
   - name: authorization
   - name: users
+  - name: accounts

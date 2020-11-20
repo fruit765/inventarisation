@@ -21,7 +21,7 @@ const {
 } = require("./model/libs/device")
 const passport = require("passport")
 const { send } = require("./model/libs/command")
-const { getUsers } = require("./model/libs/user")
+const { getUsers, updateUsers, insertUsers } = require("./model/libs/user")
 
 module.exports = function (app) {
 
@@ -31,19 +31,19 @@ module.exports = function (app) {
 
     app.get("/login", (req, res, next) => {
         const response = req.isAuthenticated() ?
-            { login: req.user.login, isAuth: 1, role: req.user.role } :
-            { login: null, isAuth: 0, role: null } 
+            { userId: req.user.id, isAuth: 1, role: req.user.role } :
+            { userId: null, isAuth: 0, role: null } 
         res.json(response)
     })
 
     app.post("/login", passport.authenticate('local'), (req, res, next) => {
-        res.json({ login: req.user.login, isAuth: 1, role: req.user.role })
+        res.json({ userId: req.user.id, isAuth: 1, role: req.user.role })
     })
 
     app.delete("/login", (req, res, next) => {
         req.session.destroy(() => {
             res.cookie("connect.sid", "", { expires: new Date(0) })
-            res.json({ login: null, isAuth: 0, role: null })
+            res.json({ userId: null, isAuth: 0, role: null })
         })
     })
 
@@ -113,6 +113,14 @@ module.exports = function (app) {
 
     app.get("/users", (req, res, next) => {
         send(next)(res)(getUsers)
+    })
+
+    app.post("/users", (req, res, next) => {
+        send(next)(res)(insertUsers(req.body))
+    })
+
+    app.patch("/users", (req, res, next) => {
+        send(next)(res)(updateUsers(req.body.id))
     })
 
     app.use((err, req, res, next) => {

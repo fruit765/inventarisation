@@ -1,0 +1,6 @@
+projectKey=inventarization
+serverUrl=http://localhost:9000
+serverVersion=8.5.1.38104
+dashboardUrl=http://localhost:9000/dashboard?id=inventarization
+ceTaskId=AXXk5f8W5UazON1nflWs
+ceTaskUrl=http://localhost:9000/api/ce/task?id=AXXk5f8W5UazON1nflWs
