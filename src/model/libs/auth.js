@@ -4,7 +4,7 @@ const fp = require("lodash/fp")
 const Credentials = require("../orm/credentials")
 const LocalStrategy = require("passport-local").Strategy
 
-const { packError, valueError } = require("./exceptionHandling")
+const { packError, valueError, handleCustomError } = require("./exceptionHandling")
 
 const getAuthUserDataById = id =>
     Credentials
@@ -30,8 +30,7 @@ const deserializeUser = function (id, done) {
     getAuthUserDataById(id)
         .then(x => x ? x : false)
         .then(x => done(null, x))
-        .catch(packError("deserializeUser"))
-        .catch(valueError(done))
+        .catch(handleCustomError("deserializeUser")(done))
 }
 
 const localStrategy = new LocalStrategy(
@@ -42,8 +41,7 @@ const localStrategy = new LocalStrategy(
                 done(null, await getAuthUserDataById(x.id)) :
                 done(null, false)
             )
-            .catch(packError("localStrategy"))
-            .catch(valueError(done))
+            .catch(handleCustomError("localStrategy")(done))
 )
 
 module.exports = {

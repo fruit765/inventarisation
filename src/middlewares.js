@@ -5,7 +5,6 @@ const dbConfig = require("../serverConfig").db
 const session = require("express-session")
 const express = require("express")
 const KnexSessionStore = require('connect-session-knex')(session)
-const bodyParser = require("body-parser")
 const OpenApiValidator = require("express-openapi-validator")
 const cors = require('cors')
 const Knex = require('knex')
@@ -13,6 +12,7 @@ const passport = require("passport")
 const { serializeUser, deserializeUser, localStrategy } = require("./model/libs/auth")
 const Role = require("./model/orm/role")
 const fp = require("lodash/fp")
+const { map, encaseP, resolve, reject, fork } = require("Fluture")
 //const {} = require("monet")
 
 const knex = Knex(dbConfig)
@@ -56,18 +56,40 @@ module.exports = function (app) {
         req.isAuthenticated() ? next() : next(err)
     })
 
-    // app.use((req, res, next) => {
-    //     Role.query()
-    //         .findById(req.user.role_id)
-    //         .select(req.path.replace(/^\//, ""))
-    //         .then(x => x[req.path.replace(/^\//, "")])
-    //         .then(x => fp.cond([
-    //             [fp.flow(fp.get("allowed"),fp.includes("all")),]
-    //         ]
-    //             )
+    app.use((req, res, next) => {
 
-    //             x.allowed.includes(any))
-    // })
+        encaseP(() => Role.query()
+            .findById(req.user.role_id)
+            .select(req.path.replace(/^\//, "")))
+            .pipe(map(x => x[req.path.replace(/^\//, "")]))
+            .pipe(map(x => x.allowed.includes("all") ? reject() : resolveresolve(x.allowed)))
+            .pipe(map(map()))
+            .pipe(fork
+                (handleCustomError("kkk")(next))
+                (fork
+                    (next)
+                    (fork
+                        (handleCustomError("kkk")(next))
+                        (next)
+                    )
+                )
+            )
+
+        fork()()
+        Role.query()
+            .findById(req.user.role_id)
+            .select(req.path.replace(/^\//, ""))
+            .then(x => x[req.path.replace(/^\//, "")])
+            .then(x => x.allowed.includes("all") ? next() : x.allowed)
+
+
+        //     fp.cond([
+        //     [fp.flow(fp.get("allowed"),fp.includes("all")),]
+        // ]
+        //     )
+
+        //     x.allowed.includes(any))
+    })
 
     app.use(
         OpenApiValidator.middleware({

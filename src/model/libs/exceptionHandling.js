@@ -61,4 +61,10 @@ const valueError = callback => err => {
     return callback(err.customErr)
 }
 
-module.exports = { packError, valueError } 
+/**
+ * packError и valueError в одной функции
+ */
+const handleCustomError = customErrName => callback => err =>
+    packError(customErrName)(err).catch(valueError(callback))
+
+module.exports = { packError, valueError, handleCustomError } 
