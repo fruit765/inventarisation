@@ -1,0 +1,29 @@
+{
+  "title": "rrr",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer"
+    },
+    "employer_id": {
+      "type": "integer"
+    },
+    "post_dep_loc_id": {
+      "type": "string"
+    },
+    "location_id": {
+      "type": "integer"
+    },
+    "full_name": {
+      "type": "string"
+    },
+    "is_archive": {
+      "type": "string"
+    },
+    "appointment_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "contact": {}
+  }
+}

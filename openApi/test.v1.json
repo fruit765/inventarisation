@@ -1,0 +1,133 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "test",
+    "version": "1.0",
+    "description": "test",
+    "license": {
+      "name": "h",
+      "url": "h"
+    },
+    "contact": {
+      "name": "h",
+      "url": "h"
+    },
+    "termsOfService": "h"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000"
+    }
+  ],
+  "paths": {
+    "/test/{jkjkjjjjjjjjjjjjjjjjjjjjjjjjj}": {
+      "get": {
+        "summary": "rr",
+        "tags": [
+          "test"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                "$ref": "#/components/schemas/ggg"
+              }
+              }
+            }
+          }
+        },
+        "operationId": "get-test",
+        "description": "test",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ggg"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "jj"
+          }
+        ]
+      },
+      "post": {
+        "summary": "rrr",
+        "operationId": "post-test",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "description": "rrr",
+        "tags": [
+          "test"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ff": {
+                    "type": "string"
+                  },
+                  "fff": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "hghg",
+            "description": ";';'",
+            "required": true
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "jkjkjjjjjjjjjjjjjjjjjjjjjjjjj",
+          "in": "path",
+          "required": true
+        }
+      ]
+    }
+  },
+  "components": {
+    "schemas": {
+      "ggg": {
+        "title": "ggg",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "test"
+    }
+  ]
+}

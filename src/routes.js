@@ -17,7 +17,8 @@ const {
     getDevices,
     insertDevices,
     updateDevices,
-    insertCredentials
+    insertCredentials,
+    getWarehouseResponsible
 } = require("./model/libs/device")
 const passport = require("passport")
 const { send } = require("./model/libs/command")
@@ -121,6 +122,10 @@ module.exports = function (app) {
 
     app.patch("/users", (req, res, next) => {
         send(next)(res)(updateUsers(req.body.id))
+    })
+
+    app.get("/warehouseResponsible", (req, res, next) => {
+        send(next)(res)(getWarehouseResponsible)
     })
 
     app.use((err, req, res, next) => {

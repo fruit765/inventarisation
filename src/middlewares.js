@@ -11,6 +11,9 @@ const cors = require('cors')
 const Knex = require('knex')
 const passport = require("passport")
 const { serializeUser, deserializeUser, localStrategy } = require("./model/libs/auth")
+const Role = require("./model/orm/role")
+const fp = require("lodash/fp")
+//const {} = require("monet")
 
 const knex = Knex(dbConfig)
 const store = new KnexSessionStore({
@@ -47,11 +50,24 @@ module.exports = function (app) {
     app.use(passport.initialize())
     app.use(passport.session())
 
-    app.use(/^(?!\/login)/,(req, res, next) => {
+    app.use(/^(?!\/login)/, (req, res, next) => {
         const err = new Error("Unauthorized")
         err.status = 401
         req.isAuthenticated() ? next() : next(err)
     })
+
+    // app.use((req, res, next) => {
+    //     Role.query()
+    //         .findById(req.user.role_id)
+    //         .select(req.path.replace(/^\//, ""))
+    //         .then(x => x[req.path.replace(/^\//, "")])
+    //         .then(x => fp.cond([
+    //             [fp.flow(fp.get("allowed"),fp.includes("all")),]
+    //         ]
+    //             )
+
+    //             x.allowed.includes(any))
+    // })
 
     app.use(
         OpenApiValidator.middleware({
@@ -59,4 +75,5 @@ module.exports = function (app) {
             validateSecurity: false
         })
     )
+
 }

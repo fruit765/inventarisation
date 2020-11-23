@@ -7,6 +7,7 @@ const { getTable, insertTable, updateTable, deleteTable } = require("./command")
 const Category = require("../orm/category")
 const Status = require("../orm/status")
 const { packError } = require("./exceptionHandling")
+const Responsibility = require("../orm/responsibility")
 
 const getAllOrOnlyCatIdRelated = objectionTableClass => catId => {
     /**
@@ -45,6 +46,8 @@ const getDevices = getTable(Device)
 const insertDevices = insertTable(Device)
 const updateDevices = updateTable(Device)
 
+const getWarehouseResponsible = Responsibility.query().select("id").where("warehouseResponsible", 1)
+
 module.exports = {
     getBrands,
     insertBrands,
@@ -61,5 +64,6 @@ module.exports = {
     getStatuses,
     getDevices,
     insertDevices,
-    updateDevices
+    updateDevices,
+    getWarehouseResponsible
 }

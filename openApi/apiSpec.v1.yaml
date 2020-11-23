@@ -1008,6 +1008,40 @@ paths:
       description: Изменить аккаунт
       tags:
         - accounts
+  /test:
+    get:
+      summary: gggg
+      tags:
+        - device
+      responses:
+        '200':
+          description: OK
+      operationId: get-test
+      description: gggg
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: h
+  /warehouseResponsible:
+    get:
+      summary: Получить список ответственных за склад
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+      operationId: get-inv-warehouseResponsible
+      description: Возвращает коллекцию ответственных за склад
+    parameters: []
 components:
   schemas: {}
   securitySchemes: {}
