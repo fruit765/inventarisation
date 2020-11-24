@@ -1,0 +1,20 @@
+{
+  "ddddd": "dfdf",
+  "title": "fgfg",
+  "type": "object",
+  "properties": {
+    "allowed": {
+      "type": "object",
+      "properties": {
+        "get": {
+          "type": "object",
+          "properties": {
+            "": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

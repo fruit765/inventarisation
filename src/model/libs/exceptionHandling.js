@@ -1,5 +1,6 @@
 "use strict"
 
+const { resolve } = require("fluture")
 const fp = require("lodash/fp")
 const winston = require("winston")
 const { consoleFormat } = require("winston-console-format")
@@ -41,24 +42,34 @@ const logger = winston.createLogger({
 /**
  * Создает обьект содержащий новое название пользовательской ошибки, и старый объект ошибки.
  * В случае если функция сама получит такой объект она просто прокинет ее дальше, не внеся изменений.
+ * Работает только с ошибками(объектами имеющими свойство stack), другие объекты будут пропущены
  */
 const packError = customErrName => err => {
-    if (err.customErr) {
-        err.path = err.path + " => " + customErrName
-        return Promise.reject(err)
-    } else {
-        err.path = customErrName
-        err.customErr = new Error(customErrName)
-        return Promise.reject(err)
-    }
+    return Promise.resolve(err)
+        .then(x => x && x.stack ? x : Promise.reject(x))
+        .then(x => {
+            if (x.customErr) {
+                x.path = x.path + " => " + customErrName
+                return Promise.reject(x)
+            } else {
+                x.path = customErrName
+                x.customErr = new Error(customErrName)
+                return Promise.reject(x)
+            }
+        })
 }
 
 /**
  * Обрабатывает запакованные ошибки, полную ошибку отправляет в лог, колбэк получает пользовательскую ошибку
+ * Если это не пользовательская ошибка передает ее в колбэк без изменений
  */
 const valueError = callback => err => {
-    logger.error(err)
-    return callback(err.customErr)
+    if (x && x.stack) {
+        logger.error(err)
+        return callback(err.customErr)
+    } else {
+        return callback(err)
+    }
 }
 
 /**

@@ -20,7 +20,7 @@
     }
   ],
   "paths": {
-    "/test/{jkjkjjjjjjjjjjjjjjjjjjjjjjjjj}": {
+    "/test/{pthparams}": {
       "get": {
         "summary": "rr",
         "tags": [
@@ -32,8 +32,8 @@
             "content": {
               "application/json": {
                 "schema": {
-                "$ref": "#/components/schemas/ggg"
-              }
+                  "$ref": "#/components/schemas/ggg"
+                }
               }
             }
           }
@@ -44,7 +44,12 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ggg"
+                "type": "object",
+                "properties": {
+                  "bodyparams": {
+                    "type": "string"
+                  }
+                }
               }
             }
           }
@@ -55,7 +60,7 @@
               "type": "string"
             },
             "in": "query",
-            "name": "jj"
+            "name": "queryparams"
           }
         ]
       },
@@ -105,11 +110,51 @@
           "schema": {
             "type": "string"
           },
-          "name": "jkjkjjjjjjjjjjjjjjjjjjjjjjjjj",
+          "name": "pthparams",
           "in": "path",
           "required": true
         }
       ]
+    },
+    "/test/11": {
+      "get": {
+        "summary": "Your GET endpoint",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-test-11",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "111"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        }
+      },
+      "parameters": []
     }
   },
   "components": {

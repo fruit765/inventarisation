@@ -12,7 +12,8 @@ const passport = require("passport")
 const { serializeUser, deserializeUser, localStrategy } = require("./model/libs/auth")
 const Role = require("./model/orm/role")
 const fp = require("lodash/fp")
-const { map, encaseP, resolve, reject, fork } = require("Fluture")
+const createError = require('http-errors')
+//const { map, encaseP, resolve, reject, fork } = require("Fluture")
 //const {} = require("monet")
 
 const knex = Knex(dbConfig)
@@ -58,27 +59,33 @@ module.exports = function (app) {
 
     app.use((req, res, next) => {
 
-        encaseP(() => Role.query()
-            .findById(req.user.role_id)
-            .select(req.path.replace(/^\//, "")))
-            .pipe(map(x => x[req.path.replace(/^\//, "")]))
-            .pipe(map(x => x.allowed.includes("all") ? reject() : resolveresolve(x.allowed)))
-            .pipe(map(map()))
-            .pipe(fork
-                (handleCustomError("kkk")(next))
-                (fork
-                    (next)
-                    (fork
-                        (handleCustomError("kkk")(next))
-                        (next)
-                    )
-                )
-            )
+        // encaseP(() => Role.query()
+        //     .findById(req.user.role_id)
+        //     .select(req.path.replace(/^\//, "")))
+        //     .pipe(map(x => x[req.path.replace(/^\//, "")]))
+        //     .pipe(map(x => x.allowed.includes("all") ? reject() : resolveresolve(x.allowed)))
+        //     .pipe(map(map()))
+        //     .pipe(fork
+        //         (handleCustomError("kkk")(next))
+        //         (fork
+        //             (next)
+        //             (fork
+        //                 (handleCustomError("kkk")(next))
+        //                 (next)
+        //             )
+        //         )
+        //     )
+        const accessDeniedError = createError(403, "Forbidden")
 
-        fork()()
         Role.query()
             .findById(req.user.role_id)
-            .select(req.path.replace(/^\//, ""))
+            .select("query_permission")
+            .then(x => x ? x : accessDeniedError)
+            .then(x => !x[req.path.replace(/^\//, "")] && (x.other === "allow") ? next() : x)
+            .then(x => !x[req.method] && (x.other === "allow") ? next() : x)
+            .then(x => !x[req.method] ? accessDeniedError : x[req.method])
+            .then(x => )
+
             .then(x => x[req.path.replace(/^\//, "")])
             .then(x => x.allowed.includes("all") ? next() : x.allowed)
 
