@@ -1,9 +1,14 @@
 "use strict"
 
+const { fork, attemptP } = require("fluture")
 const fp = require("lodash/fp")
 const { valueError, packError } = require("./exceptionHandling")
 
 const send = next => res => promise => promise.then((x) => res.json(x)).catch(valueError(next))
+const sendTest = next => res => promise => fork(valueError(next))((x) => res.json(x))(promise)
+
+const getTableTest = objectionTableClass =>
+    attemptP(() => objectionTableClass.query())
 
 const getTable = objectionTableClass =>
     objectionTableClass.query().catch(packError("getTable: " + objectionTableClass.tableName))
@@ -20,4 +25,4 @@ const deleteTable = objectionTableClass => id =>
     objectionTableClass.query().deleteById(id).then(() => id)
         .catch(packError("deleteTable: " + objectionTableClass.tableName))
 
-module.exports = { getTable, send, insertTable, updateTable, deleteTable }
+module.exports = { getTable, send, insertTable, updateTable, deleteTable, getTableTest, sendTest }

@@ -21,7 +21,7 @@ const {
     getWarehouseResponsible
 } = require("./model/libs/device")
 const passport = require("passport")
-const { send } = require("./model/libs/command")
+const { send, sendTest } = require("./model/libs/command")
 const { getUsers, updateUsers, insertUsers } = require("./model/libs/user")
 
 module.exports = function (app) {
@@ -101,7 +101,7 @@ module.exports = function (app) {
     })
 
     app.get("/devices", (req, res, next) => {
-        send(next)(res)(getDevices)
+        sendTest(next)(res)(getDevices)
     })
 
     app.post("/devices", (req, res, next) => {

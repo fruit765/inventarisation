@@ -3,7 +3,7 @@
 const Device = require("../orm/device")
 const Brand = require("../orm/brand")
 const Supplier = require("../orm/supplier")
-const { getTable, insertTable, updateTable, deleteTable } = require("./command")
+const { getTable, insertTable, updateTable, deleteTable, getTableTest } = require("./command")
 const Category = require("../orm/category")
 const Status = require("../orm/status")
 const { packError } = require("./exceptionHandling")
@@ -40,9 +40,9 @@ const insertCategories = insertTable(Category)
 const updateCategories = updateTable(Category)
 const deleteCategories = deleteTable(Category)
 
-const getStatuses = getTable(Status)
+const getStatuses = getTable(Status).then(x=>{console.log(1); return x})
 
-const getDevices = getTable(Device)
+const getDevices = getTableTest(Device)
 const insertDevices = insertTable(Device)
 const updateDevices = updateTable(Device)
 

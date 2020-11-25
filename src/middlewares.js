@@ -4,22 +4,25 @@ const dbConfig = require("../serverConfig").db
 
 const session = require("express-session")
 const express = require("express")
-const KnexSessionStore = require('connect-session-knex')(session)
+const KnexSessionStore = require("connect-session-knex")(session)
 const OpenApiValidator = require("express-openapi-validator")
-const cors = require('cors')
-const Knex = require('knex')
+const cors = require("cors")
+const Knex = require("knex")
 const passport = require("passport")
 const { serializeUser, deserializeUser, localStrategy } = require("./model/libs/auth")
 const Role = require("./model/orm/role")
 const fp = require("lodash/fp")
-const createError = require('http-errors')
+const createError = require("http-errors")
+const traverse = require("json-schema-traverse")
+const Ajv = require("ajv").default
+
 //const { map, encaseP, resolve, reject, fork } = require("Fluture")
 //const {} = require("monet")
 
 const knex = Knex(dbConfig)
 const store = new KnexSessionStore({
     knex,
-    tablename: 'sessions'
+    tablename: "sessions"
 })
 
 module.exports = function (app) {
@@ -34,7 +37,7 @@ module.exports = function (app) {
             store,
             cookie: {
                 secure: sessionConf.secure,
-                path: '/',
+                path: "/",
                 httpOnly: true,
                 maxAge: (60000 * sessionConf.maxAge)
             },
@@ -52,13 +55,15 @@ module.exports = function (app) {
     app.use(passport.session())
 
     app.use(/^(?!\/login)/, (req, res, next) => {
-        const err = new Error("Unauthorized")
-        err.status = 401
-        req.isAuthenticated() ? next() : next(err)
+        req.isAuthenticated() ? next() : next(createError(403, "Unauthorized"))
     })
 
     app.use((req, res, next) => {
 
+        
+
+
+        traverse(schema, x => x.additionalProperties = false)
         // encaseP(() => Role.query()
         //     .findById(req.user.role_id)
         //     .select(req.path.replace(/^\//, "")))
@@ -77,17 +82,42 @@ module.exports = function (app) {
         //     )
         const accessDeniedError = createError(403, "Forbidden")
 
+        const getReqData = (request) => fp.set(
+            `${request.path.replace(/^\//, "")}.${request.method}.req`,
+            {
+                body: request.body,
+                query: request.query,
+                params: request.params
+            }
+        )({})
+
+
+
         Role.query()
             .findById(req.user.role_id)
             .select("query_permission")
-            .then(x => x ? x : accessDeniedError)
-            .then(x => !x[req.path.replace(/^\//, "")] && (x.other === "allow") ? next() : x)
-            .then(x => !x[req.method] && (x.other === "allow") ? next() : x)
-            .then(x => !x[req.method] ? accessDeniedError : x[req.method])
-            .then(x => )
+            .then(schema => {
+                traverse(
+                    schema,
+                    x => { if (x.type === "object" && !x.additionalProperties) x.additionalProperties = false }
+                )
+                return schema
+            })
+            .then(schema => {
+                const ajv = new Ajv()
+                const validate = ajv.compile(schema)
+                validate(getReqData(req))
+            })
 
-            .then(x => x[req.path.replace(/^\//, "")])
-            .then(x => x.allowed.includes("all") ? next() : x.allowed)
+
+        // .then(x => x ? x : accessDeniedError)
+        // .then(x => !x[req.path.replace(/^\//, "")] && (x.other === "allow") ? next() : x)
+        // .then(x => !x[req.method] && (x.other === "allow") ? next() : x)
+        // .then(x => !x[req.method] ? accessDeniedError : x[req.method])
+        // .then(x => )
+
+        // .then(x => x[req.path.replace(/^\//, "")])
+        // .then(x => x.allowed.includes("all") ? next() : x.allowed)
 
 
         //     fp.cond([
@@ -98,11 +128,11 @@ module.exports = function (app) {
         //     x.allowed.includes(any))
     })
 
-    app.use(
-        OpenApiValidator.middleware({
-            apiSpec: "./openApi/apiSpec.v1.yaml",
-            validateSecurity: false
-        })
-    )
+app.use(
+    OpenApiValidator.middleware({
+        apiSpec: "./openApi/apiSpec.v1.yaml",
+        validateSecurity: false
+    })
+)
 
 }

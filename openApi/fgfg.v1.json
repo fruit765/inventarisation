@@ -3,14 +3,23 @@
   "title": "fgfg",
   "type": "object",
   "properties": {
-    "allowed": {
+    "devices": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "get": {
           "type": "object",
+          "additionalProperties": false,
           "properties": {
-            "": {
-              "type": "string"
+            "333": {},
+            "params": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "type": "integer"
+                }
+              }
             }
           }
         }

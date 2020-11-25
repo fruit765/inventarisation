@@ -1,0 +1,12 @@
+{
+  "title": "ggg",
+  "type": "object",
+  "properties": {
+    "weight": {
+      "type": "integer"
+    },
+    "height": {
+      "type": "integer"
+    }
+  }
+}
