@@ -14,6 +14,7 @@ const Role = require("./model/orm/role")
 const fp = require("lodash/fp")
 const createError = require("http-errors")
 const traverse = require("json-schema-traverse")
+const { valueError, handleCustomError } = require("./model/libs/exceptionHandling")
 const Ajv = require("ajv").default
 
 //const { map, encaseP, resolve, reject, fork } = require("Fluture")
@@ -58,9 +59,9 @@ module.exports = function (app) {
         req.isAuthenticated() ? next() : next(createError(403, "Unauthorized"))
     })
 
-    app.use((req, res, next) => {
+    app.use(/^(?!\/login)/, (req, res, next) => {
 
-        
+
 
 
         traverse(schema, x => x.additionalProperties = false)
@@ -91,48 +92,38 @@ module.exports = function (app) {
             }
         )({})
 
+        const addAdditionalPropertiesByDefault = (schema) => {
+            traverse(
+                schema,
+                x => {
+                    if (x.type === "object" && !x.additionalProperties) x.additionalProperties = false
+                }
+            )
+            return schema
+        }
 
+        const validateReqBySchema = (request) => (schema) => {
+            const ajv = new Ajv()
+            const validate = ajv.compile(schema)
+            return validate(getReqData(request))
+        }
 
         Role.query()
             .findById(req.user.role_id)
             .select("query_permission")
-            .then(schema => {
-                traverse(
-                    schema,
-                    x => { if (x.type === "object" && !x.additionalProperties) x.additionalProperties = false }
-                )
-                return schema
-            })
-            .then(schema => {
-                const ajv = new Ajv()
-                const validate = ajv.compile(schema)
-                validate(getReqData(req))
-            })
+            .then(addAdditionalPropertiesByDefault)
+            .then(fp.set("$async", true))
+            .then(validateReqBySchema(req))
+            .then(fp.constant(next))
+            .catch(handleCustomError)
 
-
-        // .then(x => x ? x : accessDeniedError)
-        // .then(x => !x[req.path.replace(/^\//, "")] && (x.other === "allow") ? next() : x)
-        // .then(x => !x[req.method] && (x.other === "allow") ? next() : x)
-        // .then(x => !x[req.method] ? accessDeniedError : x[req.method])
-        // .then(x => )
-
-        // .then(x => x[req.path.replace(/^\//, "")])
-        // .then(x => x.allowed.includes("all") ? next() : x.allowed)
-
-
-        //     fp.cond([
-        //     [fp.flow(fp.get("allowed"),fp.includes("all")),]
-        // ]
-        //     )
-
-        //     x.allowed.includes(any))
     })
 
-app.use(
-    OpenApiValidator.middleware({
-        apiSpec: "./openApi/apiSpec.v1.yaml",
-        validateSecurity: false
-    })
-)
+    app.use(
+        OpenApiValidator.middleware({
+            apiSpec: "./openApi/apiSpec.v1.yaml",
+            validateSecurity: false
+        })
+    )
 
 }
