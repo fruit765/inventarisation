@@ -1,17 +1,16 @@
 "use strict"
 
-const fp = require("lodash/fp")
 const Credentials = require("../orm/credentials")
 const LocalStrategy = require("passport-local").Strategy
 
-const { packError, valueError, handleCustomError } = require("./exceptionHandling")
+const { packError, handleCustomError } = require("./exceptionHandling")
 
 const getAuthUserDataById = id =>
     Credentials
         .query()
         .findById(id)
         .joinRelated("role")
-        .select("credentials.id", "login", "role")
+        .select("credentials.id", "login", "role","role_id")
         .catch(packError("getAuthUserDataById"))
 
 const checkLoginPassword = login => password =>

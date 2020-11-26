@@ -40,9 +40,9 @@ const insertCategories = insertTable(Category)
 const updateCategories = updateTable(Category)
 const deleteCategories = deleteTable(Category)
 
-const getStatuses = getTable(Status).then(x=>{console.log(1); return x})
+const getStatuses = getTable(Status)
 
-const getDevices = getTableTest(Device)
+const getDevices = getTable(Device)
 const insertDevices = insertTable(Device)
 const updateDevices = updateTable(Device)
 

@@ -196,3 +196,129 @@
     '    at json (/home/nikita/git/inventarisation/node_modules/express/lib/response.js:256:18)\n' +
     '    at processTicksAndRejections (node:internal/process/task_queues:93:5)'
 }
+{
+  path: 'checkAuthorizationByRoleMlw',
+  customErr: Error: checkAuthorizationByRoleMlw
+      at /home/nikita/git/inventarisation/src/model/libs/exceptionHandling.js:51:25
+      at /home/nikita/git/inventarisation/src/model/libs/exceptionHandling.js:78:29
+      at processTicksAndRejections (node:internal/process/task_queues:93:5),
+  level: 'error',
+  timestamp: '2020-11-26T08:53:05.141Z',
+  ms: '+0ms',
+  message: 'undefined was passed to findById',
+  stack: 'Error: undefined was passed to findById\n' +
+    '    at assertIdNotUndefined (/home/nikita/git/inventarisation/node_modules/objection/lib/utils/assert.js:18:11)\n' +
+    '    at FindByIdOperation.onBuild (/home/nikita/git/inventarisation/node_modules/objection/lib/queryBuilder/operations/FindByIdOperation.js:19:7)\n' +
+    '    at QueryBuilder.callOperationMethod (/home/nikita/git/inventarisation/node_modules/objection/lib/queryBuilder/QueryBuilderOperationSupport.js:350:33)\n' +
+    '    at /home/nikita/git/inventarisation/node_modules/objection/lib/queryBuilder/QueryBuilderOperationSupport.js:437:14\n' +
+    '    at QueryBuilder.forEachOperation (/home/nikita/git/inventarisation/node_modules/objection/lib/queryBuilder/QueryBuilderOperationSupport.js:287:37)\n' +
+    '    at QueryBuilder.executeOnBuild (/home/nikita/git/inventarisation/node_modules/objection/lib/queryBuilder/QueryBuilderOperationSupport.js:435:10)\n' +
+    '    at callOnBuildHooks (/home/nikita/git/inventarisation/node_modules/objection/lib/queryBuilder/QueryBuilder.js:1579:11)\n' +
+    '    at doExecute (/home/nikita/git/inventarisation/node_modules/objection/lib/queryBuilder/QueryBuilder.js:1469:13)\n' +
+    '    at QueryBuilder.execute (/home/nikita/git/inventarisation/node_modules/objection/lib/queryBuilder/QueryBuilder.js:684:28)\n' +
+    '    at processTicksAndRejections (node:internal/process/task_queues:93:5)'
+}
+{
+  path: 'checkAuthorizationByRoleMlw',
+  customErr: Error: checkAuthorizationByRoleMlw
+      at /home/nikita/git/inventarisation/src/model/libs/exceptionHandling.js:51:25
+      at /home/nikita/git/inventarisation/src/model/libs/exceptionHandling.js:78:29
+      at processTicksAndRejections (node:internal/process/task_queues:93:5),
+  level: 'error',
+  timestamp: '2020-11-26T08:55:00.194Z',
+  ms: '+0ms',
+  message: 'undefined was passed to findById',
+  stack: 'Error: undefined was passed to findById\n' +
+    '    at assertIdNotUndefined (/home/nikita/git/inventarisation/node_modules/objection/lib/utils/assert.js:18:11)\n' +
+    '    at FindByIdOperation.onBuild (/home/nikita/git/inventarisation/node_modules/objection/lib/queryBuilder/operations/FindByIdOperation.js:19:7)\n' +
+    '    at QueryBuilder.callOperationMethod (/home/nikita/git/inventarisation/node_modules/objection/lib/queryBuilder/QueryBuilderOperationSupport.js:350:33)\n' +
+    '    at /home/nikita/git/inventarisation/node_modules/objection/lib/queryBuilder/QueryBuilderOperationSupport.js:437:14\n' +
+    '    at QueryBuilder.forEachOperation (/home/nikita/git/inventarisation/node_modules/objection/lib/queryBuilder/QueryBuilderOperationSupport.js:287:37)\n' +
+    '    at QueryBuilder.executeOnBuild (/home/nikita/git/inventarisation/node_modules/objection/lib/queryBuilder/QueryBuilderOperationSupport.js:435:10)\n' +
+    '    at callOnBuildHooks (/home/nikita/git/inventarisation/node_modules/objection/lib/queryBuilder/QueryBuilder.js:1579:11)\n' +
+    '    at doExecute (/home/nikita/git/inventarisation/node_modules/objection/lib/queryBuilder/QueryBuilder.js:1469:13)\n' +
+    '    at QueryBuilder.execute (/home/nikita/git/inventarisation/node_modules/objection/lib/queryBuilder/QueryBuilder.js:684:28)\n' +
+    '    at processTicksAndRejections (node:internal/process/task_queues:93:5)'
+}
+{
+  path: 'checkAuthorizationByRoleMlw',
+  customErr: Error: checkAuthorizationByRoleMlw
+      at /home/nikita/git/inventarisation/src/model/libs/exceptionHandling.js:51:25
+      at /home/nikita/git/inventarisation/src/model/libs/exceptionHandling.js:78:29
+      at processTicksAndRejections (node:internal/process/task_queues:93:5),
+  level: 'error',
+  timestamp: '2020-11-26T08:55:47.386Z',
+  ms: '+0ms',
+  message: 'Ajv is not a constructor',
+  stack: 'TypeError: Ajv is not a constructor\n' +
+    '    at /home/nikita/git/inventarisation/src/model/libs/authorization.js:30:17\n' +
+    '    at processTicksAndRejections (node:internal/process/task_queues:93:5)'
+}
+{
+  path: 'checkAuthorizationByRoleMlw',
+  customErr: Error: checkAuthorizationByRoleMlw
+      at /home/nikita/git/inventarisation/src/model/libs/exceptionHandling.js:51:25
+      at /home/nikita/git/inventarisation/src/model/libs/exceptionHandling.js:78:29
+      at processTicksAndRejections (node:internal/process/task_queues:93:5),
+  level: 'error',
+  timestamp: '2020-11-26T08:56:20.932Z',
+  ms: '+0ms',
+  message: 'id.replace is not a function',
+  stack: 'TypeError: id.replace is not a function\n' +
+    '    at Function.normalizeId (/home/nikita/git/inventarisation/node_modules/ajv/lib/compile/resolve.js:221:18)\n' +
+    '    at Ajv._addSchema (/home/nikita/git/inventarisation/node_modules/ajv/lib/ajv.js:301:20)\n' +
+    '    at Ajv.compile (/home/nikita/git/inventarisation/node_modules/ajv/lib/ajv.js:113:24)\n' +
+    '    at /home/nikita/git/inventarisation/src/model/libs/authorization.js:31:26\n' +
+    '    at processTicksAndRejections (node:internal/process/task_queues:93:5)'
+}
+{
+  path: 'checkAuthorizationByRoleMlw',
+  customErr: Error: checkAuthorizationByRoleMlw
+      at /home/nikita/git/inventarisation/src/model/libs/exceptionHandling.js:51:25
+      at /home/nikita/git/inventarisation/src/model/libs/exceptionHandling.js:78:29
+      at processTicksAndRejections (node:internal/process/task_queues:93:5),
+  level: 'error',
+  timestamp: '2020-11-26T08:57:42.829Z',
+  ms: '+0ms',
+  message: 'id.replace is not a function',
+  stack: 'TypeError: id.replace is not a function\n' +
+    '    at Function.normalizeId (/home/nikita/git/inventarisation/node_modules/ajv/lib/compile/resolve.js:221:18)\n' +
+    '    at Ajv._addSchema (/home/nikita/git/inventarisation/node_modules/ajv/lib/ajv.js:301:20)\n' +
+    '    at Ajv.compile (/home/nikita/git/inventarisation/node_modules/ajv/lib/ajv.js:113:24)\n' +
+    '    at /home/nikita/git/inventarisation/src/model/libs/authorization.js:31:26\n' +
+    '    at processTicksAndRejections (node:internal/process/task_queues:93:5)'
+}
+{
+  path: 'checkAuthorizationByRoleMlw',
+  customErr: Error: checkAuthorizationByRoleMlw
+      at /home/nikita/git/inventarisation/src/model/libs/exceptionHandling.js:51:25
+      at /home/nikita/git/inventarisation/src/model/libs/exceptionHandling.js:78:29
+      at processTicksAndRejections (node:internal/process/task_queues:93:5),
+  level: 'error',
+  timestamp: '2020-11-26T08:58:23.593Z',
+  ms: '+0ms',
+  message: 'id.replace is not a function',
+  stack: 'TypeError: id.replace is not a function\n' +
+    '    at Function.normalizeId (/home/nikita/git/inventarisation/node_modules/ajv/lib/compile/resolve.js:221:18)\n' +
+    '    at Ajv._addSchema (/home/nikita/git/inventarisation/node_modules/ajv/lib/ajv.js:301:20)\n' +
+    '    at Ajv.compile (/home/nikita/git/inventarisation/node_modules/ajv/lib/ajv.js:113:24)\n' +
+    '    at /home/nikita/git/inventarisation/src/model/libs/authorization.js:31:26\n' +
+    '    at processTicksAndRejections (node:internal/process/task_queues:93:5)'
+}
+{
+  path: 'checkAuthorizationByRoleMlw',
+  customErr: Error: checkAuthorizationByRoleMlw
+      at /home/nikita/git/inventarisation/src/model/libs/exceptionHandling.js:51:25
+      at /home/nikita/git/inventarisation/src/model/libs/exceptionHandling.js:78:29
+      at processTicksAndRejections (node:internal/process/task_queues:93:5),
+  level: 'error',
+  timestamp: '2020-11-26T09:03:11.645Z',
+  ms: '+0ms',
+  message: 'id.replace is not a function',
+  stack: 'TypeError: id.replace is not a function\n' +
+    '    at Function.normalizeId (/home/nikita/git/inventarisation/node_modules/ajv/lib/compile/resolve.js:221:18)\n' +
+    '    at Ajv._addSchema (/home/nikita/git/inventarisation/node_modules/ajv/lib/ajv.js:301:20)\n' +
+    '    at Ajv.compile (/home/nikita/git/inventarisation/node_modules/ajv/lib/ajv.js:113:24)\n' +
+    '    at /home/nikita/git/inventarisation/src/model/libs/authorization.js:32:26\n' +
+    '    at processTicksAndRejections (node:internal/process/task_queues:93:5)'
+}
