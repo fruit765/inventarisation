@@ -19,6 +19,7 @@ pipeline{
                     npm i
                     touch tmp/restart.txt
                 '''
+                
             }           
         }
     }
