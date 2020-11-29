@@ -12,8 +12,8 @@ pipeline{
     stages{
         stage("deploy"){
             steps{
-                sh "ssh mdranev@mdranev.beget.tech"
                 sh '''
+                    ssh mdranev@mdranev.beget.tech
                     cd inv.karmydev.ru
                     mkdir -p server
                     cd server
