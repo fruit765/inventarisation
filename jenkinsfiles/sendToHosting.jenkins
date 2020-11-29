@@ -10,15 +10,14 @@ pipeline{
         timestamps()
     }  
     stages{
-        stage("deploy"){
+        stage("update"){
             steps{
                 sh '''
                     ssh mdranev@mdranev.beget.tech /bin/bash <<'EOT'
-                    cd inv.karmydev.ru
-                    mkdir -p server
-                    cd server
-                    git clone https://github.com/fruit765/inventarisation
- 
+                    cd inv.karmydev.ru/server/inventarisation
+                    git pull
+                    npm
+                    touch tmp/restart.txt
                 '''
             }           
         }
