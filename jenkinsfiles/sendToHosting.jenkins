@@ -10,9 +10,12 @@ pipeline{
         timestamps()
     }  
     stages{
-        stage("A"){
+        stage("Auth"){
             steps{
-                sh "ssh mdranev@mdranev.beget.tech \'hostname\'"
+                sh "ssh mdranev@mdranev.beget.tech"
+                sh '''
+                    hostname
+                '''
             }           
         }
     }
