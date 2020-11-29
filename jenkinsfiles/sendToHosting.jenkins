@@ -13,13 +13,13 @@ pipeline{
         stage("update"){
             steps{
                 sh '''
-                    ssh mdranev@mdranev.beget.tech /bin/bash <<'EOT'
+                    ssh mdranev@mdranev.beget.tech 'ssh localhost -p222 /bin/bash <<\'EOT\''
                     cd inv.karmydev.ru/server/inventarisation
                     git pull
                     npm i
                     touch tmp/restart.txt
                 '''
-                
+
             }           
         }
     }
