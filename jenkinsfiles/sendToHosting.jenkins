@@ -10,12 +10,15 @@ pipeline{
         timestamps()
     }  
     stages{
-        stage("Auth"){
+        stage("deploy"){
             steps{
+                sh "ssh mdranev@mdranev.beget.tech"
                 sh '''
-                    ssh mdranev@mdranev.beget.tech
-                    ssh localhost -p222
-                    hostname
+                    cd inv.karmydev.ru/
+                    mkdir -p server/
+                    cd server
+                    git clone https://github.com/fruit765/inventarisation
+
                 '''
             }           
         }
