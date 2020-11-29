@@ -1,0 +1,19 @@
+#!groovy
+properties([disableConcurrentsBuilds()])
+
+pipeline{
+    agent{
+        label "master"
+    }
+    options {
+        buildDiscarder(logRotator(numToKeepStr: "10", artifactNumToKeepStr: "10"))
+        timestamps()
+    }
+    stages{
+        stage("A"){
+            steps{
+                sh "ssh mdranev@mdranev.beget.tech \'hostname\'"
+            }           
+        }
+    }
+}
