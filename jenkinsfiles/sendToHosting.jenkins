@@ -16,7 +16,7 @@ pipeline{
                     ssh mdranev@mdranev.beget.tech /bin/bash <<'EOT'
                     cd inv.karmydev.ru/server/inventarisation
                     git pull
-                    npm
+                    npm i
                     touch tmp/restart.txt
                 '''
             }           
