@@ -12,8 +12,9 @@ pipeline{
     stages{
         stage("Auth"){
             steps{
-                sh "ssh mdranev@mdranev.beget.tech"
                 sh '''
+                    ssh mdranev@mdranev.beget.tech
+                    ssh localhost -p222
                     hostname
                 '''
             }           
