@@ -49,7 +49,7 @@ module.exports = class Device extends Model {
                     to: "status.id"
                 }
             },
- 
+
             supplier: {
                 relation: Model.BelongsToOneRelation,
                 modelClass: Supplier,
