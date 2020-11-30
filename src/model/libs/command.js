@@ -23,7 +23,7 @@ const updateTable = objectionTableClass => data =>
         objectionTableClass.query().findById(data.id).patch(fp.omit("id")(data)).then(() => data)
             .catch(packError("updateTable: " + objectionTableClass.tableName))
     )
- 
+
 const deleteTable = objectionTableClass => id =>
     attemptP(() =>
         objectionTableClass.query().deleteById(id).then(() => id)
