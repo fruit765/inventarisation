@@ -1,0 +1,5 @@
+{
+    "sonarlint.connectedMode.connections.sonarqube": [
+        { "serverUrl": "http://3.122.234.159", "token": "bc335fc11f7a5e2f452a7be8a284b6cd3ff6e2d3" }
+    ]
+}

@@ -2,10 +2,11 @@
 
 const fp = require("lodash/fp")
 const traverse = require("json-schema-traverse")
-const { Left } = require("sanctuary")
+const { map, chain } = require("sanctuary")
 const Role = require("../orm/role")
 const { handleCustomError } = require("./exceptionHandling")
-const Ajv = require("ajv")
+const { getCell, validateDataBySchema } = require("./../libs/command")
+const { fork } = require("fluture")
 
 const getReqData = (request) => fp.set(
     `${request.path.replace(/^\//, "")}.${request.method}.req`,
@@ -26,28 +27,27 @@ const addAdditionalPropertiesByDefault = (schema) => {
     return schema
 }
 
-const validateReqBySchema = (request) => (schema) => {
-    const ajv = new Ajv()
-    const validate = ajv.compile(schema)
-    return validate(getReqData(request))
-        .catch(
-            err => (err instanceof Ajv.ValidationError) ?
-                Left(err) :
-                Promise.reject(err)
-        )
+const schemaPrepare = rawSchema => {
+    return fp.flow(
+        map(x => x ? x : { additionalProperties: false }),
+        map(addAdditionalPropertiesByDefault),
+        map(fp.set("$async", true))
+    )(rawSchema)
 }
 
-const authorizationRequest = (req, res, next) => {
-    Role.query()
-        .findById(req.user.role_id)
-        .select("query_permission")
-        .then(fp.get("query_permission"))
-        .then(x => x ? x : { additionalProperties: false })
-        .then(addAdditionalPropertiesByDefault)
-        .then(fp.set("$async", true))
-        .then(validateReqBySchema(req))
-        .then(() => next())
-        .catch(handleCustomError("checkAuthorizationByRoleMlw")(next))
+const authorizationRequestByGetFn = getSchemaByIdFn => (req, res, next) => {
+    const result = fp.flow(
+        getSchemaByIdFn,
+        map(schemaPrepare),
+        map(validateDataBySchema),
+        chain(x => x(getReqData(req)))
+    )(req.user.role_id)
+
+    return fork(handleCustomError("checkAuthorizationByRoleMlw")(next))
+        (() => next())
+        (result)
 }
+
+const authorizationRequest = authorizationRequestByGetFn(getCell(Role)("query_permission"))
 
 module.exports = { authorizationRequest }

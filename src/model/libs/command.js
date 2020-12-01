@@ -1,10 +1,35 @@
 "use strict"
 
-const { fork, attemptP } = require("fluture")
+const { fork, attemptP, encaseP, mapRej } = require("fluture")
 const fp = require("lodash/fp")
 const { valueError, packError } = require("./exceptionHandling")
+const Ajv = require("ajv")
+const { Left } = require("sanctuary")
 
 const send = next => res => fluture => fork(valueError(next))((x) => res.json(x))(fluture)
+const sendP = next => res => pomise => pomise.then((x) => res.json(x)).catch(valueError(next))
+
+const validateDataBySchema = (schema) => (data) => {
+    const ajv = new Ajv()
+    const validate = encaseP(ajv.compile(schema).bind(ajv))
+    return mapRej(
+        err => (err instanceof Ajv.ValidationError) ? Left(err) : err
+    )(validate(data))
+}
+
+const getCell = objectionTableClass => cellName => cellId =>
+    attemptP(() =>
+        objectionTableClass.query()
+            .findById(cellId)
+            .select(cellName)
+            .then(fp.get(cellName))
+            .catch(packError(
+                `getCell: 
+                table: ${objectionTableClass.tableName},
+                cellId: ${cellId},
+                cellName: ${cellName}`
+            ))
+    )
 
 const getTable = objectionTableClass =>
     attemptP(() =>
@@ -14,19 +39,25 @@ const getTable = objectionTableClass =>
 
 const insertTable = objectionTableClass => data =>
     attemptP(() =>
-        objectionTableClass.query().insertAndFetch(data)
+        objectionTableClass.query()
+            .insertAndFetch(data)
             .catch(packError("insertTable: " + objectionTableClass.tableName))
     )
 
 const updateTable = objectionTableClass => data =>
     attemptP(() =>
-        objectionTableClass.query().findById(data.id).patch(fp.omit("id")(data)).then(() => data)
+        objectionTableClass.query()
+            .findById(data.id)
+            .patch(fp.omit("id")(data))
+            .then(() => data)
             .catch(packError("updateTable: " + objectionTableClass.tableName))
     )
- 
+
 const deleteTable = objectionTableClass => id =>
     attemptP(() =>
-        objectionTableClass.query().deleteById(id).then(() => id)
+        objectionTableClass.query()
+            .deleteById(id)
+            .then(() => id)
             .catch(packError("deleteTable: " + objectionTableClass.tableName))
     )
 
@@ -40,4 +71,4 @@ const getDevRelatedTabValueAssociatedCatId = objectionTableClass => catId =>
         .select(objectionTableClass.tableName + ".*")
         .catch(packError("getDevRelatedTabValueAssociatedCatId"))
 
-module.exports = { getTable, send, insertTable, updateTable, deleteTable, getDevRelatedTabValueAssociatedCatId }
+module.exports = { validateDataBySchema, getTable, getCell, send, sendP, insertTable, updateTable, deleteTable, getDevRelatedTabValueAssociatedCatId }

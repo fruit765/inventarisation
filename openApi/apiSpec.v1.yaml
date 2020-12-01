@@ -64,7 +64,6 @@ paths:
                     - location_id
                     - brand_id
                     - model
-                    - isArchive
                     - date_ purchase
                     - date_warranty_end
                     - inv_number
@@ -1008,21 +1007,6 @@ paths:
       description: Изменить аккаунт
       tags:
         - accounts
-  /test:
-    get:
-      summary: gggg
-      tags:
-        - device
-      responses:
-        '200':
-          description: OK
-      operationId: get-test
-      description: gggg
-      parameters:
-        - schema:
-            type: string
-          in: query
-          name: h
   /warehouseResponsible:
     get:
       summary: Получить список ответственных за склад
@@ -1042,6 +1026,28 @@ paths:
       operationId: get-inv-warehouseResponsible
       description: Возвращает коллекцию ответственных за склад
     parameters: []
+  /bindDevices:
+    post:
+      summary: Привязка устройств к другому устройству
+      operationId: post-bindDevices
+      responses:
+        '200':
+          description: OK
+      tags:
+        - device
+      description: Привязка устройств к другому устройству
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                ids:
+                  type: array
+                  items:
+                    type: integer
 components:
   schemas: {}
   securitySchemes: {}
