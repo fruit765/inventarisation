@@ -1,0 +1,44 @@
+#!groovy
+properties([disableConcurrentBuilds()])
+
+pipeline {
+    agent any
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '10'))
+        timestamps()
+    }
+    triggers {
+        GenericTrigger(
+     genericVariables: [
+      [key: 'ref', value: '$.ref']
+     ],
+
+     causeString: 'Triggered on $ref',
+
+     token: 'inv',
+     tokenCredentialId: '',
+
+     printContributedVariables: true,
+     printPostContent: true,
+
+     silentResponse: false,
+
+     regexpFilterText: '$ref',
+     regexpFilterExpression: '^(refs/heads/master)$'
+    )
+    }
+    stages {
+        stage('update') {
+            steps {
+                sh '''
+                    ssh mdranev@mdranev.beget.tech /bin/bash <<'EOT'
+                    ssh localhost -p222 /bin/bash <<'EOT'
+                    cd inv.karmydev.ru/server/inventarisation
+                    git pull
+                    npm i
+                    touch tmp/restart.txt
+                '''
+            }
+        }
+    }
+}
