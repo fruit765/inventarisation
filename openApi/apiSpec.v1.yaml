@@ -64,7 +64,7 @@ paths:
                         - integer
                         - string
                     specifications: {}
-                    date_ purchase:
+                    date_purchase:
                       type: string
                       format: date
                     date_warranty_end:
@@ -84,7 +84,7 @@ paths:
                     - location_id
                     - brand_id
                     - model
-                    - date_ purchase
+                    - date_purchase
                     - date_warranty_end
                     - inv_number
       operationId: get-devices
