@@ -24,45 +24,27 @@ paths:
                   type: object
                   properties:
                     parent_id:
-                      type:
-                        - integer
-                        - string
+                      type: integer
                     category_id:
-                      type:
-                        - integer
-                        - string
+                      type: integer
                     status_id:
-                      type:
-                        - integer
-                        - string
+                      type: integer
                     user_id:
-                      type:
-                        - integer
-                        - string
+                      type: integer
                     supplier_id:
-                      type:
-                        - integer
-                        - string
+                      type: integer
                     location_id:
-                      type:
-                        - integer
-                        - string
+                      type: integer
                     brand_id:
-                      type:
-                        - integer
-                        - string
+                      type: integer
                     model:
                       type: string
                     comments:
                       type: string
                     price:
-                      type:
-                        - integer
-                        - string
+                      type: integer
                     isArchive:
-                      type:
-                        - integer
-                        - string
+                      type: integer
                     specifications: {}
                     date_purchase:
                       type: string
@@ -73,9 +55,7 @@ paths:
                     inv_number:
                       type: string
                     id:
-                      type:
-                        - integer
-                        - string
+                      type: integer
                   required:
                     - category_id
                     - status_id
