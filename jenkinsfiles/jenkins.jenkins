@@ -15,7 +15,7 @@ pipeline {
 
      causeString: 'Triggered on $ref',
 
-     token: 'inv',
+     token: 'inv_master',
      tokenCredentialId: '',
 
      printContributedVariables: true,
