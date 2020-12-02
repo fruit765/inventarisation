@@ -9,6 +9,7 @@ const brands = require('./routes/brands')
 const login = require('./routes/login')
 const command = require('./routes/command')
 const Status = require("./model/orm/status")
+const Location = require("./model/orm/location")
 
 module.exports = function (app) {
 
@@ -18,6 +19,10 @@ module.exports = function (app) {
 
     app.get("/statuses", (req, res, next) => {
         send(next)(res)(getTable(Status))
+    })
+
+    app.get("/locations", (req, res, next) => {
+        send(next)(res)(getTable(Location))
     })
 
     app.use(login)

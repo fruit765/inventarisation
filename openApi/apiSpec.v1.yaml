@@ -1048,6 +1048,26 @@ paths:
                   type: array
                   items:
                     type: integer
+  /locations:
+    get:
+      summary: Получение списка локаций
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    location:
+                      type: string
+      operationId: get-locations
+      description: Получение списка локаций
 components:
   schemas: {}
   securitySchemes: {}
