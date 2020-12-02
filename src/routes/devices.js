@@ -23,6 +23,15 @@ router.route('/devices')
         send(next)(res)(insertTable(Device)(req.body))
     })
     .patch((req, res, next) => {
+        req.body.date_purchase = dateToIso(req.body.date_purchase)
+        req.body.date_warranty_end = dateToIso(req.body.date_warranty_end)
+        req.body.specifications = JSON.stringify(req.body.specifications)
+        req.body=mapKeys(req.body, (value, key) => {
+            if (!key.includes("specifications_")) {
+                return key
+            }
+        })
+        delete(req.body[undefined])
         send(next)(res)(updateTable(Device)(req.body))
     })
 
