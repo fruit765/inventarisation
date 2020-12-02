@@ -5,13 +5,12 @@ const fp = require("lodash/fp")
 const { valueError, packError } = require("./exceptionHandling")
 const Ajv = require("ajv")
 const { Left } = require("sanctuary")
-const DF = require('date-fns/fp')
+const luxon = require('luxon')
 
 const send = next => res => fluture => fork(valueError(next))((x) => res.json(x))(fluture)
 const sendP = next => res => pomise => pomise.then((x) => res.json(x)).catch(valueError(next))
 
-const dateToIso = dateFormat => dateString => DF.formatISO(DF.parse(new Date())(dateFormat)(dateString))
-console.log(new Date())
+const dateToIso = dateString => luxon.DateTime.fromISO(dateString,{ zone: "UTC" }).toUTC().toISO()
 
 const validateDataBySchema = (schema) => (data) => {
     const ajv = new Ajv()

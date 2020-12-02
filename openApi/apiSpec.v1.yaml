@@ -106,7 +106,7 @@ paths:
                   isArchive:
                     type: integer
                   specifications: {}
-                  date_ purchase:
+                  date_purchase:
                     type: string
                     format: date
                   date_warranty_end:
@@ -124,7 +124,7 @@ paths:
                   - brand_id
                   - model
                   - isArchive
-                  - date_ purchase
+                  - date_purchase
                   - date_warranty_end
                   - inv_number
       tags:
@@ -159,7 +159,7 @@ paths:
                 isArchive:
                   type: integer
                 specifications: {}
-                date_ purchase:
+                date_purchase:
                   type: string
                   format: date
                 date_warranty_end:
@@ -175,7 +175,7 @@ paths:
                 - location_id
                 - brand_id
                 - model
-                - date_ purchase
+                - date_purchase
                 - date_warranty_end
                 - inv_number
     description: ''
@@ -215,7 +215,7 @@ paths:
                   isArchive:
                     type: integer
                   specifications: {}
-                  date_ purchase:
+                  date_purchase:
                     type: string
                     format: date
                   date_warranty_end:
@@ -257,7 +257,7 @@ paths:
                 isArchive:
                   type: integer
                 specifications: {}
-                date_ purchase:
+                date_purchase:
                   type: string
                   format: date
                 date_warranty_end:

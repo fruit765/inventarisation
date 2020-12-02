@@ -356,3 +356,173 @@
     '    at QueryBuilder.execute (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\objection\\lib\\queryBuilder\\QueryBuilder.js:687:20)\n' +
     '    at processTicksAndRejections (internal/process/task_queues.js:97:5)'
 }
+{
+  name: 'DBError',
+  nativeError: Error: insert into `device` (`brand_id`, `category_id`, `comments`, `date_ purchase`, `date_purchase`, `date_warranty_end`, `inv_number`, `location_id`, `model`, `price`, `specifications`, `status_id`, `supplier_id`, `user_id`) values (1, 3, 'ghghgh', '2018-11-13', NULL, '2018-11-13T00:00:00.000Z', 'ssds-222', 1, 'sdsdsd', 1233, {"latency":1}, 1, 1, 2) - Unknown column 'date_ purchase' in 'field list'
+      at Packet.asError (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\packets\packet.js:712:17)
+      at Query.execute (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\commands\command.js:28:26)
+      at Connection.handlePacket (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\connection.js:425:32)
+      at PacketParser.onPacket (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\connection.js:75:12)
+      at PacketParser.executeStart (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\packet_parser.js:75:16)
+      at Socket.<anonymous> (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\connection.js:82:25)
+      at Socket.emit (events.js:315:20)
+      at addChunk (_stream_readable.js:295:12)
+      at readableAddChunk (_stream_readable.js:271:9)
+      at Socket.Readable.push (_stream_readable.js:212:10)
+      at TCP.onStreamRead (internal/stream_base_commons.js:186:23) {
+    code: 'ER_BAD_FIELD_ERROR',
+    errno: 1054,
+    sqlState: '42S22',
+    sqlMessage: "Unknown column 'date_ purchase' in 'field list'"
+  },
+  client: 'mysql',
+  path: 'insertTable: device',
+  customErr: Error: insertTable: device
+      at C:\Users\Admin\Documents\inventarisation\src\model\libs\exceptionHandling.js:51:25
+      at processTicksAndRejections (internal/process/task_queues.js:97:5),
+  level: 'error',
+  timestamp: '2020-12-02T07:41:51.006Z',
+  ms: '+0ms',
+  message: 'insert into `device` (`brand_id`, `category_id`, `comments`, `date_ purchase`, `date_purchase`, `date_warranty_end`, `inv_number`, `location_id`, `model`, `price`, `specifications`, `status_id`, `supplier_id`, `user_id`) values (1, 3, \'ghghgh\', \'2018-11-13\', NULL, \'2018-11-13T00:00:00.000Z\', \'ssds-222\', 1, \'sdsdsd\', 1233, {"latency":1}, 1, 1, 2) - Unknown column \'date_ purchase\' in \'field list\'',
+  stack: 'DBError: insert into `device` (`brand_id`, `category_id`, `comments`, `date_ purchase`, `date_purchase`, `date_warranty_end`, `inv_number`, `location_id`, `model`, `price`, `specifications`, `status_id`, `supplier_id`, `user_id`) values (1, 3, \'ghghgh\', \'2018-11-13\', NULL, \'2018-11-13T00:00:00.000Z\', \'ssds-222\', 1, \'sdsdsd\', 1233, {"latency":1}, 1, 1, 2) - Unknown column \'date_ purchase\' in \'field list\'\n' +
+    '    at wrapError (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\db-errors\\lib\\dbErrors.js:19:14)\n' +
+    '    at handleExecuteError (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\objection\\lib\\queryBuilder\\QueryBuilder.js:1506:32)\n' +
+    '    at QueryBuilder.execute (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\objection\\lib\\queryBuilder\\QueryBuilder.js:687:20)\n' +
+    '    at processTicksAndRejections (internal/process/task_queues.js:97:5)'
+}
+{
+  name: 'DBError',
+  nativeError: Error: insert into `device` (`brand_id`, `category_id`, `comments`, `date_ purchase`, `date_purchase`, `date_warranty_end`, `inv_number`, `location_id`, `model`, `price`, `specifications`, `status_id`, `supplier_id`, `user_id`) values (1, 3, 'ghghgh', '2018-11-13', NULL, '2018-11-13T00:00:00.000Z', 'ssds-222', 1, 'sdsdsd', 1233, {"latency":1}, 1, 1, 2) - Unknown column 'date_ purchase' in 'field list'
+      at Packet.asError (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\packets\packet.js:712:17)
+      at Query.execute (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\commands\command.js:28:26)
+      at Connection.handlePacket (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\connection.js:425:32)
+      at PacketParser.onPacket (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\connection.js:75:12)
+      at PacketParser.executeStart (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\packet_parser.js:75:16)
+      at Socket.<anonymous> (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\connection.js:82:25)
+      at Socket.emit (events.js:315:20)
+      at addChunk (_stream_readable.js:295:12)
+      at readableAddChunk (_stream_readable.js:271:9)
+      at Socket.Readable.push (_stream_readable.js:212:10)
+      at TCP.onStreamRead (internal/stream_base_commons.js:186:23) {
+    code: 'ER_BAD_FIELD_ERROR',
+    errno: 1054,
+    sqlState: '42S22',
+    sqlMessage: "Unknown column 'date_ purchase' in 'field list'"
+  },
+  client: 'mysql',
+  path: 'insertTable: device',
+  customErr: Error: insertTable: device
+      at C:\Users\Admin\Documents\inventarisation\src\model\libs\exceptionHandling.js:51:25
+      at processTicksAndRejections (internal/process/task_queues.js:97:5),
+  level: 'error',
+  timestamp: '2020-12-02T07:42:25.580Z',
+  ms: '+0ms',
+  message: 'insert into `device` (`brand_id`, `category_id`, `comments`, `date_ purchase`, `date_purchase`, `date_warranty_end`, `inv_number`, `location_id`, `model`, `price`, `specifications`, `status_id`, `supplier_id`, `user_id`) values (1, 3, \'ghghgh\', \'2018-11-13\', NULL, \'2018-11-13T00:00:00.000Z\', \'ssds-222\', 1, \'sdsdsd\', 1233, {"latency":1}, 1, 1, 2) - Unknown column \'date_ purchase\' in \'field list\'',
+  stack: 'DBError: insert into `device` (`brand_id`, `category_id`, `comments`, `date_ purchase`, `date_purchase`, `date_warranty_end`, `inv_number`, `location_id`, `model`, `price`, `specifications`, `status_id`, `supplier_id`, `user_id`) values (1, 3, \'ghghgh\', \'2018-11-13\', NULL, \'2018-11-13T00:00:00.000Z\', \'ssds-222\', 1, \'sdsdsd\', 1233, {"latency":1}, 1, 1, 2) - Unknown column \'date_ purchase\' in \'field list\'\n' +
+    '    at wrapError (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\db-errors\\lib\\dbErrors.js:19:14)\n' +
+    '    at handleExecuteError (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\objection\\lib\\queryBuilder\\QueryBuilder.js:1506:32)\n' +
+    '    at QueryBuilder.execute (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\objection\\lib\\queryBuilder\\QueryBuilder.js:687:20)\n' +
+    '    at processTicksAndRejections (internal/process/task_queues.js:97:5)'
+}
+{
+  name: 'DBError',
+  nativeError: Error: insert into `device` (`brand_id`, `category_id`, `comments`, `date_purchase`, `date_warranty_end`, `inv_number`, `location_id`, `model`, `price`, `specifications`, `status_id`, `supplier_id`, `user_id`) values (1, 3, 'ghghgh', '2018-11-13T00:00:00.000Z', '2018-11-13T00:00:00.000Z', 'ssds-222', 1, 'sdsdsd', 1233, {"latency":1}, 1, 1, 2) - Unknown column 'latency' in 'field list'
+      at Packet.asError (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\packets\packet.js:712:17)
+      at Query.execute (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\commands\command.js:28:26)
+      at Connection.handlePacket (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\connection.js:425:32)
+      at PacketParser.onPacket (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\connection.js:75:12)
+      at PacketParser.executeStart (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\packet_parser.js:75:16)
+      at Socket.<anonymous> (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\connection.js:82:25)
+      at Socket.emit (events.js:315:20)
+      at addChunk (_stream_readable.js:295:12)
+      at readableAddChunk (_stream_readable.js:271:9)
+      at Socket.Readable.push (_stream_readable.js:212:10)
+      at TCP.onStreamRead (internal/stream_base_commons.js:186:23) {
+    code: 'ER_BAD_FIELD_ERROR',
+    errno: 1054,
+    sqlState: '42S22',
+    sqlMessage: "Unknown column 'latency' in 'field list'"
+  },
+  client: 'mysql',
+  path: 'insertTable: device',
+  customErr: Error: insertTable: device
+      at C:\Users\Admin\Documents\inventarisation\src\model\libs\exceptionHandling.js:51:25
+      at processTicksAndRejections (internal/process/task_queues.js:97:5),
+  level: 'error',
+  timestamp: '2020-12-02T07:43:48.113Z',
+  ms: '+0ms',
+  message: 'insert into `device` (`brand_id`, `category_id`, `comments`, `date_purchase`, `date_warranty_end`, `inv_number`, `location_id`, `model`, `price`, `specifications`, `status_id`, `supplier_id`, `user_id`) values (1, 3, \'ghghgh\', \'2018-11-13T00:00:00.000Z\', \'2018-11-13T00:00:00.000Z\', \'ssds-222\', 1, \'sdsdsd\', 1233, {"latency":1}, 1, 1, 2) - Unknown column \'latency\' in \'field list\'',
+  stack: 'DBError: insert into `device` (`brand_id`, `category_id`, `comments`, `date_purchase`, `date_warranty_end`, `inv_number`, `location_id`, `model`, `price`, `specifications`, `status_id`, `supplier_id`, `user_id`) values (1, 3, \'ghghgh\', \'2018-11-13T00:00:00.000Z\', \'2018-11-13T00:00:00.000Z\', \'ssds-222\', 1, \'sdsdsd\', 1233, {"latency":1}, 1, 1, 2) - Unknown column \'latency\' in \'field list\'\n' +
+    '    at wrapError (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\db-errors\\lib\\dbErrors.js:19:14)\n' +
+    '    at handleExecuteError (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\objection\\lib\\queryBuilder\\QueryBuilder.js:1506:32)\n' +
+    '    at QueryBuilder.execute (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\objection\\lib\\queryBuilder\\QueryBuilder.js:687:20)\n' +
+    '    at processTicksAndRejections (internal/process/task_queues.js:97:5)'
+}
+{
+  name: 'DBError',
+  nativeError: Error: insert into `device` (`brand_id`, `category_id`, `comments`, `date_purchase`, `date_warranty_end`, `inv_number`, `location_id`, `model`, `price`, `specifications`, `status_id`, `supplier_id`, `user_id`) values (1, 3, 'ghghgh', '2018-11-13T00:00:00.000Z', '2018-11-13T00:00:00.000Z', 'ssds-222', 1, 'sdsdsd', 1233, {"latency":1}, 1, 1, 2) - Unknown column 'latency' in 'field list'
+      at Packet.asError (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\packets\packet.js:712:17)
+      at Query.execute (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\commands\command.js:28:26)
+      at Connection.handlePacket (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\connection.js:425:32)
+      at PacketParser.onPacket (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\connection.js:75:12)
+      at PacketParser.executeStart (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\packet_parser.js:75:16)
+      at Socket.<anonymous> (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\connection.js:82:25)
+      at Socket.emit (events.js:315:20)
+      at addChunk (_stream_readable.js:295:12)
+      at readableAddChunk (_stream_readable.js:271:9)
+      at Socket.Readable.push (_stream_readable.js:212:10)
+      at TCP.onStreamRead (internal/stream_base_commons.js:186:23) {
+    code: 'ER_BAD_FIELD_ERROR',
+    errno: 1054,
+    sqlState: '42S22',
+    sqlMessage: "Unknown column 'latency' in 'field list'"
+  },
+  client: 'mysql',
+  path: 'insertTable: device',
+  customErr: Error: insertTable: device
+      at C:\Users\Admin\Documents\inventarisation\src\model\libs\exceptionHandling.js:51:25
+      at processTicksAndRejections (internal/process/task_queues.js:97:5),
+  level: 'error',
+  timestamp: '2020-12-02T07:50:09.923Z',
+  ms: '+0ms',
+  message: 'insert into `device` (`brand_id`, `category_id`, `comments`, `date_purchase`, `date_warranty_end`, `inv_number`, `location_id`, `model`, `price`, `specifications`, `status_id`, `supplier_id`, `user_id`) values (1, 3, \'ghghgh\', \'2018-11-13T00:00:00.000Z\', \'2018-11-13T00:00:00.000Z\', \'ssds-222\', 1, \'sdsdsd\', 1233, {"latency":1}, 1, 1, 2) - Unknown column \'latency\' in \'field list\'',
+  stack: 'DBError: insert into `device` (`brand_id`, `category_id`, `comments`, `date_purchase`, `date_warranty_end`, `inv_number`, `location_id`, `model`, `price`, `specifications`, `status_id`, `supplier_id`, `user_id`) values (1, 3, \'ghghgh\', \'2018-11-13T00:00:00.000Z\', \'2018-11-13T00:00:00.000Z\', \'ssds-222\', 1, \'sdsdsd\', 1233, {"latency":1}, 1, 1, 2) - Unknown column \'latency\' in \'field list\'\n' +
+    '    at wrapError (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\db-errors\\lib\\dbErrors.js:19:14)\n' +
+    '    at handleExecuteError (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\objection\\lib\\queryBuilder\\QueryBuilder.js:1506:32)\n' +
+    '    at QueryBuilder.execute (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\objection\\lib\\queryBuilder\\QueryBuilder.js:687:20)\n' +
+    '    at processTicksAndRejections (internal/process/task_queues.js:97:5)'
+}
+{
+  name: 'DBError',
+  nativeError: Error: insert into `device` (`brand_id`, `category_id`, `comments`, `date_purchase`, `date_warranty_end`, `inv_number`, `location_id`, `model`, `price`, `specifications`, `status_id`, `supplier_id`, `user_id`) values (1, 3, 'ghghgh', '2018-11-13T00:00:00.000Z', '2018-11-13T00:00:00.000Z', 'ssds-222', 1, 'sdsdsd', 1233, {"latency":1}, 1, 1, 2) - Unknown column 'latency' in 'field list'
+      at Packet.asError (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\packets\packet.js:712:17)
+      at Query.execute (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\commands\command.js:28:26)
+      at Connection.handlePacket (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\connection.js:425:32)
+      at PacketParser.onPacket (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\connection.js:75:12)
+      at PacketParser.executeStart (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\packet_parser.js:75:16)
+      at Socket.<anonymous> (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\connection.js:82:25)
+      at Socket.emit (events.js:315:20)
+      at addChunk (_stream_readable.js:295:12)
+      at readableAddChunk (_stream_readable.js:271:9)
+      at Socket.Readable.push (_stream_readable.js:212:10)
+      at TCP.onStreamRead (internal/stream_base_commons.js:186:23) {
+    code: 'ER_BAD_FIELD_ERROR',
+    errno: 1054,
+    sqlState: '42S22',
+    sqlMessage: "Unknown column 'latency' in 'field list'"
+  },
+  client: 'mysql',
+  path: 'insertTable: device',
+  customErr: Error: insertTable: device
+      at C:\Users\Admin\Documents\inventarisation\src\model\libs\exceptionHandling.js:51:25
+      at processTicksAndRejections (internal/process/task_queues.js:97:5),
+  level: 'error',
+  timestamp: '2020-12-02T07:50:29.970Z',
+  ms: '+0ms',
+  message: 'insert into `device` (`brand_id`, `category_id`, `comments`, `date_purchase`, `date_warranty_end`, `inv_number`, `location_id`, `model`, `price`, `specifications`, `status_id`, `supplier_id`, `user_id`) values (1, 3, \'ghghgh\', \'2018-11-13T00:00:00.000Z\', \'2018-11-13T00:00:00.000Z\', \'ssds-222\', 1, \'sdsdsd\', 1233, {"latency":1}, 1, 1, 2) - Unknown column \'latency\' in \'field list\'',
+  stack: 'DBError: insert into `device` (`brand_id`, `category_id`, `comments`, `date_purchase`, `date_warranty_end`, `inv_number`, `location_id`, `model`, `price`, `specifications`, `status_id`, `supplier_id`, `user_id`) values (1, 3, \'ghghgh\', \'2018-11-13T00:00:00.000Z\', \'2018-11-13T00:00:00.000Z\', \'ssds-222\', 1, \'sdsdsd\', 1233, {"latency":1}, 1, 1, 2) - Unknown column \'latency\' in \'field list\'\n' +
+    '    at wrapError (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\db-errors\\lib\\dbErrors.js:19:14)\n' +
+    '    at handleExecuteError (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\objection\\lib\\queryBuilder\\QueryBuilder.js:1506:32)\n' +
+    '    at QueryBuilder.execute (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\objection\\lib\\queryBuilder\\QueryBuilder.js:687:20)\n' +
+    '    at processTicksAndRejections (internal/process/task_queues.js:97:5)'
+}

@@ -10,8 +10,9 @@ router.route('/devices')
         send(next)(res)(getTable(Device))
     })
     .post( (req, res, next) => {
-        req.body.date_purchase = dateToIso('yyyy-MM-dd')(req.body.date_purchase)
-        req.body.date_warranty_end = dateToIso('yyyy-MM-dd')(req.body.date_warranty_end)
+        req.body.date_purchase = dateToIso(req.body.date_purchase)
+        req.body.date_warranty_end = dateToIso(req.body.date_warranty_end)
+        req.body.specifications = JSON.stringify(req.body.specifications)
         send(next)(res)(insertTable(Device)(req.body))
     })
     .patch((req, res, next) => {
