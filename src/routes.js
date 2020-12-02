@@ -1,6 +1,6 @@
 "use strict"
 
-const { send } = require("./model/libs/command")
+const { send, getTable } = require("./model/libs/command")
 const devices = require('./routes/devices')
 const categories = require('./routes/categories')
 const users = require('./routes/users')
@@ -8,6 +8,7 @@ const suppliers = require('./routes/suppliers')
 const brands = require('./routes/brands')
 const login = require('./routes/login')
 const command = require('./routes/command')
+const Status = require("./model/orm/status")
 
 module.exports = function (app) {
 
@@ -16,7 +17,7 @@ module.exports = function (app) {
     })
 
     app.get("/statuses", (req, res, next) => {
-        send(next)(res)(getStatuses)
+        send(next)(res)(getTable(Status))
     })
 
     app.use(login)

@@ -57,6 +57,7 @@ module.exports = function (app) {
     app.use(
         OpenApiValidator.middleware({
             apiSpec: "./openApi/apiSpec.v1.yaml",
+            //formats: [],
             validateSecurity: false,
             validateRequests: true,
             coerceTypes: true

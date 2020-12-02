@@ -5,9 +5,13 @@ const fp = require("lodash/fp")
 const { valueError, packError } = require("./exceptionHandling")
 const Ajv = require("ajv")
 const { Left } = require("sanctuary")
+const DF = require('date-fns/fp')
 
 const send = next => res => fluture => fork(valueError(next))((x) => res.json(x))(fluture)
 const sendP = next => res => pomise => pomise.then((x) => res.json(x)).catch(valueError(next))
+
+const dateToIso = dateFormat => dateString => DF.formatISO(DF.parse(new Date())(dateFormat)(dateString))
+console.log(new Date())
 
 const validateDataBySchema = (schema) => (data) => {
     const ajv = new Ajv()
@@ -71,4 +75,4 @@ const getDevRelatedTabValueAssociatedCatId = objectionTableClass => catId =>
         .select(objectionTableClass.tableName + ".*")
         .catch(packError("getDevRelatedTabValueAssociatedCatId"))
 
-module.exports = { validateDataBySchema, getTable, getCell, send, sendP, insertTable, updateTable, deleteTable, getDevRelatedTabValueAssociatedCatId }
+module.exports = { validateDataBySchema, getTable, getCell, send, sendP, insertTable, updateTable, deleteTable, getDevRelatedTabValueAssociatedCatId, dateToIso }
