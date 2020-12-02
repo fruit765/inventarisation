@@ -64,6 +64,7 @@ paths:
                     - location_id
                     - brand_id
                     - model
+                    - isArchive
                     - date_purchase
                     - date_warranty_end
                     - inv_number
@@ -174,7 +175,6 @@ paths:
                 - location_id
                 - brand_id
                 - model
-                - isArchive
                 - date_ purchase
                 - date_warranty_end
                 - inv_number

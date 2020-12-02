@@ -2,11 +2,10 @@
 
 const fp = require("lodash/fp")
 const traverse = require("json-schema-traverse")
-const { map, chain } = require("sanctuary")
 const Role = require("../orm/role")
 const { handleCustomError } = require("./exceptionHandling")
 const { getCell, validateDataBySchema } = require("./../libs/command")
-const { fork } = require("fluture")
+const { fork, map, chain } = require("fluture")
 
 const getReqData = (request) => fp.set(
     `${request.path.replace(/^\//, "")}.${request.method}.req`,
@@ -29,9 +28,9 @@ const addAdditionalPropertiesByDefault = (schema) => {
 
 const schemaPrepare = rawSchema => {
     return fp.flow(
-        map(x => x ? x : { additionalProperties: false }),
-        map(addAdditionalPropertiesByDefault),
-        map(fp.set("$async", true))
+        x => x ? x : { additionalProperties: false },
+        addAdditionalPropertiesByDefault,
+        fp.set("$async", true)
     )(rawSchema)
 }
 
@@ -39,8 +38,7 @@ const authorizationRequestByGetFn = getSchemaByIdFn => (req, res, next) => {
     const result = fp.flow(
         getSchemaByIdFn,
         map(schemaPrepare),
-        map(validateDataBySchema),
-        chain(x => x(getReqData(req)))
+        chain(schema => validateDataBySchema(schema)(getReqData(req)))
     )(req.user.role_id)
 
     return fork(handleCustomError("checkAuthorizationByRoleMlw")(next))
