@@ -19,7 +19,7 @@ router.route('/devices')
                 return key
             }
         })
-        delete(req.body.undifiend)
+        delete(req.body[undefined])
         send(next)(res)(insertTable(Device)(req.body))
     })
     .patch((req, res, next) => {
