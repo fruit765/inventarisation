@@ -9,6 +9,7 @@
     "checkjs": "npx tsc --allowJs --checkJs --noEmit --moduleResolution node --target ES6 src/*.js"
   },
   "dependencies": {
+    "@apidevtools/swagger-parser": "^10.0.2",
     "body-parser": "^1.19.0",
     "connect-session-knex": "^2.0.0",
     "cookie-parser": "^1.4.5",

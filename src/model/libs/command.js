@@ -52,7 +52,7 @@ const updateTable = objectionTableClass => data =>
         objectionTableClass.query()
             .findById(data.id)
             .patch(fp.omit("id")(data))
-            .then(() => data)
+            .then(() => data.specifications ? fp.set("specifications")(JSON.parse(data.specifications))(data) : data)
             .catch(packError("updateTable: " + objectionTableClass.tableName))
     )
 
