@@ -12,7 +12,8 @@ router.get('/warehouseResponsible', (req, res, next) => {
     sendP(next)(res)(response)
 })
 
-router.post('/bindDevices', (req, res, next) => {
+router.post('/subDevices', async (req, res, next) => {
+    await Device.query().where("parent_id",req.body.id).patch({"parent_id":null})
     const response = Device.query().findByIds(req.body.ids).patchAndFetch({parent_id:req.body.id})
     sendP(next)(res)(response)
 })

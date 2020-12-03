@@ -1026,7 +1026,7 @@ paths:
       operationId: get-inv-warehouseResponsible
       description: Возвращает коллекцию ответственных за склад
     parameters: []
-  /bindDevices:
+  /subDevices:
     post:
       summary: Привязка устройств к другому устройству
       operationId: post-bindDevices
@@ -1048,6 +1048,7 @@ paths:
                   type: array
                   items:
                     type: integer
+    parameters: []
   /locations:
     get:
       summary: Получение списка локаций
