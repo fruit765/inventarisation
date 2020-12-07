@@ -35,7 +35,7 @@ const getCell = objectionTableClass => cellName => cellId =>
     )
 
 const getTable = objectionTableClass =>
-    attemptP(() =>
+    attemptP(() => 
         objectionTableClass.query()
             .catch(packError("getTable: " + objectionTableClass.tableName))
     )
