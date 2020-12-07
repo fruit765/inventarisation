@@ -20,12 +20,12 @@ router.post('/subDevices', async (req, res, next) => {
     sendP(next)(res)(response)
 })
 
-router.post('/post_dep_loc/:status', async (req, res, next) => {
+router.get('/post_dep_loc', async (req, res, next) => {
     let response
-    
-    if (req.params.status === "free") {
+
+    if (req.query.status === "free") {
         response = Post_dep_loc.query().where("free", ">", 0)
-    } else if (req.params.status === "all") {
+    } else if (req.query.status === "all") {
         response = Post_dep_loc.query()
     }
 

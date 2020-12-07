@@ -31,6 +31,13 @@ const makeQueryJSchema = oApiMethodBlock => {
     return JSchema
 }
 
+const makePathJSchema = oApiMethodBlock => {
+
+    oApiMethodBlock
+
+    return JSchema
+}
+
 const makeReqBodyJSchema = fp.get("requestBody.application/json.schema")
 
 const makeReqValidatorsObj = ajvImp => oApiObj => fp.mapValues(
