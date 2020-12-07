@@ -1,3 +1,4 @@
 /.project
 node_modules
 /serverConfig.js
+/server.log
