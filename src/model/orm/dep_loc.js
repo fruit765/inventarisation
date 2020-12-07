@@ -10,7 +10,7 @@ Model.knex(knex)
 module.exports = class Dep_loc extends Model {
     static get tableName() {
         return "dep_loc"
-    }
+    } 
 
     static get relationMappings() {
         const Department = require("./department")
@@ -45,7 +45,7 @@ module.exports = class Dep_loc extends Model {
                     to: "post_dep_loc.dep_loc_id"
                 }
             },
-            
+
             account_owner: {
                 relation: Model.HasManyRelation,
                 modelClass: Account_owner,
