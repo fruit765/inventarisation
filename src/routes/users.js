@@ -10,9 +10,11 @@ router.route('/users')
         send(next)(res)(getTable(User))
     })
     .post( (req, res, next) => {
+        req.body.contact = JSON.stringify(req.body.contact)
         send(next)(res)(insertTable(User)(req.body))
     })
     .patch((req, res, next) => {
+        req.body.contact = JSON.stringify(req.body.contact)
         send(next)(res)(updateTable(User)(req.body))
     })
 
