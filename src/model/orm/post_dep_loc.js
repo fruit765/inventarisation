@@ -32,7 +32,7 @@ module.exports = class Post_dep_loc extends Model {
                 modelClass: Dep_loc,
                 join: {
                     from: "post_dep_loc.dep_loc_id",
-                    to: "post.id"
+                    to: "dep_loc.id"
                 }
             },
 

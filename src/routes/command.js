@@ -20,7 +20,7 @@ router.post('/subDevices', async (req, res, next) => {
     sendP(next)(res)(response)
 })
 
-router.get('/post_dep_loc', async (req, res, next) => {
+router.get('/post_dep_loc_united', async (req, res, next) => {
     let response = Post_dep_loc
         .query()
         .joinRelated("[post, dep_loc.[department, location]]")

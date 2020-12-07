@@ -608,3 +608,146 @@
     '    at C:\\Users\\Admin\\Documents\\inventarisation\\src\\model\\libs\\express-openapi-validator.js:85:40\n' +
     '    at processTicksAndRejections (internal/process/task_queues.js:97:5)'
 }
+{
+  level: 'error',
+  timestamp: '2020-12-07T11:58:01.028Z',
+  ms: '+0ms',
+  message: "Post_dep_loc.relationMappings.dep_loc: join: either `from` or `to` must point to the owner model table and the other one to the related table. It might be that specified table 'post' is not correct",
+  stack: "Error: Post_dep_loc.relationMappings.dep_loc: join: either `from` or `to` must point to the owner model table and the other one to the related table. It might be that specified table 'post' is not correct\n" +
+    '    at BelongsToOneRelation.createError (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\objection\\lib\\relations\\Relation.js:225:14)\n' +
+    '    at Object.createError (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\objection\\lib\\relations\\Relation.js:44:32)\n' +
+    '    at createRelationProperty (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\objection\\lib\\relations\\Relation.js:347:17)\n' +
+    '    at createJoinProperties (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\objection\\lib\\relations\\Relation.js:312:18)\n' +
+    '    at BelongsToOneRelation.setMapping (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\objection\\lib\\relations\\Relation.js:52:11)\n' +
+    '    at Function.getRelationUnsafe (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\objection\\lib\\model\\Model.js:643:30)\n' +
+    '    at RelationExpression.forEachChildExpression (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\objection\\lib\\queryBuilder\\RelationExpression.js:161:37)\n' +
+    '    at forEachChildExpression (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\objection\\lib\\queryBuilder\\join\\utils.js:17:8)\n' +
+    '    at TableTree._createChildNodes (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\objection\\lib\\queryBuilder\\join\\TableTree.js:62:5)\n' +
+    '    at TableTree._createNodes (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\objection\\lib\\queryBuilder\\join\\TableTree.js:43:10)\n' +
+    '    at new TableTree (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\objection\\lib\\queryBuilder\\join\\TableTree.js:15:10)\n' +
+    '    at Function.create (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\objection\\lib\\queryBuilder\\join\\TableTree.js:19:12)\n' +
+    '    at RelationJoiner._getTableTree (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\objection\\lib\\queryBuilder\\join\\RelationJoiner.js:96:34)\n' +
+    '    at RelationJoiner.build (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\objection\\lib\\queryBuilder\\join\\RelationJoiner.js:72:32)\n' +
+    '    at JoinRelatedOperation.onBuild (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\objection\\lib\\queryBuilder\\operations\\JoinRelatedOperation.js:50:12)\n' +
+    '    at QueryBuilder.callOperationMethod (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\objection\\lib\\queryBuilder\\QueryBuilderOperationSupport.js:350:33)'
+}
+{
+  name: 'DBError',
+  nativeError: Error: select `post_dep_loc`.`id`, `post`, `department`, `location` from `post_dep_loc` inner join `post` on `post`.`id` = `post_dep_loc`.`post_id` inner join `dep_loc` on `dep_loc`.`id` = `post_dep_loc`.`dep_loc_id` inner join `department` as `dep_loc:department` on `dep_loc:department`.`id` = `dep_loc`.`department_id` inner join `location` as `dep_loc:location` on `dep_loc:location`.`id` = `dep_loc`.`location_id` where `free` > 0 - Unknown column 'post_dep_loc.dep_loc_id' in 'on clause'
+      at Packet.asError (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\packets\packet.js:712:17)
+      at Query.execute (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\commands\command.js:28:26)
+      at Connection.handlePacket (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\connection.js:425:32)
+      at PacketParser.onPacket (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\connection.js:75:12)
+      at PacketParser.executeStart (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\packet_parser.js:75:16)
+      at Socket.<anonymous> (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\connection.js:82:25)
+      at Socket.emit (events.js:315:20)
+      at addChunk (_stream_readable.js:295:12)
+      at readableAddChunk (_stream_readable.js:271:9)
+      at Socket.Readable.push (_stream_readable.js:212:10)
+      at TCP.onStreamRead (internal/stream_base_commons.js:186:23) {
+    code: 'ER_BAD_FIELD_ERROR',
+    errno: 1054,
+    sqlState: '42S22',
+    sqlMessage: "Unknown column 'post_dep_loc.dep_loc_id' in 'on clause'"
+  },
+  client: 'mysql',
+  level: 'error',
+  timestamp: '2020-12-07T11:59:48.380Z',
+  ms: '+0ms',
+  message: "select `post_dep_loc`.`id`, `post`, `department`, `location` from `post_dep_loc` inner join `post` on `post`.`id` = `post_dep_loc`.`post_id` inner join `dep_loc` on `dep_loc`.`id` = `post_dep_loc`.`dep_loc_id` inner join `department` as `dep_loc:department` on `dep_loc:department`.`id` = `dep_loc`.`department_id` inner join `location` as `dep_loc:location` on `dep_loc:location`.`id` = `dep_loc`.`location_id` where `free` > 0 - Unknown column 'post_dep_loc.dep_loc_id' in 'on clause'",
+  stack: "DBError: select `post_dep_loc`.`id`, `post`, `department`, `location` from `post_dep_loc` inner join `post` on `post`.`id` = `post_dep_loc`.`post_id` inner join `dep_loc` on `dep_loc`.`id` = `post_dep_loc`.`dep_loc_id` inner join `department` as `dep_loc:department` on `dep_loc:department`.`id` = `dep_loc`.`department_id` inner join `location` as `dep_loc:location` on `dep_loc:location`.`id` = `dep_loc`.`location_id` where `free` > 0 - Unknown column 'post_dep_loc.dep_loc_id' in 'on clause'\n" +
+    '    at wrapError (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\db-errors\\lib\\dbErrors.js:19:14)\n' +
+    '    at handleExecuteError (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\objection\\lib\\queryBuilder\\QueryBuilder.js:1506:32)\n' +
+    '    at QueryBuilder.execute (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\objection\\lib\\queryBuilder\\QueryBuilder.js:687:20)\n' +
+    '    at processTicksAndRejections (internal/process/task_queues.js:97:5)'
+}
+{
+  name: 'DBError',
+  nativeError: Error: select `post_dep_loc`.* from `post_dep_loc` inner join `post` on `post`.`id` = `post_dep_loc`.`post_id` inner join `dep_loc` on `dep_loc`.`id` = `post_dep_loc`.`dep_loc_id` where `free` > 0 - Unknown column 'post_dep_loc.dep_loc_id' in 'on clause'
+      at Packet.asError (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\packets\packet.js:712:17)
+      at Query.execute (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\commands\command.js:28:26)
+      at Connection.handlePacket (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\connection.js:425:32)
+      at PacketParser.onPacket (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\connection.js:75:12)
+      at PacketParser.executeStart (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\packet_parser.js:75:16)
+      at Socket.<anonymous> (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\connection.js:82:25)
+      at Socket.emit (events.js:315:20)
+      at addChunk (_stream_readable.js:295:12)
+      at readableAddChunk (_stream_readable.js:271:9)
+      at Socket.Readable.push (_stream_readable.js:212:10)
+      at TCP.onStreamRead (internal/stream_base_commons.js:186:23) {
+    code: 'ER_BAD_FIELD_ERROR',
+    errno: 1054,
+    sqlState: '42S22',
+    sqlMessage: "Unknown column 'post_dep_loc.dep_loc_id' in 'on clause'"
+  },
+  client: 'mysql',
+  level: 'error',
+  timestamp: '2020-12-07T12:03:44.261Z',
+  ms: '+0ms',
+  message: "select `post_dep_loc`.* from `post_dep_loc` inner join `post` on `post`.`id` = `post_dep_loc`.`post_id` inner join `dep_loc` on `dep_loc`.`id` = `post_dep_loc`.`dep_loc_id` where `free` > 0 - Unknown column 'post_dep_loc.dep_loc_id' in 'on clause'",
+  stack: "DBError: select `post_dep_loc`.* from `post_dep_loc` inner join `post` on `post`.`id` = `post_dep_loc`.`post_id` inner join `dep_loc` on `dep_loc`.`id` = `post_dep_loc`.`dep_loc_id` where `free` > 0 - Unknown column 'post_dep_loc.dep_loc_id' in 'on clause'\n" +
+    '    at wrapError (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\db-errors\\lib\\dbErrors.js:19:14)\n' +
+    '    at handleExecuteError (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\objection\\lib\\queryBuilder\\QueryBuilder.js:1506:32)\n' +
+    '    at QueryBuilder.execute (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\objection\\lib\\queryBuilder\\QueryBuilder.js:687:20)\n' +
+    '    at processTicksAndRejections (internal/process/task_queues.js:97:5)'
+}
+{
+  name: 'DBError',
+  nativeError: Error: select `post_dep_loc`.* from `post_dep_loc` inner join `dep_loc` on `dep_loc`.`id` = `post_dep_loc`.`dep_loc_id` where `free` > 0 - Unknown column 'post_dep_loc.dep_loc_id' in 'on clause'
+      at Packet.asError (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\packets\packet.js:712:17)
+      at Query.execute (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\commands\command.js:28:26)
+      at Connection.handlePacket (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\connection.js:425:32)
+      at PacketParser.onPacket (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\connection.js:75:12)
+      at PacketParser.executeStart (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\packet_parser.js:75:16)
+      at Socket.<anonymous> (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\connection.js:82:25)
+      at Socket.emit (events.js:315:20)
+      at addChunk (_stream_readable.js:295:12)
+      at readableAddChunk (_stream_readable.js:271:9)
+      at Socket.Readable.push (_stream_readable.js:212:10)
+      at TCP.onStreamRead (internal/stream_base_commons.js:186:23) {
+    code: 'ER_BAD_FIELD_ERROR',
+    errno: 1054,
+    sqlState: '42S22',
+    sqlMessage: "Unknown column 'post_dep_loc.dep_loc_id' in 'on clause'"
+  },
+  client: 'mysql',
+  level: 'error',
+  timestamp: '2020-12-07T12:04:09.951Z',
+  ms: '+0ms',
+  message: "select `post_dep_loc`.* from `post_dep_loc` inner join `dep_loc` on `dep_loc`.`id` = `post_dep_loc`.`dep_loc_id` where `free` > 0 - Unknown column 'post_dep_loc.dep_loc_id' in 'on clause'",
+  stack: "DBError: select `post_dep_loc`.* from `post_dep_loc` inner join `dep_loc` on `dep_loc`.`id` = `post_dep_loc`.`dep_loc_id` where `free` > 0 - Unknown column 'post_dep_loc.dep_loc_id' in 'on clause'\n" +
+    '    at wrapError (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\db-errors\\lib\\dbErrors.js:19:14)\n' +
+    '    at handleExecuteError (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\objection\\lib\\queryBuilder\\QueryBuilder.js:1506:32)\n' +
+    '    at QueryBuilder.execute (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\objection\\lib\\queryBuilder\\QueryBuilder.js:687:20)\n' +
+    '    at processTicksAndRejections (internal/process/task_queues.js:97:5)'
+}
+{
+  name: 'DBError',
+  nativeError: Error: select `post_dep_loc`.* from `post_dep_loc` inner join `post` on `post`.`id` = `post_dep_loc`.`post_id` inner join `dep_loc` on `dep_loc`.`id` = `post_dep_loc`.`dep_loc_id` inner join `department` as `dep_loc:department` on `dep_loc:department`.`id` = `dep_loc`.`department_id` inner join `location` as `dep_loc:location` on `dep_loc:location`.`id` = `dep_loc`.`location_id` where `free` > 0 - Unknown column 'dep_loc.department_id' in 'on clause'
+      at Packet.asError (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\packets\packet.js:712:17)
+      at Query.execute (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\commands\command.js:28:26)
+      at Connection.handlePacket (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\connection.js:425:32)
+      at PacketParser.onPacket (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\connection.js:75:12)
+      at PacketParser.executeStart (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\packet_parser.js:75:16)
+      at Socket.<anonymous> (C:\Users\Admin\Documents\inventarisation\node_modules\mysql2\lib\connection.js:82:25)
+      at Socket.emit (events.js:315:20)
+      at addChunk (_stream_readable.js:295:12)
+      at readableAddChunk (_stream_readable.js:271:9)
+      at Socket.Readable.push (_stream_readable.js:212:10)
+      at TCP.onStreamRead (internal/stream_base_commons.js:186:23) {
+    code: 'ER_BAD_FIELD_ERROR',
+    errno: 1054,
+    sqlState: '42S22',
+    sqlMessage: "Unknown column 'dep_loc.department_id' in 'on clause'"
+  },
+  client: 'mysql',
+  level: 'error',
+  timestamp: '2020-12-07T12:06:42.631Z',
+  ms: '+0ms',
+  message: "select `post_dep_loc`.* from `post_dep_loc` inner join `post` on `post`.`id` = `post_dep_loc`.`post_id` inner join `dep_loc` on `dep_loc`.`id` = `post_dep_loc`.`dep_loc_id` inner join `department` as `dep_loc:department` on `dep_loc:department`.`id` = `dep_loc`.`department_id` inner join `location` as `dep_loc:location` on `dep_loc:location`.`id` = `dep_loc`.`location_id` where `free` > 0 - Unknown column 'dep_loc.department_id' in 'on clause'",
+  stack: "DBError: select `post_dep_loc`.* from `post_dep_loc` inner join `post` on `post`.`id` = `post_dep_loc`.`post_id` inner join `dep_loc` on `dep_loc`.`id` = `post_dep_loc`.`dep_loc_id` inner join `department` as `dep_loc:department` on `dep_loc:department`.`id` = `dep_loc`.`department_id` inner join `location` as `dep_loc:location` on `dep_loc:location`.`id` = `dep_loc`.`location_id` where `free` > 0 - Unknown column 'dep_loc.department_id' in 'on clause'\n" +
+    '    at wrapError (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\db-errors\\lib\\dbErrors.js:19:14)\n' +
+    '    at handleExecuteError (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\objection\\lib\\queryBuilder\\QueryBuilder.js:1506:32)\n' +
+    '    at QueryBuilder.execute (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\objection\\lib\\queryBuilder\\QueryBuilder.js:687:20)\n' +
+    '    at processTicksAndRejections (internal/process/task_queues.js:97:5)'
+}
