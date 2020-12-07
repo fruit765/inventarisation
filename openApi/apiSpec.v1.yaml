@@ -1108,6 +1108,27 @@ paths:
           name: status
           required: true
     parameters: []
+  /employers:
+    get:
+      summary: Получить список работодателей
+      tags: []
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    employer:
+                      type: string
+      operationId: get-employers
+      description: Получить список работодателей
 components:
   schemas: {}
   securitySchemes: {}

@@ -3,6 +3,7 @@
 const express = require('express')
 const { sendP } = require('../model/libs/command')
 const Device = require('../model/orm/device')
+const Employer = require('../model/orm/employer')
 const Post_dep_loc = require('../model/orm/post_dep_loc')
 
 const Responsibility = require('../model/orm/responsibility')
@@ -25,6 +26,7 @@ router.get('/post_dep_loc_united', async (req, res, next) => {
         .query()
         .joinRelated("[post, dep_loc.[department, location]]")
         .select("post_dep_loc.id", "post", "department", "location")
+        .clone()
 
     if (req.query.status === "free") {
         response = response.where("free", ">", 0)
@@ -32,5 +34,11 @@ router.get('/post_dep_loc_united', async (req, res, next) => {
 
     sendP(next)(res)(response)
 })
+
+router.get('/employers', async (req, res, next) => {
+    sendP(next)(res)(Employer.query())
+})
+
+
 
 module.exports = router
