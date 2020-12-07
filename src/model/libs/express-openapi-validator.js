@@ -31,13 +31,6 @@ const makeQueryJSchema = oApiMethodBlock => {
     return JSchema
 }
 
-const makePathJSchema = oApiMethodBlock => {
-
-    oApiMethodBlock
-
-    return JSchema
-}
-
 const makeReqBodyJSchema = fp.get("requestBody.application/json.schema")
 
 const makeReqValidatorsObj = ajvImp => oApiObj => fp.mapValues(
@@ -98,7 +91,7 @@ const expressMwFn = validatorsObjPromise => (req, res, next) => {
 const makeOApiObj = oApiPath => SwaggerParser.validate(oApiPath)
 
 const openApiValid = (validOpt) => {
-    const ajv = new Ajv()
+    const ajv = new Ajv({coerceTypes: true})
     const validatorsObjPromise = makeOApiObj(validOpt.apiSpec).then(makeReqValidatorsObj(ajv))
     return expressMwFn(validatorsObjPromise)
 }
