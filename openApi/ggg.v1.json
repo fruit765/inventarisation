@@ -8,5 +8,9 @@
     "height": {
       "type": "integer"
     }
-  }
+  },
+  "required": [
+    "weight",
+    "height"
+  ]
 }

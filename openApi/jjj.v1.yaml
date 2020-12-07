@@ -1,0 +1,49 @@
+openapi: 3.0.0
+info:
+  title: test
+  version: '1.0'
+  contact:
+    name: test
+  description: test
+  license:
+    name: test
+    url: test
+  termsOfService: test
+servers:
+  - url: 'http://localhost:3000'
+    description: test
+paths:
+  /test:
+    get:
+      summary: test
+      tags:
+        - test
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  gh:
+                    type: string
+      operationId: get-fgfg
+      description: fghfgh
+      parameters:
+        - in: query
+          name: test
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                dd:
+                  type: string
+components:
+  schemas: {}
+tags:
+  - name: test

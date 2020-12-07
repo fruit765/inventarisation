@@ -526,3 +526,85 @@
     '    at QueryBuilder.execute (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\objection\\lib\\queryBuilder\\QueryBuilder.js:687:20)\n' +
     '    at processTicksAndRejections (internal/process/task_queues.js:97:5)'
 }
+{
+  level: 'error',
+  timestamp: '2020-12-04T11:46:50.275Z',
+  ms: '+0ms',
+  message: 'patchAndFetch can only be called for instance operations',
+  stack: 'Error: patchAndFetch can only be called for instance operations\n' +
+    '    at C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\objection\\lib\\queryBuilder\\QueryBuilder.js:1025:15\n' +
+    '    at writeOperation (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\objection\\lib\\queryBuilder\\QueryBuilder.js:1683:5)\n' +
+    '    at QueryBuilder.patchAndFetch (C:\\Users\\Admin\\Documents\\inventarisation\\node_modules\\objection\\lib\\queryBuilder\\QueryBuilder.js:1021:12)\n' +
+    '    at C:\\Users\\Admin\\Documents\\inventarisation\\src\\routes\\command.js:17:61\n' +
+    '    at processTicksAndRejections (internal/process/task_queues.js:97:5)'
+}
+{
+  path: 'expressMwFn',
+  customErr: Error: expressMwFn
+      at C:\Users\Admin\Documents\inventarisation\src\model\libs\exceptionHandling.js:51:25
+      at C:\Users\Admin\Documents\inventarisation\src\model\libs\exceptionHandling.js:78:29
+      at processTicksAndRejections (internal/process/task_queues.js:97:5),
+  level: 'error',
+  timestamp: '2020-12-06T22:18:07.414Z',
+  ms: '+0ms',
+  message: "Cannot read property 'req' of undefined",
+  stack: "TypeError: Cannot read property 'req' of undefined\n" +
+    '    at C:\\Users\\Admin\\Documents\\inventarisation\\src\\model\\libs\\express-openapi-validator.js:85:36\n' +
+    '    at processTicksAndRejections (internal/process/task_queues.js:97:5)'
+}
+{
+  path: 'expressMwFn',
+  customErr: Error: expressMwFn
+      at C:\Users\Admin\Documents\inventarisation\src\model\libs\exceptionHandling.js:51:25
+      at C:\Users\Admin\Documents\inventarisation\src\model\libs\exceptionHandling.js:78:29
+      at processTicksAndRejections (internal/process/task_queues.js:97:5),
+  level: 'error',
+  timestamp: '2020-12-06T22:30:14.532Z',
+  ms: '+0ms',
+  message: "Cannot read property 'req' of undefined",
+  stack: "TypeError: Cannot read property 'req' of undefined\n" +
+    '    at C:\\Users\\Admin\\Documents\\inventarisation\\src\\model\\libs\\express-openapi-validator.js:86:36\n' +
+    '    at processTicksAndRejections (internal/process/task_queues.js:97:5)'
+}
+{
+  path: 'expressMwFn',
+  customErr: Error: expressMwFn
+      at C:\Users\Admin\Documents\inventarisation\src\model\libs\exceptionHandling.js:51:25
+      at C:\Users\Admin\Documents\inventarisation\src\model\libs\exceptionHandling.js:78:29
+      at processTicksAndRejections (internal/process/task_queues.js:97:5),
+  level: 'error',
+  timestamp: '2020-12-06T22:30:35.868Z',
+  ms: '+0ms',
+  message: "Cannot read property 'req' of undefined",
+  stack: "TypeError: Cannot read property 'req' of undefined\n" +
+    '    at C:\\Users\\Admin\\Documents\\inventarisation\\src\\model\\libs\\express-openapi-validator.js:86:36\n' +
+    '    at processTicksAndRejections (internal/process/task_queues.js:97:5)'
+}
+{
+  path: 'expressMwFn',
+  customErr: Error: expressMwFn
+      at C:\Users\Admin\Documents\inventarisation\src\model\libs\exceptionHandling.js:51:25
+      at C:\Users\Admin\Documents\inventarisation\src\model\libs\exceptionHandling.js:78:29
+      at processTicksAndRejections (internal/process/task_queues.js:97:5),
+  level: 'error',
+  timestamp: '2020-12-06T22:54:43.083Z',
+  ms: '+0ms',
+  message: "Cannot read property 'query' of undefined",
+  stack: "TypeError: Cannot read property 'query' of undefined\n" +
+    '    at C:\\Users\\Admin\\Documents\\inventarisation\\src\\model\\libs\\express-openapi-validator.js:85:40\n' +
+    '    at processTicksAndRejections (internal/process/task_queues.js:97:5)'
+}
+{
+  path: 'expressMwFn',
+  customErr: Error: expressMwFn
+      at C:\Users\Admin\Documents\inventarisation\src\model\libs\exceptionHandling.js:51:25
+      at C:\Users\Admin\Documents\inventarisation\src\model\libs\exceptionHandling.js:78:29
+      at processTicksAndRejections (internal/process/task_queues.js:97:5),
+  level: 'error',
+  timestamp: '2020-12-06T22:55:41.948Z',
+  ms: '+0ms',
+  message: "Cannot read property 'query' of undefined",
+  stack: "TypeError: Cannot read property 'query' of undefined\n" +
+    '    at C:\\Users\\Admin\\Documents\\inventarisation\\src\\model\\libs\\express-openapi-validator.js:85:40\n' +
+    '    at processTicksAndRejections (internal/process/task_queues.js:97:5)'
+}

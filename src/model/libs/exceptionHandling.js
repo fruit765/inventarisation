@@ -1,7 +1,7 @@
 "use strict"
 
 const fp = require("lodash/fp")
-const { Right, type, Left, map, either, mapLeft } = require("sanctuary")
+const { type, Left, either, mapLeft } = require("sanctuary")
 const winston = require("winston")
 const { consoleFormat } = require("winston-console-format")
 const { log } = require("../../../serverConfig")

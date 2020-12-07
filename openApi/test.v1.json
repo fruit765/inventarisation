@@ -20,7 +20,7 @@
     }
   ],
   "paths": {
-    "/test/{pthparams}": {
+    "/test/{pthparams}/{ghhgh}": {
       "get": {
         "summary": "rr",
         "tags": [
@@ -57,10 +57,21 @@
         "parameters": [
           {
             "schema": {
-              "type": "string"
+              "type": "string",
+              "enum": [
+                "dsf",
+                "fddf"
+              ]
             },
             "in": "query",
             "name": "queryparams"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "555"
           }
         ]
       },
@@ -113,66 +124,24 @@
           "name": "pthparams",
           "in": "path",
           "required": true
+        },
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "ghhgh",
+          "in": "path",
+          "required": true
         }
       ]
     },
-    "/test/11": {
+    "/fffffff": {
       "get": {
         "summary": "Your GET endpoint",
         "tags": [],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {}
-                }
-              }
-            }
-          }
-        },
-        "operationId": "get-test-11",
-        "parameters": [
-          {
-            "schema": {
-              "type": "string"
-            },
-            "in": "query",
-            "name": "111"
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {}
-              }
-            }
-          }
-        }
-      },
-      "parameters": []
-    }
-  },
-  "components": {
-    "schemas": {
-      "ggg": {
-        "title": "ggg",
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          }
-        }
+        "responses": {},
+        "operationId": "get-fffffff"
       }
     }
-  },
-  "tags": [
-    {
-      "name": "test"
-    }
-  ]
+  }
 }

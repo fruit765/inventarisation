@@ -14,7 +14,7 @@ module.exports = class User extends Model {
 
     static get relationMappings() {
         const Employer = require("./employer")
-        const Post = require("./post")
+        const Post_dep_loc = require("./post_dep_loc")
         const Credentials = require("./credentials")
         const Device = require("./device")
         const History = require("./history")
@@ -76,12 +76,12 @@ module.exports = class User extends Model {
                 }
             },
 
-            post: {
+            post_dep_loc: {
                 relation: Model.BelongsToOneRelation,
-                modelClass: Post,
+                modelClass: Post_dep_loc,
                 join: {
-                    from: "user.post_id",
-                    to: "post.id"
+                    from: "user.post_dep_loc_id",
+                    to: "post_dep_loc.id"
                 }
             }
         }

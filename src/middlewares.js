@@ -12,6 +12,7 @@ const passport = require("passport")
 const { serializeUser, deserializeUser, localStrategy } = require("./model/libs/authentication")
 const createError = require("http-errors")
 const { authorizationRequest } = require("./model/libs/authorization")
+const openApiValid = require("./model/libs/express-openapi-validator")
 
 const knex = Knex(dbConfig)
 const store = new KnexSessionStore({
@@ -54,13 +55,19 @@ module.exports = function (app) {
 
     app.use(/^(?!\/login)/, authorizationRequest)
 
+    // app.use(
+    //     OpenApiValidator.middleware({
+    //         apiSpec: "./openApi/apiSpec.v1.yaml",
+    //         //formats: [],
+    //         validateSecurity: false,
+    //         validateRequests: true,
+    //         coerceTypes: true
+    //     })
+    // )
+
     app.use(
-        OpenApiValidator.middleware({
-            apiSpec: "./openApi/apiSpec.v1.yaml",
-            //formats: [],
-            validateSecurity: false,
-            validateRequests: true,
-            coerceTypes: true
+        openApiValid({
+            apiSpec: "./openApi/apiSpec.v1.yaml"
         })
     )
 

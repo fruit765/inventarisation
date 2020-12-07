@@ -15,7 +15,7 @@ module.exports = class Location extends Model {
     static get relationMappings() {
         const Device = require("./device")
         const User = require("./user")
-        const Dep_loc = require("./dep_loc")
+        const Dep_loc = require("./department")
 
         return {
             device: {

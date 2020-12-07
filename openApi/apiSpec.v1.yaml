@@ -1069,6 +1069,45 @@ paths:
                       type: string
       operationId: get-locations
       description: Получение списка локаций
+  '/post_dep_loc_united/{status}':
+    get:
+      summary: Получает список должностей
+      tags: []
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    post:
+                      type: string
+                    department:
+                      type: string
+                    location:
+                      type: string
+                  required:
+                    - id
+                    - post
+                    - department
+                    - location
+      operationId: get-post_dep_loc_united
+      description: |-
+        Получает список должностей
+        флаг free в status pathParams, указывает на вывод свободных вакансий
+      parameters: []
+    parameters:
+      - schema:
+          type: string
+        name: status
+        in: path
+        required: true
 components:
   schemas: {}
   securitySchemes: {}
