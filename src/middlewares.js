@@ -67,7 +67,10 @@ module.exports = function (app) {
 
     app.use(
         openApiValid({
-            apiSpec: "./openApi/apiSpec.v1.yaml"
+            apiSpec: "./openApi/apiSpec.v1.yaml",
+            validateRequests: {
+                coerceTypes: true
+            }
         })
     )
 

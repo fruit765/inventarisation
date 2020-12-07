@@ -14,19 +14,20 @@ router.get('/warehouseResponsible', (req, res, next) => {
 })
 
 router.post('/subDevices', async (req, res, next) => {
-    await Device.query().where("parent_id",req.body.id).patch({"parent_id":null})
-    await Device.query().findByIds(req.body.ids).patch({parent_id:req.body.id})
+    await Device.query().where("parent_id", req.body.id).patch({ "parent_id": null })
+    await Device.query().findByIds(req.body.ids).patch({ parent_id: req.body.id })
     const response = Device.query().findByIds(req.body.ids)
     sendP(next)(res)(response)
 })
 
 router.get('/post_dep_loc', async (req, res, next) => {
-    let response
+    let response = Post_dep_loc
+        .query()
+        .joinRelated("[post, dep_loc.[department, location]]")
+        .select("post_dep_loc.id", "post", "department", "location")
 
     if (req.query.status === "free") {
-        response = Post_dep_loc.query().where("free", ">", 0)
-    } else if (req.query.status === "all") {
-        response = Post_dep_loc.query()
+        response = response.where("free", ">", 0)
     }
 
     sendP(next)(res)(response)

@@ -91,7 +91,7 @@ const expressMwFn = validatorsObjPromise => (req, res, next) => {
 const makeOApiObj = oApiPath => SwaggerParser.validate(oApiPath)
 
 const openApiValid = (validOpt) => {
-    const ajv = new Ajv({coerceTypes: true})
+    const ajv = new Ajv(validOpt.validateRequests)
     const validatorsObjPromise = makeOApiObj(validOpt.apiSpec).then(makeReqValidatorsObj(ajv))
     return expressMwFn(validatorsObjPromise)
 }
