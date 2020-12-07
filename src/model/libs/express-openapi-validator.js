@@ -51,7 +51,7 @@ const makeReqValidatorsObj = ajvImp => oApiObj => fp.mapValues(
 
         return Object.keys(req).length ? { req } : undefined
     })
-)(oApiObj.paths)
+)(fp.mapKeys(fp.toLower)(oApiObj.paths))
 
 const validate = (ajvValidator, object, next) => {
     if (ajvValidator) {
@@ -73,6 +73,7 @@ const expressMwFn = validatorsObjPromise => (req, res, next) => {
             const validPathBlock = fp.get(`${req.path.toLocaleLowerCase()}`)(validatorsObj)
 
             if (!validPathBlock) {
+                console.log(validatorsObj)
                 return next(new createError.NotFound())
             }
 
