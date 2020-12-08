@@ -845,7 +845,8 @@ paths:
                 appointment_data:
                   type: string
                   format: date
-                contact: {}
+                contact:
+                  x-json: stringify
               required:
                 - post_dep_loc_id
                 - location_id
@@ -903,7 +904,8 @@ paths:
                 appointment_date:
                   type: string
                   format: date
-                contact: {}
+                contact:
+                  x-json: stringify
               required:
                 - id
   /credentials:

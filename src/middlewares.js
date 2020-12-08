@@ -70,6 +70,11 @@ module.exports = function (app) {
             apiSpec: "./openApi/apiSpec.v1.yaml",
             validateRequests: {
                 coerceTypes: true
+            },
+            addKeywords: {
+                "x-json": (schema, data) => {
+                    
+                }
             }
         })
     )

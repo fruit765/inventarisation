@@ -53,6 +53,7 @@ const updateTable = objectionTableClass => data =>
             .findById(data.id)
             .patch(fp.omit("id")(data))
             .then(() => data.specifications ? fp.set("specifications")(JSON.parse(data.specifications))(data) : data)
+            .then(() => data.contact ? fp.set("contact")(JSON.parse(data.contact))(data) : data)
             .catch(packError("updateTable: " + objectionTableClass.tableName))
     )
 
