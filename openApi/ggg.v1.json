@@ -2,15 +2,13 @@
   "title": "ggg",
   "type": "object",
   "properties": {
-    "weight": {
-      "type": "integer"
-    },
-    "height": {
-      "type": "integer"
+    "a": {
+      "type": "object",
+      "properties": {
+        "t": {
+          "type": "string"
+        }
+      }
     }
-  },
-  "required": [
-    "weight",
-    "height"
-  ]
+  }
 }

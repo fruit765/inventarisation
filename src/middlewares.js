@@ -69,11 +69,30 @@ module.exports = function (app) {
         openApiValid({
             apiSpec: "./openApi/apiSpec.v1.yaml",
             validateRequests: {
+                removeAdditional: true,
                 coerceTypes: true
             },
             addKeywords: {
-                "x-json": (schema, data) => {
+                "x-json": (keywordValue, data, jssch, gpth, objData, keyData) => {
+                    if (keywordValue === "stringify") {
+                        objData[keyData] = JSON.stringify(data)
+                    } else if (keywordValue === "parse") {
+                        try {
+                            objData[keyData] = JSON.parse(data)
+                        } catch {
+                            objData[keyData] = undefined
+                        }
+                    }
+
+                    return true
+                },
+
+                "x-date": (keywordValue, data, jssch, gpth, objData, keyData) => {
+                    if (keywordValue === "toIso") {
+                        objData[keyData] = dateToIso(data)
+                    } 
                     
+                    return true
                 }
             }
         })

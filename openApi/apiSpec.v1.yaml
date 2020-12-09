@@ -138,6 +138,7 @@ paths:
               properties:
                 parent_id:
                   type: integer
+                  nullable: true
                 category_id:
                   type: integer
                 status_id:
@@ -158,13 +159,16 @@ paths:
                   type: integer
                 isArchive:
                   type: integer
-                specifications: {}
+                specifications:
+                  x-json: stringify
                 date_purchase:
                   type: string
                   format: date
+                  x-date: toIso
                 date_warranty_end:
                   type: string
                   format: date
+                  x-date: toIso
                 inv_number:
                   type: string
               required:
@@ -194,6 +198,7 @@ paths:
                     type: integer
                   parent_id:
                     type: integer
+                    nullable: true
                   category_id:
                     type: integer
                   status_id:
@@ -214,7 +219,8 @@ paths:
                     type: integer
                   isArchive:
                     type: integer
-                  specifications: {}
+                  specifications:
+                    x-json: stringify
                   date_purchase:
                     type: string
                     format: date
@@ -260,9 +266,11 @@ paths:
                 date_purchase:
                   type: string
                   format: date
+                  x-date: toIso
                 date_warranty_end:
                   type: string
                   format: date
+                  x-date: toIso
                 inv_number:
                   type: string
               required:

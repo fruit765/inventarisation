@@ -4,6 +4,7 @@ const Ajv = require('ajv')
 const SwaggerParser = require("@apidevtools/swagger-parser")
 const fp = require('lodash/fp')
 const transform = require("lodash/fp/transform").convert({ 'cap': false })
+const forIn = require("lodash/fp/forIn").convert({ 'cap': false })
 const createError = require('http-errors')
 const { handleCustomError } = require('./exceptionHandling')
 
@@ -16,7 +17,7 @@ const makeQueryJSchema = oApiMethodBlock => {
         fp.filter(x => x.schema) //не работает с content, исключаем
     )(oApiMethodBlock)
 
-    if (fp.isNil(paramsInQuery)) {
+    if (fp.isNil(paramsInQuery[0])) {
         return undefined
     }
 
@@ -31,7 +32,7 @@ const makeQueryJSchema = oApiMethodBlock => {
     return JSchema
 }
 
-const makeReqBodyJSchema = fp.get("requestBody.application/json.schema")
+const makeReqBodyJSchema = fp.get("requestBody.content.application/json.schema")
 
 const makeReqValidatorsObj = ajvImp => oApiObj => fp.mapValues(
     fp.mapValues((oApiMethodBlock) => {
@@ -73,7 +74,6 @@ const expressMwFn = validatorsObjPromise => (req, res, next) => {
             const validPathBlock = fp.get(`${req.path.toLocaleLowerCase()}`)(validatorsObj)
 
             if (!validPathBlock) {
-                console.log(validatorsObj)
                 return next(new createError.NotFound())
             }
 
@@ -82,7 +82,6 @@ const expressMwFn = validatorsObjPromise => (req, res, next) => {
             if (!validReqBlock) {
                 return next(new createError.MethodNotAllowed())
             }
- 
             validate(validReqBlock.query, req.query, next)
             validate(validReqBlock.body, req.body, next)
         })
@@ -91,8 +90,18 @@ const expressMwFn = validatorsObjPromise => (req, res, next) => {
 
 const makeOApiObj = oApiPath => SwaggerParser.validate(oApiPath)
 
+const addKeyword = ajvImp => forIn((value, key) => {
+    ajvImp.addKeyword(key, {
+        async: true,
+        validate: value
+    })
+})
+
 const openApiValid = (validOpt) => {
     const ajv = new Ajv(validOpt.validateRequests)
+
+    addKeyword(ajv)(validOpt.addKeywords)
+
     const validatorsObjPromise = makeOApiObj(validOpt.apiSpec).then(makeReqValidatorsObj(ajv))
     return expressMwFn(validatorsObjPromise)
 }
