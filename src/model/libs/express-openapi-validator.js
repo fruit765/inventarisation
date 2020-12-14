@@ -15,6 +15,7 @@ class OpenApiValid {
         this.ajv = new Ajv(options.validateRequests)
         this._addKeyword()
         this._parseOApi()
+        this._makeReqValidatorsObj()
     }
 
     _parseOApi() {
@@ -38,7 +39,7 @@ class OpenApiValid {
         )(oApiMethodBlock)
 
         if (fp.isNil(paramsInQuery[0])) {
-            return undefined
+            return null
         }
 
         const JSchema = transform((result, queryValue) => {
@@ -53,7 +54,7 @@ class OpenApiValid {
     }
 
     _makeReqBodyJSchema(oApiMethodBlock) {
-        return fp.get("requestBody.content.application/json.schema")(oApiMethodBlock)
+        return fp.get("requestBody.content.application/json.schema")(oApiMethodBlock) || null
     }
 
     _validate(ajvValidator, object, next) {
@@ -70,29 +71,56 @@ class OpenApiValid {
         }
     }
 
-    makeReqValidatorsObj() {
+    _makeReqValidatorsObj() {
         this.reqValidatorsObjPromise = this.rawOApiObjPromise.then(
             rawOApiObj => fp.mapValues(
                 fp.mapValues((oApiMethodBlock) => {
                     const req = {}
-                    const queryJSchema = this._makeQueryJSchema(oApiMethodBlock)
-                    const bodyJSchema = this._makeReqBodyJSchema(oApiMethodBlock)
 
-                    if (bodyJSchema) {
-                        bodyJSchema["$async"] = true
-                        req.body = this.ajv.compile(bodyJSchema)
+                    const queryJSchema = this._makeQueryJSchema(oApiMethodBlock) || {
+                        type: "object",
+                        properties: {}
                     }
 
-                    if (queryJSchema) {
-                        queryJSchema["$async"] = true
-                        req.query = this.ajv.compile(queryJSchema)
+                    const bodyJSchema = this._makeReqBodyJSchema(oApiMethodBlock) || {
+                        type: "object",
+                        properties: {}
                     }
 
-                    return Object.keys(req).length ? { req } : undefined
+                    bodyJSchema["$async"] = true
+                    req.body = this.ajv.compile(bodyJSchema)
+
+                    queryJSchema["$async"] = true
+                    req.query = this.ajv.compile(queryJSchema)
+
+                    return { req }
+
                 }))(fp.mapKeys(fp.toLower)(rawOApiObj.paths))
         )
-        return this
     }
+
+    // _makeResValidatorsObj() {
+    //     this.resValidatorsObjPromise = this.rawOApiObjPromise.then(
+    //         rawOApiObj => fp.mapValues(
+    //             fp.mapValues((oApiMethodBlock) => {
+    //                 const req = {}
+    //                 const queryJSchema = this._makeQueryJSchema(oApiMethodBlock)
+    //                 const bodyJSchema = this._makeReqBodyJSchema(oApiMethodBlock)
+
+    //                 if (bodyJSchema) {
+    //                     bodyJSchema["$async"] = true
+    //                     req.body = this.ajv.compile(bodyJSchema)
+    //                 }
+
+    //                 if (queryJSchema) {
+    //                     queryJSchema["$async"] = true
+    //                     req.query = this.ajv.compile(queryJSchema)
+    //                 }
+
+    //                 return Object.keys(req).length ? { req } : undefined
+    //             }))(fp.mapKeys(fp.toLower)(rawOApiObj.paths))
+    //     )
+    // }
 
     buildExpressMw() {
         return (req, res, next) => {
@@ -109,6 +137,7 @@ class OpenApiValid {
                     if (!validReqBlock) {
                         return next(new createError.MethodNotAllowed())
                     }
+                    
                     this._validate(validReqBlock.query, req.query, next)
                     this._validate(validReqBlock.body, req.body, next)
                 })
@@ -118,7 +147,7 @@ class OpenApiValid {
 
 const openApiValidator = (options) => {
     const openApiValid = new OpenApiValid(options)
-    return openApiValid.makeReqValidatorsObj().buildExpressMw()
+    return openApiValid.buildExpressMw()
 }
 
 module.exports = openApiValidator
