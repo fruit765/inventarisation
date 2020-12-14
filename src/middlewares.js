@@ -56,37 +56,37 @@ module.exports = function (app) {
 
     app.use(/^(?!\/login)/, authorizationRequest)
 
-    app.use(
-        openApiValidator({
-            apiSpec: "./openApi/apiSpec.v1.yaml",
-            validateRequests: {
-                removeAdditional: "all",
-                coerceTypes: true
-            },
-            addKeywords: {
-                "x-json": (keywordValue, data, jssch, gpth, objData, keyData) => {
-                    if (keywordValue === "stringify") {
-                        objData[keyData] = JSON.stringify(data)
-                    } else if (keywordValue === "parse") {
-                        try {
-                            objData[keyData] = JSON.parse(data)
-                        } catch {
-                            objData[keyData] = undefined
-                        }
-                    }
+    // app.use(
+    //     openApiValidator({
+    //         apiSpec: "./openApi/apiSpec.v1.yaml",
+    //         validateRequests: {
+    //             removeAdditional: "all",
+    //             coerceTypes: true
+    //         },
+    //         addKeywords: {
+    //             "x-json": (keywordValue, data, jssch, gpth, objData, keyData) => {
+    //                 if (keywordValue === "stringify") {
+    //                     objData[keyData] = JSON.stringify(data)
+    //                 } else if (keywordValue === "parse") {
+    //                     try {
+    //                         objData[keyData] = JSON.parse(data)
+    //                     } catch {
+    //                         objData[keyData] = undefined
+    //                     }
+    //                 }
 
-                    return true
-                },
+    //                 return true
+    //             },
 
-                "x-date": (keywordValue, data, jssch, gpth, objData, keyData) => {
-                    if (keywordValue === "toIso") {
-                        objData[keyData] = dateToIso(data)
-                    } 
+    //             "x-date": (keywordValue, data, jssch, gpth, objData, keyData) => {
+    //                 if (keywordValue === "toIso") {
+    //                     objData[keyData] = dateToIso(data)
+    //                 } 
                     
-                    return true
-                }
-            }
-        })
-    )
+    //                 return true
+    //             }
+    //         }
+    //     })
+    // )
 
 }
