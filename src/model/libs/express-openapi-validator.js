@@ -57,13 +57,13 @@ class OpenApiValid {
         return fp.get("requestBody.content.application/json.schema")(oApiMethodBlock) || null
     }
 
-    _validate(ajvValidator, object, next) {
+    _validate(ajvValidator, object) {
         if (ajvValidator) {
-            ajvValidator(object)
-                .then(() => next())
+            return ajvValidator(object)
+                .then(x => true)
                 .catch(err => {
                     if (err instanceof Ajv.ValidationError) {
-                        return next(new createError.BadRequest(err.message))
+                        return false
                     } else {
                         throw err
                     }
@@ -94,7 +94,7 @@ class OpenApiValid {
                     req.query = this.ajv.compile(queryJSchema)
 
                     return { req }
-
+                    
                 }))(fp.mapKeys(fp.toLower)(rawOApiObj.paths))
         )
     }
@@ -124,8 +124,8 @@ class OpenApiValid {
 
     buildExpressMw() {
         return (req, res, next) => {
-            return this.reqValidatorsObjPromise
-                .then(validatorsObj => {
+            this.reqValidatorsObjPromise
+                .then(async validatorsObj => {
                     const validPathBlock = fp.get(`${req.path.toLocaleLowerCase()}`)(validatorsObj)
 
                     if (!validPathBlock) {
@@ -137,9 +137,14 @@ class OpenApiValid {
                     if (!validReqBlock) {
                         return next(new createError.MethodNotAllowed())
                     }
-                    
-                    this._validate(validReqBlock.query, req.query, next)
-                    this._validate(validReqBlock.body, req.body, next)
+                
+                    const queryIsValid = await this._validate(validReqBlock.query, req.query, next)
+                    const bodyIsValid = await this._validate(validReqBlock.body, req.body, next)
+                    if (queryIsValid && bodyIsValid) {
+                        next()
+                    } else {
+                        next(new createError.BadRequest(err.message))
+                    }
                 })
         }
     }
