@@ -105,14 +105,14 @@ module.exports = class Device extends Model {
                 }
             },
 
-            act: {
-                relation: Model.HasManyRelation,
-                modelClass: Act,
-                join: {
-                    from: "device.id",
-                    to: ref("act.description:device_id").castInt()
-                }
-            }
+            // act: {
+            //     relation: Model.HasManyRelation,
+            //     modelClass: Act,
+            //     join: {
+            //         from: "device.id",
+            //         to: ref("act.description:device_id").castInt()
+            //     }
+            // }
         }
     }
 
