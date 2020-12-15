@@ -21,6 +21,7 @@ module.exports = class Device extends Model {
         const Location = require("./location")
         const User = require("./user")
         const History = require("./history")
+        const Act = require("./act")
 
         return {
             brand: {
@@ -102,8 +103,23 @@ module.exports = class Device extends Model {
                     from: "device.id",
                     to: "device.parent_id"
                 }
+            },
+
+            act: {
+                relation: Model.HasManyRelation,
+                modelClass: Act,
+                join: {
+                    from: "device.id",
+                    to: ref("act.description:device_id").castInt()
+                }
             }
         }
+    }
+
+    static async getWithVirtualStatus() {
+        return this.query().joinRelated("status").select("device.*","status.status")
+        // const devices = await this.query().joinRelated("act.act_type")
+        // for 
     }
 
 }

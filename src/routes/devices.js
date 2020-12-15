@@ -8,9 +8,7 @@ const router = express.Router()
 
 router.route('/devices')
     .get((req, res, next) => {
-        //const virtualStock = Device.query().joinRelated()
-
-        sendP(next)(res)(Device.query().joinRelated("status").select("device.*","status.status"))
+        sendP(next)(res)(Device.getWithVirtualStatus())
     })
     .post((req, res, next) => {
         send(next)(res)(insertTable(Device)(req.body))
@@ -27,7 +25,12 @@ router.route('/devices')
 
         }
 
-        send(next)(res)(updateTable(Device)(req.body))
+        await Device.query()
+            .findById(req.body.id)
+            .patch(fp.omit("id")(req.body))
+            .then(() => req.body.specifications ? fp.set("specifications")(JSON.parse(req.body.specifications))(req.body) : req.body)
+
+        sendP(next)(res)(Device.getWithVirtualStatus())
     })
 
 module.exports = router
