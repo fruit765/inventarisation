@@ -124,6 +124,9 @@ class OpenApiValid {
 
     buildExpressMw() {
         return (req, res, next) => {
+            // this.resValidatorsObjPromise
+            // const _json=res.json
+            // res.json = function (x) {console.log(this.statusCode); _json.bind(this)(x)}
             this.reqValidatorsObjPromise
                 .then(async validatorsObj => {
                     const validPathBlock = fp.get(`${req.path.toLocaleLowerCase()}`)(validatorsObj)

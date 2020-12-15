@@ -75,4 +75,5 @@ const getDevRelatedTabValueAssociatedCatId = objectionTableClass => catId =>
         .select(objectionTableClass.tableName + ".*")
         .catch(packError("getDevRelatedTabValueAssociatedCatId"))
 
+
 module.exports = { validateDataBySchema, getTable, getCell, send, sendP, insertTable, updateTable, deleteTable, getDevRelatedTabValueAssociatedCatId, dateToIso }

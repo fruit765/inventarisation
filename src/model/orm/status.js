@@ -26,4 +26,9 @@ module.exports = class Status extends Model {
             }
         }
     }
+
+    static async getIdByStatus(status) {
+        const statusRow = await this.query().where({status}).first()
+        return statusRow.id
+    }
 }

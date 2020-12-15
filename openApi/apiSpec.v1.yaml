@@ -70,6 +70,7 @@ paths:
                     - inv_number
       operationId: get-devices
       description: Получить список оборудования
+      parameters: []
     post:
       summary: Добавить оборудование
       operationId: post-devices
@@ -201,8 +202,8 @@ paths:
                     nullable: true
                   category_id:
                     type: integer
-                  status_id:
-                    type: integer
+                  status:
+                    type: string
                   user_id:
                     type: integer
                   supplier_id:
@@ -244,8 +245,6 @@ paths:
                   type: integer
                 category_id:
                   type: integer
-                status_id:
-                  type: integer
                 user_id:
                   type: integer
                 supplier_id:
@@ -275,6 +274,12 @@ paths:
                   type: string
               required:
                 - id
+        description: ''
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: action
   /brands:
     get:
       summary: Получить данные из таблицы brand
@@ -1139,6 +1144,72 @@ paths:
                       type: string
       operationId: get-employers
       description: Получить список работодателей
+  /acts:
+    get:
+      summary: Получение актов
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    ref:
+                      type: string
+                    user_id:
+                      type: integer
+                    act_type_id:
+                      type: integer
+                    description: {}
+                    comments:
+                      type: string
+                  required:
+                    - id
+                    - ref
+                    - user_id
+                    - act_type_id
+                    - comments
+      operationId: get-acts
+      description: Получает акты
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: actType
+  /actFile:
+    get:
+      summary: Получить картинку акта
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+            multipart/form-data:
+              schema:
+                type: object
+                properties:
+                  '':
+                    type: string
+      operationId: get-actPictures
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: id
+          required: true
+      description: Получить картинку акта
+      tags:
+        - acts
+    parameters: []
 components:
   schemas: {}
   securitySchemes: {}
@@ -1148,3 +1219,4 @@ tags:
   - name: authorization
   - name: users
   - name: accounts
+  - name: acts
