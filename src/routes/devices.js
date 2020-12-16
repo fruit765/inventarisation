@@ -29,8 +29,8 @@ router.route('/devices')
         } else if (req.query.action === "remove") {
             if (virtualDevice.status === "given") {
                 req.body.status_id = await Status.getIdByStatus("stock")
-            } else {
-                req.body.status_id = await Status.getIdByStatus("given")
+            } else if (virtualDevice.status === "givenIncomplete") {
+                //req.body.status_id = await Status.getIdByStatus("given")
                 //req.body.user_id = await History.query().where("device_id", req.body.id)
             }
         }
