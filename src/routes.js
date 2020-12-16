@@ -1,6 +1,6 @@
 "use strict"
 
-const { send, getTable } = require("./model/libs/command")
+const { send, getTable, sendP, getWithVirtualStatus } = require("./model/libs/command")
 const devices = require('./routes/devices')
 const categories = require('./routes/categories')
 const users = require('./routes/users')
@@ -10,6 +10,7 @@ const login = require('./routes/login')
 const command = require('./routes/command')
 const Status = require("./model/orm/status")
 const Location = require("./model/orm/location")
+const Device = require("./model/orm/device")
 
 module.exports = function (app) {
 
@@ -32,6 +33,9 @@ module.exports = function (app) {
     app.use(categories)
     app.use(users)
     app.use(command)
+    app.get("/test", (req, res, next) => {
+        sendP(next)(res)(getWithVirtualStatus())
+    })
 
     app.use((err, req, res, next) => {
         // format error

@@ -15,9 +15,9 @@ module.exports = class Act_type extends Model {
 
     static get relationMappings() {
         const Act = require("./act")
-        
+
         return {
-            user: {
+            act: {
                 relation: Model.HasManyRelation,
                 modelClass: Act,
                 join: {
@@ -27,4 +27,5 @@ module.exports = class Act_type extends Model {
             }
         }
     }
+
 }

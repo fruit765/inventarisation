@@ -1210,6 +1210,23 @@ paths:
       tags:
         - acts
     parameters: []
+  /test:
+    get:
+      summary: asdasdsa
+      tags:
+        - device
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  dd:
+                    type: string
+      operationId: get-test
+      description: sadasd
 components:
   schemas: {}
   securitySchemes: {}

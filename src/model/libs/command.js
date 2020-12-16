@@ -6,11 +6,13 @@ const { valueError, packError } = require("./exceptionHandling")
 const Ajv = require("ajv")
 const { Left } = require("sanctuary")
 const luxon = require('luxon')
+const Device = require("../orm/device")
+const Act = require("../orm/act")
 
 const send = next => res => fluture => fork(valueError(next))((x) => res.json(x))(fluture)
 const sendP = next => res => pomise => pomise.then((x) => res.json(x)).catch(valueError(next))
 
-const dateToIso = dateString => luxon.DateTime.fromISO(dateString,{ zone: "UTC" }).toUTC().toISO()
+const dateToIso = dateString => luxon.DateTime.fromISO(dateString, { zone: "UTC" }).toUTC().toISO()
 
 const validateDataBySchema = (schema) => (data) => {
     const ajv = new Ajv()
@@ -35,7 +37,7 @@ const getCell = objectionTableClass => cellName => cellId =>
     )
 
 const getTable = objectionTableClass =>
-    attemptP(() => 
+    attemptP(() =>
         objectionTableClass.query()
             .catch(packError("getTable: " + objectionTableClass.tableName))
     )
@@ -75,5 +77,37 @@ const getDevRelatedTabValueAssociatedCatId = objectionTableClass => catId =>
         .select(objectionTableClass.tableName + ".*")
         .catch(packError("getDevRelatedTabValueAssociatedCatId"))
 
+const getWithVirtualStatus = async () => {
+    const devices = await Device.query().joinRelated("status").select("device.*", "status")
+    const acts = await Act.query().joinRelated("act_type").whereNotNull("ref").andWhere("act_type", "device_given").select("description")
+    const [devicesStockIds, devicesGivenIds] = devices.reduce((sum, value) => {
+        if (value.status === "stock") {
+            sum[0].push(value.id)
+        } else if (value.status === "given") {
+            sum[1].push(value.id)
+        }
+        return sum
+    }, [[], []])
 
-module.exports = { validateDataBySchema, getTable, getCell, send, sendP, insertTable, updateTable, deleteTable, getDevRelatedTabValueAssociatedCatId, dateToIso }
+    const givenActDevIds = acts.reduce((sum, value) => {
+        return sum.concat(value.description.device_ids)
+    }, [])
+
+    const devicesReturnIds = fp.intersection(givenActDevIds, devicesStockIds)
+    const devicesGivenIncompleteIds = fp.difference(devicesGivenIds, givenActDevIds)
+
+    const devicesKeyId = fp.keyBy("id", devices)
+
+    for (let value of devicesReturnIds) {
+        devicesKeyId[value]["status"] = "return"
+    }
+
+    for (let value of devicesGivenIncompleteIds) {
+        devicesKeyId[value]["status"] = "givenIncomplete"
+    }
+
+
+    return fp.values(devicesKeyId)
+}
+
+module.exports = { getWithVirtualStatus, validateDataBySchema, getTable, getCell, send, sendP, insertTable, updateTable, deleteTable, getDevRelatedTabValueAssociatedCatId, dateToIso }
