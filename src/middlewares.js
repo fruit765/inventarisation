@@ -81,9 +81,25 @@ module.exports = function (app) {
                 "x-date": (keywordValue, data, jssch, gpth, objData, keyData) => {
                     if (keywordValue === "toIso") {
                         objData[keyData] = dateToIso(data)
-                    } 
-                    
+                    }
+
                     return true
+                },
+
+                "x-type": (keywordValue, data, jssch, gpth, objData, keyData) => {
+                    if (keywordValue === "intOrNull") {
+                        if (data === null || data === "null" || data === "") {
+                            objData[keyData] = null
+                        } else {
+                            objData[keyData] = parseInt(Number(data))
+                        }
+                    }
+
+                    if (isNaN(objData[keyData])) {
+                        throw new Error(keyData+" must be null or integer")
+                    } else {
+                        return true
+                    }
                 }
             }
         })

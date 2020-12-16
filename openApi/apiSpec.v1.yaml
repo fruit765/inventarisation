@@ -241,8 +241,7 @@ paths:
                 id:
                   type: integer
                 parent_id:
-                  type: integer
-                  nullable: true
+                  x-type: "intOrNull"
                 category_id:
                   type: integer
                 user_id:
