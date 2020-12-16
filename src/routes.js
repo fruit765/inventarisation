@@ -1,6 +1,6 @@
 "use strict"
 
-const { send, getTable, sendP, getWithVirtualStatus } = require("./model/libs/command")
+const { send, getTable, sendP, getDevWithVirtualStatus } = require("./model/libs/command")
 const devices = require('./routes/devices')
 const categories = require('./routes/categories')
 const users = require('./routes/users')
@@ -34,7 +34,7 @@ module.exports = function (app) {
     app.use(users)
     app.use(command)
     app.get("/test", (req, res, next) => {
-        sendP(next)(res)(getWithVirtualStatus())
+        sendP(next)(res)(getDevWithVirtualStatus(0))
     })
 
     app.use((err, req, res, next) => {

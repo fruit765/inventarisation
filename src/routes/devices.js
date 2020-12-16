@@ -16,13 +16,17 @@ router.route('/devices')
         send(next)(res)(insertTable(Device)(req.body))
     })
     .patch(async (req, res, next) => {
-        // const device = await Device
-        //     .query()
-        //     .findById(req.body.id)
-        //     .joinRelated("status")
-        //     .select("device.id as id","device.*", "status")
 
         const virtualDevice = (await getDevWithVirtualStatus(req.body.id))[0]
+
+        const getPrevStatus = async id => History
+            .query()
+            .where("device_id", id)
+            .whereRaw(`JSON_EXTRACT(diff, '$.status_id') IS NOT NULL`)
+            .orderBy('id', 'desc')
+            .limit(2)
+            .then(his => fp.get("[1].diff.user_id", his))
+            .then(userId => fp.isNil(userId) ? virtualDevice.user_id : userId)
 
         if (req.query.action === "bind") {
             req.body.status_id = await Status.getIdByStatus("given")
@@ -31,14 +35,11 @@ router.route('/devices')
                 req.body.status_id = await Status.getIdByStatus("stock")
             } else if (virtualDevice.status === "givenIncomplete") {
                 req.body.status_id = await Status.getIdByStatus("stock")
-                req.body.user_id = History
-                    .query()
-                    .where("device_id", req.body.id)
-                    .whereJsonHasAny("description", "status_id")
-                    //.whereRaw(`JSON_CONTAINS(history.description, '?', 'status')`, [req.body.id])
+                //req.body.user_id = await getPrevStatus(req.body.id)
+                //.whereRaw(`JSON_CONTAINS(history.description, '?', 'status')`, [req.body.id])
             } else if (virtualDevice.status === "return") {
                 req.body.status_id = await Status.getIdByStatus("given")
-                req.body.user_id = virtualDevice.user_id
+                //req.body.user_id = await getPrevStatus(req.body.id)
             }
         }
 
@@ -47,8 +48,6 @@ router.route('/devices')
             .patch(fp.omit("id")(req.body))
             .then(() => getDevWithVirtualStatus(req.body.id))
             .then(dev => dev[0])
-        //.then(fp.set("status", status))
-        //.then(() => req.body.specifications ? fp.set("specifications")(JSON.parse(req.body.specifications))(req.body) : req.body)
 
         sendP(next)(res)(updQuery)
     })
