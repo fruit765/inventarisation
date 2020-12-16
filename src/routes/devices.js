@@ -30,15 +30,22 @@ router.route('/devices')
             if (virtualDevice.status === "given") {
                 req.body.status_id = await Status.getIdByStatus("stock")
             } else if (virtualDevice.status === "givenIncomplete") {
-                //req.body.status_id = await Status.getIdByStatus("given")
-                //req.body.user_id = await History.query().where("device_id", req.body.id)
+                req.body.status_id = await Status.getIdByStatus("stock")
+                req.body.user_id = History
+                    .query()
+                    .where("device_id", req.body.id)
+                    .whereJsonHasAny("description", "status_id")
+                    //.whereRaw(`JSON_CONTAINS(history.description, '?', 'status')`, [req.body.id])
+            } else if (virtualDevice.status === "return") {
+                req.body.status_id = await Status.getIdByStatus("given")
+                req.body.user_id = virtualDevice.user_id
             }
         }
 
         const updQuery = Device.query()
             .findById(req.body.id)
             .patch(fp.omit("id")(req.body))
-            .then(dev => getDevWithVirtualStatus(dev.id))
+            .then(() => getDevWithVirtualStatus(req.body.id))
             .then(dev => dev[0])
         //.then(fp.set("status", status))
         //.then(() => req.body.specifications ? fp.set("specifications")(JSON.parse(req.body.specifications))(req.body) : req.body)

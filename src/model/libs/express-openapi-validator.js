@@ -57,15 +57,15 @@ class OpenApiValid {
         return fp.get("requestBody.content.application/json.schema")(oApiMethodBlock) || null
     }
 
-    _validate(ajvValidator, object) {
+    _validate(ajvValidator, object, next) {
         if (ajvValidator) {
             return ajvValidator(object)
                 .then(x => true)
                 .catch(err => {
                     if (err instanceof Ajv.ValidationError) {
-                        return false
+                        next(new createError.BadRequest(err.errors))
                     } else {
-                        throw err
+                        next(err)
                     }
                 })
         }
@@ -145,9 +145,7 @@ class OpenApiValid {
                     const bodyIsValid = await this._validate(validReqBlock.body, req.body, next)
                     if (queryIsValid && bodyIsValid) {
                         next()
-                    } else {
-                        next(new createError.BadRequest(err.message))
-                    }
+                    } 
                 })
         }
     }
