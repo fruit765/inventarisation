@@ -77,8 +77,8 @@ const getDevRelatedTabValueAssociatedCatId = objectionTableClass => catId =>
         .select(objectionTableClass.tableName + ".*")
         .catch(packError("getDevRelatedTabValueAssociatedCatId"))
 
-const getWithVirtualStatus = async () => {
-    const devices = await Device.query().joinRelated("status").select("device.*", "status")
+const getDevWithVirtualStatus = async (devId) => {
+    const devices = await Device.query().joinRelated("status").select("device.*", "status").skipUndefined().where("id", devId)
     const acts = await Act.query().joinRelated("act_type").whereNotNull("ref").andWhere("act_type", "device_given").select("description")
     const [devicesStockIds, devicesGivenIds] = devices.reduce((sum, value) => {
         if (value.status === "stock") {
@@ -110,4 +110,4 @@ const getWithVirtualStatus = async () => {
     return fp.values(devicesKeyId)
 }
 
-module.exports = { getWithVirtualStatus, validateDataBySchema, getTable, getCell, send, sendP, insertTable, updateTable, deleteTable, getDevRelatedTabValueAssociatedCatId, dateToIso }
+module.exports = { getDevWithVirtualStatus, validateDataBySchema, getTable, getCell, send, sendP, insertTable, updateTable, deleteTable, getDevRelatedTabValueAssociatedCatId, dateToIso }
