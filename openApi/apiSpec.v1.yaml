@@ -242,6 +242,7 @@ paths:
                   type: integer
                 parent_id:
                   type: integer
+                  nullable: true
                 category_id:
                   type: integer
                 user_id:
