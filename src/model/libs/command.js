@@ -78,7 +78,7 @@ const getDevRelatedTabValueAssociatedCatId = objectionTableClass => catId =>
         .catch(packError("getDevRelatedTabValueAssociatedCatId"))
 
 const getDevWithVirtualStatus = async (devId) => {
-    const devices = await Device.query().joinRelated("status").select("device.*", "status").skipUndefined().where("id", devId)
+    const devices = await Device.query().joinRelated("status").select("device.*", "status").skipUndefined().where("device.id", devId)
     const acts = await Act.query().joinRelated("act_type").whereNotNull("ref").andWhere("act_type", "device_given").select("description")
     const [devicesStockIds, devicesGivenIds] = devices.reduce((sum, value) => {
         if (value.status === "stock") {

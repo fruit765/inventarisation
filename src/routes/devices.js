@@ -6,6 +6,7 @@ const Device = require('../model/orm/device')
 const History = require('../model/orm/history')
 const Status = require('../model/orm/status')
 const router = express.Router()
+const fp = require("lodash/fp")
 
 router.route('/devices')
     .get((req, res, next) => {
@@ -15,18 +16,18 @@ router.route('/devices')
         send(next)(res)(insertTable(Device)(req.body))
     })
     .patch(async (req, res, next) => {
-        const device = await Device
-            .query()
-            .findById(req.body.id)
-            .joinRelated("status")
-            .select("device.*", "status")
+        // const device = await Device
+        //     .query()
+        //     .findById(req.body.id)
+        //     .joinRelated("status")
+        //     .select("device.id as id","device.*", "status")
 
         const virtualDevice = (await getDevWithVirtualStatus(req.body.id))[0]
 
         if (req.query.action === "bind") {
             req.body.status_id = await Status.getIdByStatus("given")
         } else if (req.query.action === "remove") {
-            if (virtualDevice.status === "given" && virtualDevice.status === "givenIncomplete") {
+            if (virtualDevice.status === "given") {
                 req.body.status_id = await Status.getIdByStatus("stock")
             } else {
                 req.body.status_id = await Status.getIdByStatus("given")
