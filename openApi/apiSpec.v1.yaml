@@ -220,8 +220,7 @@ paths:
                     type: integer
                   isArchive:
                     type: integer
-                  specifications:
-                    x-json: stringify
+                  specifications: {}
                   date_purchase:
                     type: string
                     format: date
@@ -261,7 +260,8 @@ paths:
                   type: integer
                 isArchive:
                   type: integer
-                specifications: {}
+                specifications:
+                  x-json: stringify
                 date_purchase:
                   type: string
                   format: date
