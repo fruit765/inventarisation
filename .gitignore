@@ -2,3 +2,4 @@
 node_modules
 /serverConfig.js
 /server.log
+/tmp
