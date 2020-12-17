@@ -5,7 +5,6 @@ const dbConfig = require("../serverConfig").db
 const session = require("express-session")
 const express = require("express")
 const KnexSessionStore = require("connect-session-knex")(session)
-const OpenApiValidator = require("express-openapi-validator")
 const cors = require("cors")
 const Knex = require("knex")
 const passport = require("passport")
