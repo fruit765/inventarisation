@@ -77,4 +77,4 @@ const valueError = callback => err => {
 const handleCustomError = customErrName => callback => err =>
     packError(customErrName)(err).catch(valueError(callback))
 
-module.exports = { packError, valueError, handleCustomError } 
+module.exports = { packError, valueError, handleCustomError, logger } 

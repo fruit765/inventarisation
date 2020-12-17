@@ -6,7 +6,7 @@ const fp = require('lodash/fp')
 const transform = require("lodash/fp/transform").convert({ 'cap': false })
 const forIn = require("lodash/fp/forIn").convert({ 'cap': false })
 const createError = require('http-errors')
-
+const { logger } = require('./exceptionHandling')
 // проверка параметров пути не реализованна
 class OpenApiValid {
 
@@ -130,7 +130,7 @@ class OpenApiValid {
             this.reqValidatorsObjPromise
                 .then(async validatorsObj => {
                     const validPathBlock = fp.get(`${req.path.toLocaleLowerCase()}`)(validatorsObj)
-
+                    logger.error(validPathBlock)
                     if (!validPathBlock) {
                         return next(new createError.NotFound())
                     }

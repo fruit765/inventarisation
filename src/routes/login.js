@@ -3,7 +3,6 @@
 const express = require("express")
 const passport = require("passport")
 const router = express.Router()
-const fp = require("lodash/fp")
 
 router.route("/login")
     .get((req, res) => {
