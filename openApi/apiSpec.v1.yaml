@@ -241,7 +241,7 @@ paths:
                 id:
                   type: integer
                 parent_id:
-                  x-type: "intOrNull"
+                  x-type: intOrNull
                 category_id:
                   type: integer
                 user_id:
@@ -1227,6 +1227,34 @@ paths:
                     type: string
       operationId: get-test
       description: sadasd
+  /deviceAction:
+    post:
+      summary: ''
+      operationId: post-deviceAction
+      responses:
+        '200':
+          description: OK
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: action
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ids:
+                  type: array
+                  items:
+                    type: integer
+                user_id:
+                  type: integer
+              required:
+                - ids
+                - user_id
 components:
   schemas: {}
   securitySchemes: {}

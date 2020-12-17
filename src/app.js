@@ -4,9 +4,11 @@
 const express = require("express")
 const app = express()
 const port = require("../serverConfig").server.port
+const router = express.Router()
 
-require("./middlewares")(app)
-require("./routes.js")(app)
+require("./middlewares")(router)
+require("./routes.js")(router)
 
+app.use('/api', router)
 
 app.listen(port)
