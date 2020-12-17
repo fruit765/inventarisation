@@ -131,8 +131,6 @@ class OpenApiValid {
                 .then(async validatorsObj => {
                     const validPathBlock = fp.get(`${req.path.toLocaleLowerCase()}`)(validatorsObj)
 
-                    logger.error(req.path.toLocaleLowerCase())
-
                     if (!validPathBlock) {
                         return next(new createError.NotFound())
                     }
