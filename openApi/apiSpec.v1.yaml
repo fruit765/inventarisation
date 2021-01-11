@@ -1010,18 +1010,105 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  account_name_id:
+                    type: integer
+                  login:
+                    type: string
+                  password:
+                    type: string
+                  comments:
+                    type: string
+                  is_archive:
+                    type: integer
+                required:
+                  - id
+                  - account_name_id
+                  - login
+                  - password
+                  - is_archive
       description: Добавить аккаунт
       tags:
         - accounts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                account_name_id:
+                  type: integer
+                login:
+                  type: string
+                password:
+                  type: string
+                comments:
+                  type: string
+                is_archive:
+                  type: integer
+              required:
+                - account_name_id
+                - login
+                - password
+        description: ''
     patch:
       summary: Изменить аккаунт
       operationId: patch-accounts
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  account_name_id:
+                    type: integer
+                  login:
+                    type: string
+                  password:
+                    type: string
+                  comments:
+                    type: string
+                  is_archive:
+                    type: integer
+                required:
+                  - id
+                  - account_name_id
+                  - login
+                  - password
+                  - is_archive
       description: Изменить аккаунт
       tags:
         - accounts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                account_name_id:
+                  type: integer
+                login:
+                  type: string
+                password:
+                  type: string
+                comments:
+                  type: string
+                is_archive:
+                  type: integer
+              required:
+                - id
   /warehouseResponsible:
     get:
       summary: Получить список ответственных за склад
@@ -1229,7 +1316,7 @@ paths:
       description: sadasd
   /deviceAction:
     post:
-      summary: ''
+      summary: fdf
       operationId: post-deviceAction
       responses:
         '200':
@@ -1255,6 +1342,199 @@ paths:
               required:
                 - ids
                 - user_id
+      description: fff
+      tags:
+        - device
+  /account_types:
+    get:
+      summary: Изменение имен сервисов
+      tags:
+        - accounts
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  account_type:
+                    type: string
+                required:
+                  - id
+                  - account_type
+      operationId: get-account_names
+      description: Получение имен сервисов
+    parameters: []
+    post:
+      summary: Добавление имен сервисов
+      operationId: post-account_names
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  account_type:
+                    type: string
+                required:
+                  - id
+                  - account_type
+      description: Добавление имен сервисов
+      tags:
+        - accounts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                account_type:
+                  type: string
+              required:
+                - account_type
+    patch:
+      summary: Изменение имен сервисов
+      operationId: patch-account_names
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  account_type:
+                    type: string
+                required:
+                  - id
+                  - account_type
+      description: Изменение имен сервисов
+      tags:
+        - accounts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                account_type:
+                  type: string
+              required:
+                - id
+                - account_type
+  /account_owners:
+    get:
+      summary: Получить список владельцев сериса
+      tags:
+        - accounts
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  user_id:
+                    type: integer
+                  dep_loc_id:
+                    type: integer
+                  account_id:
+                    type: integer
+                required:
+                  - id
+                  - user_id
+                  - dep_loc_id
+                  - account_id
+      operationId: get-account_owners
+      description: Получить список владельцев сериса
+    post:
+      summary: Добавить владельца сервису
+      operationId: post-account_owners
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  user_id:
+                    type: integer
+                  dep_loc_id:
+                    type: integer
+                  account_id:
+                    type: integer
+                required:
+                  - id
+                  - user_id
+                  - dep_loc_id
+                  - account_id
+      tags:
+        - accounts
+      description: Добавить владельца сервису
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                user_id:
+                  type: integer
+                dep_loc_id:
+                  type: integer
+                account_id:
+                  type: integer
+              required:
+                - id
+                - user_id
+                - dep_loc_id
+                - account_id
+    delete:
+      summary: Удалить владельца у сервиса
+      operationId: delete-account_owners
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                required:
+                  - id
+      description: Удалить владельца у сервиса
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+              required:
+                - id
+      tags:
+        - accounts
 components:
   schemas: {}
   securitySchemes: {}

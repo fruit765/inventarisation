@@ -9,7 +9,7 @@ Model.knex(knex)
 
 module.exports = class Account_name extends Model {
     static get tableName() {
-        return "account_name"
+        return "account_type"
     }
 
     static get relationMappings() {
@@ -20,8 +20,8 @@ module.exports = class Account_name extends Model {
                 relation: Model.HasManyRelation,
                 modelClass: Account,
                 join: {
-                    from: "account_name.id",
-                    to: "account.account_name_id"
+                    from: "account_type.id",
+                    to: "account.account_type_id"
                 }
             }
         }

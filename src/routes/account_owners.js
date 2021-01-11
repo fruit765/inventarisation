@@ -2,20 +2,20 @@
 
 const express = require('express')
 const { sendP } = require('../model/libs/command')
-const Account = require('../model/orm/account')
 const Table = require('../model/libs/table')
-const table = new Table(Account)
+const Account_owner = require('../model/orm/account_owner')
+const table = new Table(Account_owner)
 const router = express.Router()
 
-router.route('/accounts')
+router.route('/account_owner')
     .get((req, res, next) => {
         sendP(next)(res)(table.get())
     })
     .post( (req, res, next) => {
         sendP(next)(res)(table.setActorId(req.user.id).insertAndFetch(req.body))
     })
-    .patch((req, res, next) => {
-        sendP(next)(res)(table.setActorId(req.user.id).patchAndFetch(req.body))
+    .delete((req, res, next) => {
+        sendP(next)(res)(table.setActorId(req.user.id).delete(req.body.id))
     })
 
 module.exports = router

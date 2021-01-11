@@ -8,6 +8,11 @@ const suppliers = require('./routes/suppliers')
 const brands = require('./routes/brands')
 const login = require('./routes/login')
 const command = require('./routes/command')
+
+const accounts = require('./routes/accounts')
+const account_types = require('./routes/account_types')
+const accounts_owner = require('./routes/account_owners')
+
 const Status = require("./model/orm/status")
 const Location = require("./model/orm/location")
 const Device = require("./model/orm/device")
@@ -33,8 +38,15 @@ module.exports = function (app) {
     app.use(categories)
     app.use(users)
     app.use(command)
-    app.get("/test", (req, res, next) => {
-        sendP(next)(res)(getDevWithVirtualStatus(0))
+
+    app.use(accounts)
+    app.use(account_types)
+    app.use(accounts_owner)
+
+    app.get("/test", async (req, res, next) => {
+        //sendP(next)(res)(getDevWithVirtualStatus(0))
+        //const a = await Device.query().findById(2)
+        console.log(req.user)
     })
 
     app.use((err, req, res, next) => {
