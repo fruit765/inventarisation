@@ -1365,7 +1365,7 @@ paths:
                 required:
                   - id
                   - account_type
-      operationId: get-account_names
+      operationId: get-account_types
       description: Получение имен сервисов
     parameters: []
     post:
@@ -1461,6 +1461,19 @@ paths:
                   - account_id
       operationId: get-account_owners
       description: Получить список владельцев сериса
+      parameters:
+        - schema:
+            type: integer
+          in: query
+          name: accountId
+        - schema:
+            type: integer
+          in: query
+          name: locDepId
+        - schema:
+            type: integer
+          in: query
+          name: userId
     post:
       summary: Добавить владельца сервису
       operationId: post-account_owners

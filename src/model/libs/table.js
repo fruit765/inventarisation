@@ -66,7 +66,6 @@ module.exports = class Table {
         const historyInsertData = {}
         historyInsertData[this._HColName] = data.id
         historyInsertData["actor_id"] = this._options.actor_id
-        //historyInsertData["action_code_id"] = 
         historyInsertData["diff"] = JSON.stringify(fp.omit("id")(data))
         await History.query().insert(historyInsertData)
     }
@@ -143,6 +142,10 @@ module.exports = class Table {
     }
 
     get() {
+        return this._tableClass.query()
+    }
+
+    query() {
         return this._tableClass.query()
     }
 }  
