@@ -3,7 +3,7 @@
 const Knex = require("knex")
 const dbConfig = require("../../../serverConfig").db
 const knex = Knex(dbConfig)
-const fp = require("lodash/fp")
+const _ = require("lodash")
 const createError = require('http-errors')
 
 const History = require("../orm/history")
@@ -17,8 +17,8 @@ module.exports = class Table {
         this._tableClass = tableClass
         this._tableName = this._tableClass.tableName
 
-        options.isSaveHistory = fp.isNil(options.isSaveHistory) ? true : Boolean(options.isSaveHistory)
-
+        options.isSaveHistory = _.isNil(options.isSaveHistory) ? true : Boolean(options.isSaveHistory)
+        
         this.setOpt(options)
     }
 
@@ -35,12 +35,24 @@ module.exports = class Table {
         return fillteredData
     }
 
+    _delUndefined(obj) {
+        const result = {}
+        for (let key in obj) {
+            if (obj[key] !== undefined) {
+                result[key] = obj[key]
+            }
+        }
+
+        return result
+    }
+
     setOpt(options) {
         this.setActorId(options.actorId)
+        
         if (options.isSaveHistory != undefined) {
             if (options.isSaveHistory) {
                 this._HColName = this._tableName + "_id"
-                this._isSaveHistory = knex.schema.hasColumn(this._tableName, this._HColName)
+                this._isSaveHistory = knex.schema.hasColumn(History.tableName, this._HColName)
             } else {
                 this._isSaveHistory = Promise.resolve(false)
             }
@@ -58,20 +70,21 @@ module.exports = class Table {
 
     async _saveHistory(data) {
         const isSaveHistory = await this._isSaveHistory
+        const dataWithoutId = this._delUndefined(_.omit(data,"id"))
 
-        if (!isSaveHistory) {
+        if (!isSaveHistory || !Object.keys(dataWithoutId).length) {
             return null
         }
 
-        const historyInsertData = {}
+        const historyInsertData  = {}
         historyInsertData[this._HColName] = data.id
         historyInsertData["actor_id"] = this._options.actor_id
-        historyInsertData["diff"] = JSON.stringify(fp.omit("id")(data))
+        historyInsertData["diff"] = JSON.stringify(dataWithoutId)
         await History.query().insert(historyInsertData)
     }
 
     async _getActualData(id) {
-        let actualData = await this._tableClass.query().findById(data.id)
+        let actualData = await this._tableClass.query().findById(id)
         if(!actualData) {
             throw createError(400, "This id was not found") 
         }
@@ -129,7 +142,7 @@ module.exports = class Table {
         const readyToPatch = this._stringifyColJSON(onlyModWithCompleteJson)
         await this._tableClass.query()
             .findById(data.id)
-            .patch(fp.omit("id")(readyToPatch))
+            .patch(_.omit(readyToPatch,"id"))
         await this._saveHistory(onlyModData)
         return onlyModWithCompleteJson
     }
