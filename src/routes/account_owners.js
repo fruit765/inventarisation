@@ -17,5 +17,5 @@ router.route('/account_owner')
     .delete((req, res, next) => {
         sendP(next)(res)(table.setActorId(req.user.id).delete(req.body.id))
     })
-
+ 
 module.exports = router
