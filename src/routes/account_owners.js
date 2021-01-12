@@ -9,7 +9,7 @@ const router = express.Router()
 
 router.route('/account_owner')
     .get((req, res, next) => {
-        sendP(next)(res)(table.query().where({user_id:}))
+        sendP(next)(res)(table.query().where())
     })
     .post( (req, res, next) => {
         sendP(next)(res)(table.setActorId(req.user.id).insertAndFetch(req.body))
