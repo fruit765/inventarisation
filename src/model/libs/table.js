@@ -144,7 +144,7 @@ module.exports = class Table {
             .findById(data.id)
             .patch(_.omit(readyToPatch,"id"))
         await this._saveHistory(onlyModData)
-        return onlyModWithCompleteJson
+        return this._getActualData(data.id)
     }
 
     async delete (id) {
