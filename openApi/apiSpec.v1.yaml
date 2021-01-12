@@ -982,7 +982,7 @@ paths:
                 properties:
                   id:
                     type: integer
-                  account_name_id:
+                  account_type_id:
                     type: integer
                   login:
                     type: string
@@ -994,7 +994,7 @@ paths:
                     type: integer
                 required:
                   - id
-                  - account_name_id
+                  - account_type_id
                   - login
                   - password
                   - is_archive
@@ -1017,7 +1017,7 @@ paths:
                 properties:
                   id:
                     type: integer
-                  account_name_id:
+                  account_type_id:
                     type: integer
                   login:
                     type: string
@@ -1029,7 +1029,7 @@ paths:
                     type: integer
                 required:
                   - id
-                  - account_name_id
+                  - account_type_id
                   - login
                   - password
                   - is_archive
@@ -1042,7 +1042,7 @@ paths:
             schema:
               type: object
               properties:
-                account_name_id:
+                account_type_id:
                   type: integer
                 login:
                   type: string
@@ -1053,7 +1053,7 @@ paths:
                 is_archive:
                   type: integer
               required:
-                - account_name_id
+                - account_type_id
                 - login
                 - password
         description: ''
@@ -1070,7 +1070,7 @@ paths:
                 properties:
                   id:
                     type: integer
-                  account_name_id:
+                  account_type_id:
                     type: integer
                   login:
                     type: string
@@ -1082,7 +1082,7 @@ paths:
                     type: integer
                 required:
                   - id
-                  - account_name_id
+                  - account_type_id
                   - login
                   - password
                   - is_archive
@@ -1097,7 +1097,7 @@ paths:
               properties:
                 id:
                   type: integer
-                account_name_id:
+                account_type_id:
                   type: integer
                 login:
                   type: string
