@@ -18,8 +18,32 @@ module.exports = class Table {
         this._tableName = this._tableClass.tableName
 
         options.isSaveHistory = _.isNil(options.isSaveHistory) ? true : Boolean(options.isSaveHistory)
-        
+
         this.setOpt(options)
+    }
+
+    setOpt(options) {
+        this.setActorId(options.actorId)
+        this.setSaveHistory(options.isSaveHistory)
+        return this
+    }
+
+    setActorId(actorId) {
+        if (actorId) {
+            this._options.actor_id = actorId
+        }
+        return this
+    }
+
+    setSaveHistory(isSaveHistory) {
+        if (isSaveHistory != undefined) {
+            if (isSaveHistory) {
+                this._HColName = this._tableName + "_id"
+                this._isSaveHistory = knex.schema.hasColumn(History.tableName, this._HColName)
+            } else {
+                this._isSaveHistory = Promise.resolve(false)
+            }
+        }
     }
 
     _differenceProps(value1, value2) {
@@ -46,47 +70,25 @@ module.exports = class Table {
         return result
     }
 
-    setOpt(options) {
-        this.setActorId(options.actorId)
-        
-        if (options.isSaveHistory != undefined) {
-            if (options.isSaveHistory) {
-                this._HColName = this._tableName + "_id"
-                this._isSaveHistory = knex.schema.hasColumn(History.tableName, this._HColName)
-            } else {
-                this._isSaveHistory = Promise.resolve(false)
-            }
-        }
-
-        return this
-    }
-
-    setActorId(actorId) {
-        if (actorId) {
-            this._options.actor_id = actorId
-        }
-        return this
-    }
-
-    async _saveHistory(data) {
+    async _saveHistory(data, trx) {
         const isSaveHistory = await this._isSaveHistory
-        const dataWithoutId = this._delUndefined(_.omit(data,"id"))
+        const dataWithoutId = this._delUndefined(_.omit(data, "id"))
 
-        if (!isSaveHistory || !Object.keys(dataWithoutId).length) {
+        if (!isSaveHistory || !Object.keys(dataWithoutId).length || this._options.actor_id == undefined) {
             return null
         }
 
-        const historyInsertData  = {}
+        const historyInsertData = {}
         historyInsertData[this._HColName] = data.id
         historyInsertData["actor_id"] = this._options.actor_id
         historyInsertData["diff"] = JSON.stringify(dataWithoutId)
-        await History.query().insert(historyInsertData)
+        await History.query(trx).insert(historyInsertData)
     }
 
     async _getActualData(id) {
         let actualData = await this._tableClass.query().findById(id)
-        if(!actualData) {
-            throw createError(400, "This id was not found") 
+        if (!actualData) {
+            throw this._createError400Pattern("id", "This id was not found")
         }
         return actualData
     }
@@ -130,9 +132,11 @@ module.exports = class Table {
 
     async insertAndFetch(data) {
         const readyToInsert = this._stringifyColJSON(data)
-        const insertRow = await this._tableClass.query().insertAndFetch(readyToInsert)
-        await this._saveHistory(insertRow)
-        return insertRow
+        return this._tableClass.transaction(async trx => {
+            const insertRow = await this._tableClass.query(trx).insertAndFetch(readyToInsert)
+            await this._saveHistory(insertRow, trx)
+            return insertRow
+        })
     }
 
     async patchAndFetch(data) {
@@ -140,17 +144,28 @@ module.exports = class Table {
         const onlyModData = await this._onlyModifyWithId(data, actualData)
         const onlyModWithCompleteJson = await this._additionColJSON(onlyModData, actualData)
         const readyToPatch = this._stringifyColJSON(onlyModWithCompleteJson)
-        await this._tableClass.query()
-            .findById(data.id)
-            .patch(_.omit(readyToPatch,"id"))
-        await this._saveHistory(onlyModData)
-        return this._getActualData(data.id)
+        await this._tableClass.transaction(async trx => {
+            await this._tableClass.query(trx)
+                .findById(data.id)
+                .patch(_.omit(readyToPatch, "id"))
+            await this._saveHistory(onlyModData, trx)
+        })
+        return Object.assign(actualData, onlyModWithCompleteJson)
     }
 
-    async delete (id) {
+    _createError400Pattern(dataPath, message) {
+        return createError(400, [{
+            "dataPath": "." + dataPath,
+            "message": message
+        }])
+    }
+
+    async delete(id) {
         const res = await this.query().deleteById(id)
         if (res) {
             return id
+        } else {
+            throw this._createError400Pattern("id", "This id was not found")
         }
     }
 

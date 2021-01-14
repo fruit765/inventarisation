@@ -1206,9 +1206,10 @@ paths:
       parameters:
         - schema:
             type: string
+            enum:
+              - free
           in: query
           name: status
-          required: true
     parameters: []
   /employers:
     get:
@@ -1397,6 +1398,7 @@ paths:
               properties:
                 account_type:
                   type: string
+                  maxLength: 128
               required:
                 - account_type
     patch:
@@ -1430,6 +1432,7 @@ paths:
                   type: integer
                 account_type:
                   type: string
+                  maxLength: 128
               required:
                 - id
                 - account_type
@@ -1507,8 +1510,6 @@ paths:
             schema:
               type: object
               properties:
-                id:
-                  type: integer
                 user_id:
                   type: integer
                 dep_loc_id:
@@ -1516,9 +1517,6 @@ paths:
                 account_id:
                   type: integer
               required:
-                - id
-                - user_id
-                - dep_loc_id
                 - account_id
     delete:
       summary: Удалить владельца у сервиса
