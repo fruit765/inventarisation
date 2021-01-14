@@ -1472,7 +1472,7 @@ paths:
         - schema:
             type: integer
           in: query
-          name: locDepId
+          name: depLocId
         - schema:
             type: integer
           in: query
