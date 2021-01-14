@@ -70,11 +70,14 @@ module.exports = class Table {
         return result
     }
 
-    async _saveHistory(data, trx) {
+    async _saveHistory(data, actionTag, trx) {
         const isSaveHistory = await this._isSaveHistory
         const dataWithoutId = this._delUndefined(_.omit(data, "id"))
 
-        if (!isSaveHistory || !Object.keys(dataWithoutId).length || this._options.actor_id == undefined) {
+        if (
+            !isSaveHistory ||
+            (!Object.keys(dataWithoutId).length && actionTag !== "delete") ||
+            this._options.actor_id == undefined) {
             return null
         }
 
@@ -82,6 +85,7 @@ module.exports = class Table {
         historyInsertData[this._HColName] = data.id
         historyInsertData["actor_id"] = this._options.actor_id
         historyInsertData["diff"] = JSON.stringify(dataWithoutId)
+        historyInsertData["action_tag"] = actionTag
         await History.query(trx).insert(historyInsertData)
     }
 
@@ -134,7 +138,7 @@ module.exports = class Table {
         const readyToInsert = this._stringifyColJSON(data)
         return this._tableClass.transaction(async trx => {
             const insertRow = await this._tableClass.query(trx).insertAndFetch(readyToInsert)
-            await this._saveHistory(insertRow, trx)
+            await this._saveHistory(insertRow, "insert", trx)
             return insertRow
         })
     }
@@ -148,7 +152,7 @@ module.exports = class Table {
             await this._tableClass.query(trx)
                 .findById(data.id)
                 .patch(_.omit(readyToPatch, "id"))
-            await this._saveHistory(onlyModData, trx)
+            await this._saveHistory(onlyModData, "patch", trx)
         })
         return Object.assign(actualData, onlyModWithCompleteJson)
     }
@@ -161,12 +165,15 @@ module.exports = class Table {
     }
 
     async delete(id) {
-        const res = await this.query().deleteById(id)
-        if (res) {
-            return id
-        } else {
-            throw this._createError400Pattern("id", "This id was not found")
-        }
+        return this._tableClass.transaction(async trx => {
+            const res = await this.query(trx).deleteById(id)
+            if (res) {
+                this._saveHistory({ id }, "delete", trx)
+                return id
+            } else {
+                throw this._createError400Pattern("id", "This id was not found")
+            }
+        })
     }
 
     get() {

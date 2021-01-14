@@ -1546,6 +1546,26 @@ paths:
                 - id
       tags:
         - accounts
+  /dep_loc_united:
+    get:
+      summary: Поличить список отделов
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  department:
+                    type: string
+                  location:
+                    type: string
+      operationId: get-dep_loc_united
+      description: Поличить список отделов
 components:
   schemas: {}
   securitySchemes: {}

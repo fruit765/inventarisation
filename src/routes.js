@@ -9,6 +9,7 @@ const brands = require('./routes/brands')
 const login = require('./routes/login')
 const command = require('./routes/command')
 const post_dep_loc_united = require('./routes/post_dep_loc_united')
+const dep_loc_united = require('./routes/dep_loc_united')
 
 const accounts = require('./routes/accounts')
 const account_types = require('./routes/account_types')
@@ -40,6 +41,7 @@ module.exports = function (app) {
     app.use(users)
     app.use(command)
     app.use(post_dep_loc_united)
+    app.use(dep_loc_united)
 
     app.use(accounts)
     app.use(account_types)
