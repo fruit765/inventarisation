@@ -21,6 +21,6 @@ router.route('/post_dep_loc_united')
         sendP(next)(res)(response)
     })
     // .post()
-     
+      
 
 module.exports = router
