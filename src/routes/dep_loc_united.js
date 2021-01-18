@@ -3,7 +3,7 @@
 const express = require('express')
 const { sendP } = require('../model/libs/command')
 const Dep_loc = require('../model/orm/dep_loc')
-
+const table = new Table(Dep_loc)
 const router = express.Router()
 
 router.route('/dep_loc_united')
@@ -15,6 +15,10 @@ router.route('/dep_loc_united')
 
         sendP(next)(res)(response)
     })
+    // .post(async (req, res, next) => {
+    //     req.body.
+    //     table.insertAndFetch()
+    // })
      
 
 module.exports = router

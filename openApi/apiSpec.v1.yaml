@@ -1208,6 +1208,7 @@ paths:
             type: string
             enum:
               - free
+              - all
           in: query
           name: status
     parameters: []
@@ -1447,21 +1448,23 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                  user_id:
-                    type: integer
-                  dep_loc_id:
-                    type: integer
-                  account_id:
-                    type: integer
-                required:
-                  - id
-                  - user_id
-                  - dep_loc_id
-                  - account_id
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    user_id:
+                      type: integer
+                    dep_loc_id:
+                      type: integer
+                    account_id:
+                      type: integer
+                  required:
+                    - id
+                    - user_id
+                    - dep_loc_id
+                    - account_id
       operationId: get-account_owners
       description: Получить список владельцев сериса
       parameters:
