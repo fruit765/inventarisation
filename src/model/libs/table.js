@@ -170,7 +170,9 @@ module.exports = class Table {
             if (deletedData[0]) {
                 const ids = _.map(deletedData, 'id')
                 await this.query(trx).findByIds(ids).delete()
-                this._saveHistory({ id }, "delete", trx)
+                await Promise.all(ids.map((id) => {
+                    return this._saveHistory({ id }, "delete", trx)
+                }))
                 return deletedData
             } else {
                 throw this._createError400Pattern("id", "This id was not found")
