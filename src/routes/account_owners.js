@@ -33,6 +33,9 @@ router.route('/account_owners')
         sendP(next)(res)(table.insertAndFetch(req.body))
     })
     .delete((req, res, next) => {
+        if (Object.keys(req.body).length === 0) {
+            throw table.createError400Pattern("object", "object must be not empty")
+        }
         sendP(next)(res)(table.delete(req.body))
     })
 

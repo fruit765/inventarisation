@@ -92,7 +92,7 @@ module.exports = class Table {
     async _getActualData(id) {
         let actualData = await this._tableClass.query().findById(id)
         if (!actualData) {
-            throw this._createError400Pattern("id", "This id was not found")
+            throw this.createError400Pattern("id", "This id was not found")
         }
         return actualData
     }
@@ -157,7 +157,7 @@ module.exports = class Table {
         return Object.assign(actualData, onlyModWithCompleteJson)
     }
 
-    _createError400Pattern(dataPath, message) {
+    createError400Pattern(dataPath, message) {
         const err = createError(400)
         err.message = [{
             "dataPath": "." + dataPath,
@@ -170,7 +170,6 @@ module.exports = class Table {
         return this._tableClass.transaction(async trx => {
             const deletedData = await this.query(trx).where(findData)
             if (deletedData[0]) {
-                console.log(deletedData)
                 const ids = _.map(deletedData, 'id')
                 await this.query(trx).whereIn("id",ids).delete()
                 await Promise.all(ids.map((id) => {
@@ -178,7 +177,7 @@ module.exports = class Table {
                 }))
                 return deletedData
             } else {
-                throw this._createError400Pattern("object", "No records found based on your data")
+                throw this.createError400Pattern("object", "No records found based on your data")
             }
         })
     }
@@ -190,7 +189,7 @@ module.exports = class Table {
                 this._saveHistory({ id }, "delete", trx)
                 return id
             } else {
-                throw this._createError400Pattern("id", "This id was not found")
+                throw this.createError400Pattern("id", "This id was not found")
             }
         })
     }
