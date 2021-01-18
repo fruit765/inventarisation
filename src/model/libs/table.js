@@ -158,10 +158,12 @@ module.exports = class Table {
     }
 
     _createError400Pattern(dataPath, message) {
-        return createError(400, [{
+        const err = createError(400)
+        err.message = [{
             "dataPath": "." + dataPath,
             "message": message
-        }])
+        }]
+        return err
     }
 
     async delete(findData) {
@@ -174,6 +176,18 @@ module.exports = class Table {
                     return this._saveHistory({ id }, "delete", trx)
                 }))
                 return deletedData
+            } else {
+                throw this._createError400Pattern("object", "No records found based on your data")
+            }
+        })
+    }
+
+    async deleteById(id) {
+        return this._tableClass.transaction(async trx => {
+            const res = await this.query(trx).deleteById(id)
+            if (res) {
+                this._saveHistory({ id }, "delete", trx)
+                return id
             } else {
                 throw this._createError400Pattern("id", "This id was not found")
             }
