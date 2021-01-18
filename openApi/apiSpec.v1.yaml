@@ -1545,8 +1545,12 @@ paths:
               properties:
                 id:
                   type: integer
-              required:
-                - id
+                account_id:
+                  type: integer
+                user_id:
+                  type: integer
+                dep_loc_id:
+                  type: integer
       tags:
         - accounts
   /dep_loc_united:

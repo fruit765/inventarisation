@@ -164,12 +164,14 @@ module.exports = class Table {
         }])
     }
 
-    async delete(id) {
+    async delete(findData) {
         return this._tableClass.transaction(async trx => {
-            const res = await this.query(trx).deleteById(id)
-            if (res) {
+            const deletedData = await this.query(trx).where(findData)
+            if (deletedData[0]) {
+                const ids = _.map(deletedData, 'id')
+                await this.query(trx).findByIds(ids).delete()
                 this._saveHistory({ id }, "delete", trx)
-                return id
+                return deletedData
             } else {
                 throw this._createError400Pattern("id", "This id was not found")
             }

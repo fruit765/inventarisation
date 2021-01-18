@@ -33,7 +33,7 @@ router.route('/account_owners')
         sendP(next)(res)(table.insertAndFetch(req.body))
     })
     .delete((req, res, next) => {
-        sendP(next)(res)(table.delete(req.body.id))
+        sendP(next)(res)(table.delete(req.body))
     })
 
 module.exports = router
