@@ -170,11 +170,12 @@ module.exports = class Table {
         return this._tableClass.transaction(async trx => {
             const deletedData = await this.query(trx).where(findData)
             if (deletedData[0]) {
-                // const ids = _.map(deletedData, 'id')
-                // await this.query(trx).whereIn("id",ids).delete()
-                // await Promise.all(ids.map((id) => {
-                //     return this._saveHistory({ id }, "delete", trx)
-                // }))
+                console.log(deletedData)
+                const ids = _.map(deletedData, 'id')
+                await this.query(trx).whereIn("id",ids).delete()
+                await Promise.all(ids.map((id) => {
+                    return this._saveHistory({ id }, "delete", trx)
+                }))
                 return deletedData
             } else {
                 throw this._createError400Pattern("object", "No records found based on your data")
