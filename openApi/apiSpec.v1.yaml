@@ -1530,12 +1530,23 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                required:
-                  - id
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    user_id:
+                      type: integer
+                    dep_loc_id:
+                      type: integer
+                    account_id:
+                      type: integer
+                  required:
+                    - id
+                    - user_id
+                    - dep_loc_id
+                    - account_id
       description: Удалить владельца у сервиса
       requestBody:
         content:

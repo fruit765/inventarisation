@@ -100,11 +100,13 @@ const getDevWithVirtualStatus = async (devId) => {
 
     for (let value of devicesReturnIds) {
         devicesKeyId[value]["status"] = "return"
+        devicesKeyId[value]["status_id"] = 5
         //devicesKeyId[value]["user_id"] = 
     }
 
     for (let value of devicesGivenIncompleteIds) {
         devicesKeyId[value]["status"] = "givenIncomplete"
+        devicesKeyId[value]["status_id"] = 6
     }
 
 

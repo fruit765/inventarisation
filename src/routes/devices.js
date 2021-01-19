@@ -10,6 +10,8 @@ const fp = require("lodash/fp")
 
 router.route('/devices')
     .get((req, res, next) => {
+
+        
         sendP(next)(res)(getDevWithVirtualStatus())
     })
     .post((req, res, next) => {
