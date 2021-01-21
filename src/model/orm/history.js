@@ -13,21 +13,12 @@ module.exports = class History extends Model {
     }
 
     static get relationMappings() {
-        const Action_code = require("./action_code")
         const User = require("./user")
         const Account = require("./account")
         const Device = require("./device")
         const Event_confirm = require("./event_confirm")
 
         return {
-            action_code: {
-                relation: Model.BelongsToOneRelation,
-                modelClass: Action_code,
-                join: {
-                    from: "history.action_code_id",
-                    to: "action_code.id"
-                }
-            },
 
             actor: {
                 relation: Model.BelongsToOneRelation,
