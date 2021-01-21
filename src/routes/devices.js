@@ -7,11 +7,15 @@ const History = require('../model/orm/history')
 const Status = require('../model/orm/status')
 const router = express.Router()
 const fp = require("lodash/fp")
+const Table = require('../model/libs/table')
+const tableDevice = new Table(Device)
 
 router.route('/devices')
     .get((req, res, next) => {
+        tableDevice.getMap(value => {
+            
+        })
 
-        
         sendP(next)(res)(getDevWithVirtualStatus())
     })
     .post((req, res, next) => {

@@ -17,6 +17,7 @@ module.exports = class History extends Model {
         const User = require("./user")
         const Account = require("./account")
         const Device = require("./device")
+        const Event_confirm = require("./event_confirm")
 
         return {
             action_code: {
@@ -61,6 +62,15 @@ module.exports = class History extends Model {
                 join: {
                     from: "history.device_id",
                     to: "device.id"
+                }
+            },
+
+            event_confirm: {
+                relation: Model.HasManyRelation,
+                modelClass: Event_confirm,
+                join: {
+                    from: "history.id",
+                    to: "Event_confirm.history_id"
                 }
             }
         }

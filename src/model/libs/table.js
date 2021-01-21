@@ -198,6 +198,20 @@ module.exports = class Table {
         return this._tableClass.query()
     }
 
+    getMap(fn) {
+        return this._tableClass.query().then(async res => {
+            for (let key in res) {
+                const newRow = await fn(res[key])
+                const newRes = []
+                if (typeof newRow === "Object") {
+                    newRes.push(newRow)
+                } 
+            }
+
+            return newRes
+        })
+    }
+
     query() {
         return this._tableClass.query()
     }

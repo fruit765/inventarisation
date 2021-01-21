@@ -1316,37 +1316,6 @@ paths:
                     type: string
       operationId: get-test
       description: sadasd
-  /deviceAction:
-    post:
-      summary: fdf
-      operationId: post-deviceAction
-      responses:
-        '200':
-          description: OK
-      parameters:
-        - schema:
-            type: string
-          in: query
-          name: action
-          required: true
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                ids:
-                  type: array
-                  items:
-                    type: integer
-                user_id:
-                  type: integer
-              required:
-                - ids
-                - user_id
-      description: fff
-      tags:
-        - device
   /account_types:
     get:
       summary: Изменение имен сервисов
@@ -1584,6 +1553,37 @@ paths:
                     type: string
       operationId: get-dep_loc_united
       description: Поличить список отделов
+  /deviceAction:
+    post:
+      summary: Действия с оборудованием
+      operationId: post-deviceAction
+      responses:
+        '200':
+          description: OK
+      description: Действия с оборудованием
+      parameters:
+        - schema:
+            type: string
+            enum:
+              - bind
+              - remove
+          in: query
+          name: action
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  x-has-values:
+                    device: "id"
+                user_id:
+                  type: integer
+                  x-has-values:
+                    user: "id"
 components:
   schemas: {}
   securitySchemes: {}

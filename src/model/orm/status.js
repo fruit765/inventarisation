@@ -14,6 +14,7 @@ module.exports = class Status extends Model {
 
     static get relationMappings() {
         const Device = require("./device")
+        const Event_confirm_preset = require("./event_confirm_preset")
 
         return {
             device: {
@@ -22,6 +23,15 @@ module.exports = class Status extends Model {
                 join: {
                     from: "status.id",
                     to: "device.status_id"
+                }
+            },
+
+            status: {
+                relation: Model.HasManyRelation,
+                modelClass: Event_confirm_preset,
+                join: {
+                    from: "status.id",
+                    to: "event_confirm_preset.status_id"
                 }
             }
         }
