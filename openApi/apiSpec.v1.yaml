@@ -795,7 +795,15 @@ paths:
                   appointment_date:
                     type: string
                     format: date
-                  contact: {}
+                  contact:
+                    type: object
+                    properties:
+                      phone:
+                        type: string
+                        maxLength: 10
+                      email:
+                        type: string
+                        format: email
                 required:
                   - id
                   - post_dep_loc_id
@@ -1579,11 +1587,11 @@ paths:
                 id:
                   type: integer
                   x-has-values:
-                    device: "id"
+                    device: id
                 user_id:
                   type: integer
                   x-has-values:
-                    user: "id"
+                    user: id
 components:
   schemas: {}
   securitySchemes: {}
