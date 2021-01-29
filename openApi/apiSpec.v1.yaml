@@ -795,15 +795,7 @@ paths:
                   appointment_date:
                     type: string
                     format: date
-                  contact:
-                    type: object
-                    properties:
-                      phone:
-                        type: string
-                        maxLength: 10
-                      email:
-                        type: string
-                        format: email
+                  contact: {}
                 required:
                   - id
                   - post_dep_loc_id
@@ -868,6 +860,15 @@ paths:
                   format: date
                 contact:
                   x-json: stringify
+                  type: object
+                  properties:
+                    phone:
+                      type: string
+                      minLength: 10
+                      maxLength: 10
+                    email:
+                      type: string
+                      format: email
               required:
                 - post_dep_loc_id
                 - location_id
@@ -927,6 +928,15 @@ paths:
                   format: date
                 contact:
                   x-json: stringify
+                  type: object
+                  properties:
+                    phone:
+                      type: string
+                      minLength: 10
+                      maxLength: 10
+                    email:
+                      type: string
+                      format: email
               required:
                 - id
   /credentials:
