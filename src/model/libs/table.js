@@ -172,8 +172,8 @@ module.exports = class Table {
             if (deletedData[0]) {
                 const ids = _.map(deletedData, 'id')
                 await this.query(trx).whereIn("id",ids).delete()
-                await Promise.all(ids.map((id) => {
-                    return this._saveHistory({ id }, "delete", trx)
+                await Promise.all(deletedData.map((data) => {
+                    return this._saveHistory(data, "delete", trx)
                 }))
                 return deletedData
             } else {

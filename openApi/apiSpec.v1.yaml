@@ -1602,6 +1602,92 @@ paths:
                   type: integer
                   x-has-values:
                     user: id
+  /events:
+    get:
+      summary: Пролучить события
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    history_id:
+                      type: integer
+                    event_confirm_preset_id:
+                      type: integer
+                    confirm: {}
+                    status:
+                      type: string
+                    event_confirm_preset:
+                      type: object
+                      required:
+                        - id
+                        - start_preset_date
+                        - table
+                      properties:
+                        id:
+                          type: integer
+                        preset: {}
+                        start_preset_date:
+                          type: string
+                        end_preset_date:
+                          type: string
+                        table:
+                          type: string
+                        confirm: {}
+                        status_id:
+                          type: integer
+                    history:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        actor_id:
+                          type: string
+                        comments:
+                          type: string
+                        date:
+                          type: string
+                        diff: {}
+                        action_tag:
+                          type: string
+                      required:
+                        - id
+                        - actor_id
+                        - comments
+                        - date
+                        - action_tag
+                    additional: {}
+                    personal_ids:
+                      type: array
+                      items:
+                        type: integer
+                    table:
+                      type: string
+                    table_id:
+                      type: integer
+                    name:
+                      type: string
+                  required:
+                    - history_id
+                    - event_confirm_preset_id
+                    - status
+                    - event_confirm_preset
+                    - personal_ids
+                    - table
+                    - table_id
+              examples: {}
+      operationId: get-events
+      description: Пролучить события
+      parameters:
+        - schema:
+            type: string
+          in: query
 components:
   schemas: {}
   securitySchemes: {}
