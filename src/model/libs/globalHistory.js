@@ -36,19 +36,34 @@ module.exports = class GlobalHistory {
 
     _prepareLogicChVal(logicChainRaw, keyValues) {
         let logicChain = ""
-
+        let counter = 0
         if (typeof logicChainRaw === "string") {
             logicChain = logicChainRaw.trim().split(" ").map(x => {
                 const regExpKeys = _.keys(keyValues).join("|")
                 const regExp = new RegExp(`^(${regExpKeys})`, "gi")
+                x = x.match(regExp) ? "=" + x : x
+                _.forOwn(keyValues, (valArray, valType) => {
+                    if (x.match(new RegExp(valType, "gi"))) {
+                        _.forEach(valArray, (subValue, subKey) => {
+                            if (x.match(new RegExp(valType+subKey+"$", "gi"))) {
+
+                            }
+                        })
+                    }
+                }
+
+
+
+                const regExpKeys = _.keys(keyValues).join("|")
+                const regExp = new RegExp(`^(${regExpKeys})`, "gi")
+                counter++
                 return x.match(regExp) ? "=" + x : x
             }).join(" ")
         } else {
-
             _.forOwn(keyValues, (valArray, valType) => {
-                _.forEach(valArray, (subValue, subKey) => {
+                _.forEach(_.flatten(valArray), (subValue, subKey) => {
                     if (subValue != null) {
-                        logicChain = logicChain + `=${valType + subKey} AND `
+                        logicChain = logicChain + `=${valType + subKey} OR `
                     }
                 })
             })
@@ -78,17 +93,16 @@ module.exports = class GlobalHistory {
             })
         })
 
-        return queryCondition
+        return `( ${queryCondition} )`
     }
 
     async _buildQueryStrByColObj(colObj, columnName) {
         const sqlValues = await this._selectSqlStrToValue(colObj.sql) //получаем 2 мерный массив [[1,3],[3,5],[6]]
         const values = colObj.values
         //подготавливает логическую цепочку, возвращает цепочку по умолчанию если она пустая, изменяет
-        //цепочку для одномерных
-        const logicChain = this._prepareLogicChVal(colObj.logicChain, {sql: sqlValues, values: values })
-
-        this._buildQueryStrByLogicChVal(logicChain, {sql: sqlValues, values: values } ,columnName)
+        //ее для двумерного массива
+        const logicChain = this._prepareLogicChVal(colObj.logicChain, { sql: sqlValues, values: values })
+        return this._buildQueryStrByLogicChVal(logicChain, { sql: _.flatten(sqlValues), values: _.flatten(values) }, columnName)
     }
 
     async _presetColumnToQueryCondition(columns, columnsKey) {
