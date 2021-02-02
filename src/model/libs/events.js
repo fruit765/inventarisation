@@ -18,19 +18,21 @@ module.exports = class Events {
     async getEvents() {
         const eventsPreset = await Event_confirm_preset.query()
         const events = []
+        const eventsConfirm = Event_confirm.query()
         for (let eventPreset of eventsPreset) {
             const eventHistories = await this._globalHistory.getByPreset(eventPreset.table, eventPreset.preset)
             for (let eventHistory of eventHistories) {
                 events.push({
                     history_id: eventHistory.id,
                     event_confirm_preset_id: eventPreset.id,
-                    confirm: eventPreset.confirm,
-                    status: "pending", //dsdsd
                     table: eventPreset.table,
                     table_id: eventHistory[eventPreset.table+"_id"],
                     name: eventPreset.name,
                     name_rus: eventPreset.name_rus,
                     actor_id: eventHistory.actor_id,
+                    need_confirm: [{user: [eventHistory.actor_id]},{user: [eventHistory.diff.user_id]}],//[{user:[1,2,3,4]},{user:[5,6,7,8]}]
+                    confirm: eventsConfirm,
+                    status: "pending", //dsdsd
                     personal_ids: actor_id //sdsdsdsds
                 })
             }
