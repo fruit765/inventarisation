@@ -18,6 +18,7 @@ const accounts_owner = require('./routes/account_owners')
 const Status = require("./model/orm/status")
 const Location = require("./model/orm/location")
 const Device = require("./model/orm/device")
+const GlobalHistory = require("./model/libs/globalHistory")
 
 module.exports = function (app) {
 
@@ -48,9 +49,17 @@ module.exports = function (app) {
     app.use(accounts_owner)
 
     app.get("/test", async (req, res, next) => {
+        const history = new GlobalHistory()
         //sendP(next)(res)(getDevWithVirtualStatus(0))
         //const a = await Device.query().findById(2)
-        console.log(req.user)
+        const preset = {
+            columns: {
+                status_id: {
+                    sql: "select id from status where status = 'given'"
+                }
+            }
+        }
+        console.log(await history.getByPreset("device", preset))
     })
 
     app.use((err, req, res, next) => {

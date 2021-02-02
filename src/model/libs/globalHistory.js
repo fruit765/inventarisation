@@ -1,5 +1,6 @@
 "use strict"
 
+const Knex = require("knex")
 const dbConfig = require("../../../serverConfig").db
 const Device = require("../orm/device")
 const Event_confirm = require("../orm/event_confirm")
@@ -27,69 +28,165 @@ module.exports = class GlobalHistory {
         if (sqlStringArray.length) {
             sqlValues = await Promise.all(sqlStringArray.map(async value => {
                 const query = _.get(value.trim().match(/^select.*/), "[0]")
-                return await knex.raw(query)
+                const res = await knex.raw(query).then(x=>x[0])
+                return _.map(res,Object.keys(res[0])[0])
             }))
         }
 
         return sqlValues
     }
 
+    /**
+     * Если приходит не массив упоковывает значение в массив
+     * @param {*} value 
+     */
+    _warpToArray(value) {
+        if (_.isArray(value)) {
+            return value
+        } else {
+            return [value]
+        }
+    }
+
+    /**
+     * Собирает логическую цепочку для массива определенной длинны, счетчик нужен
+     * для установки начало отсчета
+     * Приходит ("foo", 3, 4), получаем "( foo4 or foo5 or foo6 )"
+     * @param {*} prefix 
+     * @param {*} length 
+     * @param {*} counter 
+     */
+    _arrayAndPrefixToLogicOr(prefix, length, counter) {
+        const res = []
+        for (let key = counter; key < counter + length; key++) {
+            res.push(prefix + counter)
+            counter++
+        }
+        return "( " + res.join(" OR ") + " )"
+    }
+
+    /**
+     * Добаляет в логическую цеопчку префикс к значеним соответствующим регулярному выражению regExpStr
+     * ("=","(sql|values)", "sql1 and sql2 and =sql3 or value0") => "=sql1 and =sql2 and =sql3 or =value0"
+     * @param {string} sign
+     * @param {*} regExpStr 
+     * @param {*} logicCh 
+     */
+    _addDefaultSignLogicCh(sign, regExpStr, logicCh) {
+        return logicCh.trim().split(" ").map(x => {
+            const regExp = new RegExp(regExpStr, "gi")
+            return x.match(regExp) ? sign + x : x
+        }).join(" ")
+    }
+
+    _flatternArrayWithLogicVal(logicCh, keyValues) {
+        let counter = 0
+        return logicCh.trim().split(" ").map(x => {
+            _.forOwn(keyValues, (valArray, valType) => {
+                _.forEach(valArray, (subValue, subKey) => {
+                    if (x.match(new RegExp("[=<>!]" + valType + subKey + "$", "gi"))) {
+                        const sign = x.match(/[=><!]/gi).join("")
+                        const subValueArray = this._warpToArray(subValue)
+                        const res = this._arrayAndPrefixToLogicOr(sign + valType, subValueArray.length, counter)
+                        counter += subValueArray.length
+                        return res
+                    }
+                })
+            })
+            return x
+        }).join(" ")
+    }
+
+    _flatternArrayWithLogicColumn(logicCh, columnsVal) {
+        let counter = 0
+        return logicCh.trim().split(" ").map(x => {
+            _.forOwn(columnsVal, (columnArray, columnName) => {
+                columnArray.forEach((columnSubArray, columnKey) => {
+                    if (x.match(new RegExp("^" + columnName + columnKey + "$", "gi"))) {
+                        const columnSubArrayWrp = this._warpToArray(columnSubArray)
+                        const res = this._arrayAndPrefixToLogicOr(columnName + columnKey, columnSubArrayWrp.length, counter)
+                        counter += columnSubArrayWrp.length
+                        return res
+                    }
+                })
+            })
+            return x
+        }).join(" ")
+    }
+
     _prepareLogicChVal(logicChainRaw, keyValues) {
         let logicChain = ""
-        let counter = 0
+        const logicArray = []
         if (typeof logicChainRaw === "string") {
-            logicChain = logicChainRaw.trim().split(" ").map(x => {
-                const regExpKeys = _.keys(keyValues).join("|")
-                const regExp = new RegExp(`^(${regExpKeys})`, "gi")
-                x = x.match(regExp) ? "=" + x : x
-                _.forOwn(keyValues, (valArray, valType) => {
-                    if (x.match(new RegExp(valType, "gi"))) {
-                        _.forEach(valArray, (subValue, subKey) => {
-                            if (x.match(new RegExp(valType+subKey+"$", "gi"))) {
-
-                            }
-                        })
-                    }
-                }
-
-
-
-                const regExpKeys = _.keys(keyValues).join("|")
-                const regExp = new RegExp(`^(${regExpKeys})`, "gi")
-                counter++
-                return x.match(regExp) ? "=" + x : x
-            }).join(" ")
+            logicChain = this._addDefaultSignLogicCh("=", `^(${_.keys(keyValues).join("|")})`, logicChainRaw)
+            logicChain = this._flatternArrayWithLogicVal(logicChain, keyValues)
         } else {
             _.forOwn(keyValues, (valArray, valType) => {
                 _.forEach(_.flatten(valArray), (subValue, subKey) => {
                     if (subValue != null) {
-                        logicChain = logicChain + `=${valType + subKey} OR `
+                        const prefix = valType + subKey
+                        logicArray.push("="+prefix)
                     }
                 })
             })
 
-            logicChain = logicChain.slice(0, -5)
+            logicChain = logicArray.join(" OR ")
         }
 
         logicChain = `( ${logicChain} )`
+        return logicChain
+    }
 
+    _prepareLogicChColumn(logicChainRaw, columnsVal) {
+        let logicChain = ""
+        if (typeof logicChainRaw === "string") {
+            return this._flatternArrayWithLogicColumn(logicChain, columnsVal)
+        } else {
+            const logicArray = []
+            _.forOwn(columnsVal, (column, columnName) => {
+                let counter = 0
+                const logicSector = column.map((columnVal, columnKey) => {
+                    const res = columnName + columnKey
+                    counter++
+                    return res
+                }).join(" OR ")
+                const logicSectorHooks = "( " + logicSector + " )"
+                logicArray.push(logicSectorHooks)
+            })
+            logicChain = logicArray.join(" AND ")
+        }
+
+        logicChain = `( ${logicChain} )`
         return logicChain
     }
 
     _buildQueryStrByLogicChVal(logicChain, keyValues, columnName) {
-        const worldsArray = logicChain.split(" ")
-
-        let queryCondition = worldsArray.map(x => {
-            const regExpKeys = _.keys(keyValues).join("|")
-            const regExp = new RegExp(`(${regExpKeys})`, "gi")
-            return x.match(regExp) ? `JSON_EXTRACT(diff, '$.${columnName}')` + x : x
+        let queryCondition = logicChain.split(" ").map(x => {
+            const regExp = new RegExp(`(${_.keys(keyValues).join("|")})`, "gi")
+            return x.match(regExp) ? `JSON_EXTRACT(diff, '$.${columnName}') ` + x : x
         }).join(" ")
-
 
         _.forOwn(keyValues, (valArray, valType) => {
             _.forEach(valArray, (subValue, subKey) => {
-                const regExp = new RegExp(valType + subKey, "gi")
-                queryCondition = queryCondition.replace(regExp, subValue)
+                const regExp = new RegExp(valType + subKey + "[\\s]", "gi")
+                queryCondition = queryCondition.replace(regExp, subValue+" ")
+            })
+        })
+
+        return `( ${queryCondition} )`
+    }
+
+    /**
+     * Собирает условие на языке sql из логической цепочки и значений
+     * @param {*} logicChain 
+     * @param {*} columnsVal 
+     */
+    _buildQueryStrByLogicChCol(logicChain, columnsVal) {
+        let queryCondition
+        _.forOwn(columnsVal, (columnArray, columnName) => {
+            _.forEach(columnArray, (columnValue, columnKey) => {
+                const regExp = new RegExp(`[\\s]` + columnName + columnKey + `[\\s]`, "gi")
+                queryCondition = logicChain.replace(regExp, " "+columnValue+" ")
             })
         })
 
@@ -102,61 +199,33 @@ module.exports = class GlobalHistory {
         //подготавливает логическую цепочку, возвращает цепочку по умолчанию если она пустая, изменяет
         //ее для двумерного массива
         const logicChain = this._prepareLogicChVal(colObj.logicChain, { sql: sqlValues, values: values })
-        return this._buildQueryStrByLogicChVal(logicChain, { sql: _.flatten(sqlValues), values: _.flatten(values) }, columnName)
+        const queryStr = this._buildQueryStrByLogicChVal(logicChain, { sql: _.flatten(sqlValues), values: _.flatten(values) }, columnName)
+        return queryStr
     }
 
-    async _presetColumnToQueryCondition(columns, columnsKey) {
-        let logicChain
-        let sqlValues, values = []
+    async _buildQueryStrByPreset(preset) {
 
-        sqlValues = await this._selectSqlStrToValue(columns[columnsKey].sql)
-
-        if (typeof columns[columnsKey].value === "string") {
-            values = [columns[columnsKey].value]
-        } else if (typeof columns[columnsKey].value === "object") {
-            values = columns[columnsKey].value
-        }
-
-        logicChain = this._prepareLogicChVal(columns[columnsKey].logicChain, { sql: sqlValues, value: values })
-        return this._buildQueryStrByLogicChVal(logicChain, sqlValues, values, columnsKey)
-
-    }
-
-    getByPreset(tableName, preset) {
-        let columns = preset.columns
-        let columnsOld
-        let columnsOldKeys, columnsKeys
-
-        if (columns.new) {
-            columns = columns.new
-            if (columns.old && Object.keys(columns.old).length) {
-                columnsOld = columns.old
-                columnsOldKeys = Object.keys(columnsOld)
-            }
-        }
-
-        columnsKeys = Object.keys(columns)
-
-        _.forOwn(columns, (columnValue, columnName) => {
-            this.
+        const columns =_.mapValues(preset.columns, (columnVal, columnName) => {
+            return columnVal.new ? columnVal.new : columnVal
         })
 
-        const logicChain = this._prepareLogicChCol(preset.logicChain,)
-
-        this._buildQueryStrByLogicChCol(logicChain,)
-
-        if (columnsKeys.length && knex.schema.hasColumn(History.tableName, tableName + "_id")) {
-            let eventsHistory = History.query().whereNotNull(eventPreset.table + "_id")
-
-            // if (typeof preset.logicChain === "string") {
-
-            // }
-
-            for (let columnsKey of columnsKeys) {
-                eventsHistory = this._presetColumnToQueryBulder(eventsHistory, columns, columnsKey)
-            }
+        const columnsValues = {}
+        for (let columnName in columns) {
+            columnsValues[columnName] = await Promise.all(this._warpToArray(columns[columnName]).map(x => {
+                return this._buildQueryStrByColObj(x, columnName)
+            }))
         }
+
+        const logicChain = this._prepareLogicChColumn(preset.logicChain, columnsValues)
+        const columnsValuesFlattern = _.mapValues(columnsValues, (val)=>{
+            return _.flatten(val)
+        })
+        const queryStr = this._buildQueryStrByLogicChCol(logicChain, columnsValuesFlattern)
+        return queryStr
     }
 
-
+    async getByPreset(tableName, preset) {
+        const cond = await this._buildQueryStrByPreset(preset)
+        return History.query().whereRaw(cond)
+    }
 }

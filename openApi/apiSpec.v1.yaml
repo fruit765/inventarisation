@@ -1647,8 +1647,6 @@ paths:
                       properties:
                         id:
                           type: integer
-                        actor_id:
-                          type: string
                         comments:
                           type: string
                         date:
@@ -1658,7 +1656,6 @@ paths:
                           type: string
                       required:
                         - id
-                        - actor_id
                         - comments
                         - date
                         - action_tag
@@ -1673,6 +1670,8 @@ paths:
                       type: integer
                     name:
                       type: string
+                    actor_id:
+                      type: integer
                   required:
                     - history_id
                     - event_confirm_preset_id
@@ -1681,13 +1680,41 @@ paths:
                     - personal_ids
                     - table
                     - table_id
-              examples: {}
+              examples:
+                example-1:
+                  value:
+                    - history_id: 0
+                      event_confirm_preset_id: 0
+                      confirm: null
+                      status: string
+                      event_confirm_preset:
+                        id: 0
+                        preset: null
+                        start_preset_date: string
+                        end_preset_date: string
+                        table: string
+                        confirm: null
+                        status_id: 0
+                      history:
+                        id: 0
+                        comments: string
+                        date: string
+                        diff: null
+                        action_tag: string
+                      additional: null
+                      personal_ids:
+                        - 0
+                      table: string
+                      table_id: 0
+                      name: string
+                      actor_id: 0
       operationId: get-events
       description: Пролучить события
       parameters:
         - schema:
-            type: string
+            type: boolean
           in: query
+          name: all
 components:
   schemas: {}
   securitySchemes: {}

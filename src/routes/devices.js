@@ -12,10 +12,9 @@ const tableDevice = new Table(Device)
 
 router.route('/devices')
     .get((req, res, next) => {
-        tableDevice.getMap(value => {
+        // tableDevice.getMap(value => {
             
-        })
-
+        // })
         sendP(next)(res)(getDevWithVirtualStatus())
     })
     .post((req, res, next) => {
