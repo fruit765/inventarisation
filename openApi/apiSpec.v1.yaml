@@ -1602,10 +1602,13 @@ paths:
                   type: integer
                   x-has-values:
                     user: id
+      tags:
+        - device
   /events:
     get:
       summary: Пролучить события
-      tags: []
+      tags:
+        - events
       responses:
         '200':
           description: OK
@@ -1623,42 +1626,6 @@ paths:
                     confirm: {}
                     status:
                       type: string
-                    event_confirm_preset:
-                      type: object
-                      required:
-                        - id
-                        - start_preset_date
-                        - table
-                      properties:
-                        id:
-                          type: integer
-                        preset: {}
-                        start_preset_date:
-                          type: string
-                        end_preset_date:
-                          type: string
-                        table:
-                          type: string
-                        confirm: {}
-                        status_id:
-                          type: integer
-                    history:
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                        comments:
-                          type: string
-                        date:
-                          type: string
-                        diff: {}
-                        action_tag:
-                          type: string
-                      required:
-                        - id
-                        - comments
-                        - date
-                        - action_tag
                     additional: {}
                     personal_ids:
                       type: array
@@ -1676,45 +1643,12 @@ paths:
                     - history_id
                     - event_confirm_preset_id
                     - status
-                    - event_confirm_preset
                     - personal_ids
                     - table
                     - table_id
-              examples:
-                example-1:
-                  value:
-                    - history_id: 0
-                      event_confirm_preset_id: 0
-                      confirm: null
-                      status: string
-                      event_confirm_preset:
-                        id: 0
-                        preset: null
-                        start_preset_date: string
-                        end_preset_date: string
-                        table: string
-                        confirm: null
-                        status_id: 0
-                      history:
-                        id: 0
-                        comments: string
-                        date: string
-                        diff: null
-                        action_tag: string
-                      additional: null
-                      personal_ids:
-                        - 0
-                      table: string
-                      table_id: 0
-                      name: string
-                      actor_id: 0
+              examples: {}
       operationId: get-events
       description: Пролучить события
-      parameters:
-        - schema:
-            type: boolean
-          in: query
-          name: all
 components:
   schemas: {}
   securitySchemes: {}
@@ -1725,3 +1659,4 @@ tags:
   - name: users
   - name: accounts
   - name: acts
+  - name: events

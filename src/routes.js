@@ -14,11 +14,13 @@ const dep_loc_united = require('./routes/dep_loc_united')
 const accounts = require('./routes/accounts')
 const account_types = require('./routes/account_types')
 const accounts_owner = require('./routes/account_owners')
+const events = require('./routes/events')
 
 const Status = require("./model/orm/status")
 const Location = require("./model/orm/location")
 const Device = require("./model/orm/device")
 const GlobalHistory = require("./model/libs/globalHistory")
+const Events = require("./model/libs/events")
 
 module.exports = function (app) {
 
@@ -48,8 +50,11 @@ module.exports = function (app) {
     app.use(account_types)
     app.use(accounts_owner)
 
+    app.use(events)
+
     app.get("/test", async (req, res, next) => {
         const history = new GlobalHistory()
+        const events = new Events()
         //sendP(next)(res)(getDevWithVirtualStatus(0))
         //const a = await Device.query().findById(2)
         const preset = {
@@ -59,7 +64,7 @@ module.exports = function (app) {
                 }
             }
         }
-        console.log(await history.getByPreset("device", preset))
+        console.log(await events.getEvents())
     })
 
     app.use((err, req, res, next) => {

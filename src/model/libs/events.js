@@ -6,6 +6,7 @@ const Event_confirm = require("../orm/event_confirm")
 const Event_confirm_preset = require("../orm/event_confirm_preset")
 const History = require("../orm/history")
 const Table = require("./table")
+const Knex = require("knex")
 const knex = Knex(dbConfig)
 const _ = require("lodash")
 const GlobalHistory = require("./globalHistory")
@@ -24,14 +25,16 @@ module.exports = class Events {
                 events.push({
                     history_id: eventHistory.id,
                     event_confirm_preset_id: eventPreset.id,
-                    confirm: eventPreset.confirm,
+                    need_confirm: [{users:[eventHistory.actor_id]},{users:[eventHistory.diff.user_id]}],
+                    confirm: [],
                     status: "pending", //dsdsd
                     table: eventPreset.table,
                     table_id: eventHistory[eventPreset.table+"_id"],
                     name: eventPreset.name,
                     name_rus: eventPreset.name_rus,
                     actor_id: eventHistory.actor_id,
-                    personal_ids: actor_id //sdsdsdsds
+                    personal_ids: [eventHistory.actor_id, eventHistory.diff.user_id],
+                    additional: {device_user_id: eventHistory.diff.user_id}
                 })
             }
         }
