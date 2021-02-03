@@ -19,6 +19,7 @@ module.exports = class Events {
     async getEvents() {
         const eventsPreset = await Event_confirm_preset.query()
         const events = []
+        const eventsConfirm = Event_confirm.query()
         for (let eventPreset of eventsPreset) {
             const eventHistories = await this._globalHistory.getByPreset(eventPreset.table, eventPreset.preset)
             for (let eventHistory of eventHistories) {
