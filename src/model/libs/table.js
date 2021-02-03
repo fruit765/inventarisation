@@ -70,6 +70,10 @@ module.exports = class Table {
         return result
     }
 
+    async _checkEvents(historyId) {
+
+    }
+
     async _saveHistory(data, actionTag, trx) {
         const isSaveHistory = await this._isSaveHistory
         const dataWithoutId = this._delUndefined(_.omit(data, "id"))
@@ -165,6 +169,7 @@ module.exports = class Table {
         }]
         return err
     }
+
 
     async delete(findData) {
         return this._tableClass.transaction(async trx => {
