@@ -43,7 +43,8 @@ module.exports = class Events {
                     name_rus: eventPreset.name_rus,
                     actor_id: eventHistory.actor_id,
                     personal_ids: personal_ids,
-                    additional: { device_user_id: eventHistory.diff.user_id }
+                    additional: { device_user_id: eventHistory.diff.user_id },
+                    date: eventHistory.date
                 })
             }
         }
