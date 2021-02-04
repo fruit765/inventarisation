@@ -10,32 +10,27 @@ module.exports = class TableDevice extends Table {
         await Device.query()
     }
 
-    async _checkPointStatus(pointId, statuses) {
-        const response = await this._getPointStatusObj()
-            .whereIn("status", statuses)
-
-        return response ? response : null
-    }
-
-    _getPointStatusObj(pointId) {
-        return this.getWithUnconfirmStatus()
-            .findById(pointId)
-            .first()
-    }
-
-    _getPointStatusStr(pointId) {
+    _getPointStatusUnconfirm(pointId) {
         return this.getWithUnconfirmStatus()
             .findById(pointId)
             .first()
             .then(res => res.status)
     }
 
+    _getPointStatus(pointId) {
+        return this.query()
+            .joinRalated("status")
+            .findById(pointId)
+            .first()
+            .then(res => res.status)
+    }
+
     async bind(dataRaw, acceptStatuses) {
-        const status = _getPointStatusStr
-        if (acceptStatuses.includes(await _getPointStatusStr())) {
+        const id = dataRaw.id
+        const currentStatus = await _getPointStatusUnconfirm(id)
+        if (!acceptStatuses.includes(currentStatus)) {
             throw new createError.NotAcceptable("This action is not acceptable with this object")
         }
-
         const status = await Status.query().where("status", "given").first()
         const data = Object.assign({}, status, dataRaw)
         const response = this.patchAndFetch(data)
@@ -43,10 +38,15 @@ module.exports = class TableDevice extends Table {
     }
 
     async undo(dataRaw) {
-        this._checkPointStatus(dataRaw.id, acceptStatuses)
-        const status = await Status.query().where("status", "given").first()
-        const data = Object.assign({}, status, dataRaw)
-        const response = this.patchAndFetch(data)
+        const id = dataRaw.id
+        const statusUnconfirm = await this._getPointStatusUnconfirm(id)
+        const statusConfirm = await this._getPointStatus(id)
+
+        if (statusUnconfirm === statusConfirm && .isNoOneConfirm(id)) {
+            throw new createError.NotAcceptable("This action is not acceptable with this object")
+        }
+
+
         return response
     }
 
