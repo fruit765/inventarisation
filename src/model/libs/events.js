@@ -48,7 +48,18 @@ module.exports = class Events {
                 })
             }
         }
-
+        
+        events[0].status="complete"
+        events[1].status="reject"
+        events[0].confirm = need_confirm
+        events[0].confirm_need = confirm_tmp
+        const confirm_reject = _.cloneDeep(confirm_tmp)
+        confirm_reject[0]["users"][events[1].actor_id] = true
+        events[1].status="reject"
+        events[1].confirm_reject=confirm_reject
+        const confirm_need1 = _.cloneDeep(events[1].need_confirm)
+        confirm_need1[0]["users"][events[1].actor_id] = false
+        events[1].need_confirm = confirm_need1
         return events
     }
 
