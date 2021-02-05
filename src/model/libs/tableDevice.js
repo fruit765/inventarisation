@@ -1,23 +1,48 @@
+// @ts-check
+
 "use strict"
 
 const Device = require("../orm/device")
 const Table = require("./table")
 const _ = require("lodash")
 const createError = require('http-errors')
+const Status = require("../orm/status")
 
 module.exports = class TableDevice extends Table {
+
+    /**
+     * 
+     * @param {*} tableClass 
+     * @param {Object} options
+     * @prop 
+     */
+    constructor(tableClass, options) {
+        super(tableClass, options)
+        this.events = TableEvents(tableClass)
+    }
+
     async getWithUnconfirmStatus() {
         await Device.query()
     }
-
-    _getPointStatusUnconfirm(pointId) {
+    
+    /**
+     * 
+     * @param {*} pointId
+     * @private 
+     */
+    getPointStatusUnconfirm(pointId) {
         return this.getWithUnconfirmStatus()
             .findById(pointId)
             .first()
             .then(res => res.status)
     }
 
-    _getPointStatus(pointId) {
+    /**
+     * 
+     * @param {*} pointId
+     * @private 
+     */
+    getPointStatus(pointId) {
         return this.query()
             .joinRalated("status")
             .findById(pointId)
@@ -27,7 +52,7 @@ module.exports = class TableDevice extends Table {
 
     async bind(dataRaw, acceptStatuses) {
         const id = dataRaw.id
-        const currentStatus = await _getPointStatusUnconfirm(id)
+        const currentStatus = await this.getPointStatusUnconfirm(id)
         if (!acceptStatuses.includes(currentStatus)) {
             throw new createError.NotAcceptable("This action is not acceptable with this object")
         }
@@ -37,14 +62,20 @@ module.exports = class TableDevice extends Table {
         return response
     }
 
-    async undo(dataRaw) {
-        const id = dataRaw.id
-        const statusUnconfirm = await this._getPointStatusUnconfirm(id)
-        const statusConfirm = await this._getPointStatus(id)
-
-        if (statusUnconfirm === statusConfirm && .isNoOneConfirm(id)) {
+    /**
+     * 
+     * @param {number} id 
+     * @param {Array<number>} eventsNameArray
+     */
+    async undo(id, eventsNameArray) {
+        const statusUnconfirm = await this.getPointStatusUnconfirm(id)
+        const statusConfirm = await this.getPointStatus(id)
+        const confirmArray = await this.events.confirmsArray(id) //ffffffffff
+        if (statusUnconfirm === statusConfirm || !confirmArray.length) {
             throw new createError.NotAcceptable("This action is not acceptable with this object")
         }
+
+        this.events.eventReject(id)
 
 
         return response
