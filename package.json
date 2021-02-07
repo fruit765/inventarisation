@@ -36,6 +36,7 @@
     "winston-console-format": "^1.0.8"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.168",
     "axios": "^0.20.0",
     "chai": "^4.2.0",
     "gulp-nodemon": "^2.5.0",

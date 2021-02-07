@@ -1,4 +1,8 @@
 // @ts-check
+/**
+ * @typedef { import("objection") } Objection
+ * @typedef { import("../../types/index").tableOptions } tableOptions
+ */
 
 "use strict"
 
@@ -12,86 +16,135 @@ module.exports = class TableDevice extends Table {
 
     /**
      * 
-     * @param {*} tableClass 
-     * @param {Object} options
-     * @prop 
+     * @param { tableOptions } options
      */
-    constructor(tableClass, options) {
-        super(tableClass, options)
-        this.events = TableEvents(tableClass)
+    constructor(options) {
+        super(Device, options)
+        this.events = TableEvents(Device)
     }
 
-    async getWithUnconfirmStatus() {
-        await Device.query()
-    }
-    
     /**
-     * 
-     * @param {*} pointId
+     * Возвращает массив оборудования с неподтвержденными статусами
+     */
+    async getTabUnconfStat() {
+        Device.query().
+    }
+
+    /**
+     * Возвращает статус оборудования с данным id
+     * @param {*} deviceId
+     * @returns {Promise<string>}
      * @private 
      */
-    getPointStatusUnconfirm(pointId) {
+    async getUnconfStatusById(deviceId) {
+        return this.getTabUnconfStat()
+            .first()
+            .findById(deviceId)
+            .then(res => res.status)
+    }
+
+     /**
+     * Возвращает оборудование с данным id и с неподтвержденным текущим статусом
+     * @param {*} deviceId
+     * @returns {Promise<string>}
+     * @private 
+     */
+    async getTabUnconfStatById(deviceId) {
+        return this.getTabUnconfStat()
+            .first()
+            .findById(deviceId)
+            .then(res => res.status)
+    }
+
+    /**
+     * Возвращает оборудование с данным id и с неподтвержденным текущим статусом
+     * @param {*} deviceId
+     * @returns {Promise<string>}
+     * @private 
+     */
+    async getTabUnconfStatById(deviceId) {
         return this.getWithUnconfirmStatus()
-            .findById(pointId)
             .first()
+            .findById(deviceId)
             .then(res => res.status)
     }
 
     /**
-     * 
-     * @param {*} pointId
-     * @private 
+     * Проверяет точку на соответствие статусам
+     * @param {number} id 
+     * @param {string[]} acceptStatuses 
+     * @private
      */
-    getPointStatus(pointId) {
-        return this.query()
-            .joinRalated("status")
-            .findById(pointId)
-            .first()
-            .then(res => res.status)
-    }
-
-    async bind(dataRaw, acceptStatuses) {
-        const id = dataRaw.id
-        const currentStatus = await this.getPointStatusUnconfirm(id)
+    async checkAcceptStatusErr(id, acceptStatuses) {
+        /**@type {string} */
+        const currentStatus = await this.getUnconfStatusById(id)
         if (!acceptStatuses.includes(currentStatus)) {
             throw new createError.NotAcceptable("This action is not acceptable with this object")
         }
-        const status = await Status.query().where("status", "given").first()
-        const data = Object.assign({}, status, dataRaw)
-        const response = this.patchAndFetch(data)
-        return response
+        return true
     }
 
     /**
-     * 
-     * @param {number} id 
-     * @param {Array<number>} eventsNameArray
+     * Меняет статус у девайса
+     * @typedef {Object} patchStatusData
+     * @prop {number} id
+     * @prop {number=} user_id
+     * @param {patchStatusData} dataRaw 
+     * @param {string} status новый статус
+     * @private
      */
-    async undo(id, eventsNameArray) {
-        const statusUnconfirm = await this.getPointStatusUnconfirm(id)
-        const statusConfirm = await this.getPointStatus(id)
-        const confirmArray = await this.events.confirmsArray(id) //ffffffffff
-        if (statusUnconfirm === statusConfirm || !confirmArray.length) {
-            throw new createError.NotAcceptable("This action is not acceptable with this object")
+    async patchStatus(dataRaw, status) {
+        /** @type {number}*/
+        const givenStatusId = await Status.query().where("status", status).first().then(res => res ? res.id : res)
+        const data = Object.assign({}, dataRaw, { status_id: givenStatusId })
+        /**@type {number} */
+        return this.patch(data)
+    }
+
+    /**
+     * Привязывает оборудование к пользователю, выставляя статус given
+     * @param {patchStatusData} dataRaw 
+     */
+    async bindToUser(dataRaw) {
+        await this.checkAcceptStatusErr(dataRaw.id, ["stock"])
+        const id = await this.patchStatus(dataRaw, "given")
+        return this.getTabUnconfStatById(id)
+    }
+
+    /**
+     * Возвращает оборудование со статусом given на склад 
+     * @param {patchStatusData} dataRaw 
+     */
+    async returnToStock(dataRaw) {
+        await this.checkAcceptStatusErr(dataRaw.id, ["given"])
+        if (_.isNil(dataRaw.user_id)) {
+            /**@type {Object} */
+            const res = await this.tableClass.query().findById(dataRaw.id)
+            dataRaw.user_id = res ? res.user_id : res
+        }
+        //await this.stockRespErr(dataRaw.user_id)
+        const id = await this.patchStatus(dataRaw, "stock")
+        return this.getTabUnconfStatById(id)
+    }
+
+    /**
+     * Откат для неподтвержденных статусов givenIncomplete и return
+     * @param {patchStatusData} dataRaw 
+     */
+    async remove(dataRaw) {
+        const unconfirmStatus = await this.getUnconfStatusById(dataRaw.id)
+        switch (unconfirmStatus) {
+            case "stock":
+            case "given":
+                throw new createError.NotAcceptable("This action is not acceptable with this object")
+            case "givenIncomplete":
+                await this.tableEvents.rejectAllByStatus("givenIncomplete")
+                break
+            case "return":
+                await this.tableEvents.rejectAllByStatus("return")
+                break
         }
 
-        this.events.eventReject(id)
-
-
-        return response
-    }
-
-    async unbind(dataRaw) {
-        const status = await Status.query().where("status", "given").first()
-        const data = Object.assign({}, status, dataRaw)
-        const response = this.patchAndFetch(data)
-        return response
-    }
-
-    async remove(dataRaw) {
-        const status = await Status.query().where("status", "given").first()
-        const data = Object.assign({}, status, dataRaw)
-        const response = this.patchAndFetch(data)
-        return response
+        return this.getTabUnconfStatById(dataRaw.id)
     }
 }

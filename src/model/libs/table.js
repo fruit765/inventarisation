@@ -1,3 +1,9 @@
+// @ts-check
+/**
+ * @typedef { import("objection") } Objection
+ * @typedef { import("../../types/index").tableOptions } tableOptions
+ */
+
 "use strict"
 
 const Knex = require("knex")
@@ -9,13 +15,21 @@ const createError = require('http-errors')
 const History = require("../orm/history")
 
 module.exports = class Table {
+    /**
+     * 
+     * @param {Objection["Model"]} tableClass 
+     * @param { tableOptions } options
+     */
     constructor(tableClass, options) {
         if (!options) {
             options = {}
         }
         this._options = {}
-        this._tableClass = tableClass
-        this._tableName = this._tableClass.tableName
+        /**
+         * @protected 
+         */
+        this.tableClass = tableClass
+        this._tableName = this.tableClass.tableName
 
         options.isSaveHistory = _.isNil(options.isSaveHistory) ? true : Boolean(options.isSaveHistory)
 
@@ -94,7 +108,7 @@ module.exports = class Table {
     }
 
     async _getActualData(id) {
-        let actualData = await this._tableClass.query().findById(id)
+        let actualData = await this.tableClass.query().findById(id)
         if (!actualData) {
             throw this.createError400Pattern("id", "This id was not found")
         }
@@ -140,8 +154,8 @@ module.exports = class Table {
 
     async insertAndFetch(data) {
         const readyToInsert = this._stringifyColJSON(data)
-        return this._tableClass.transaction(async trx => {
-            const insertRow = await this._tableClass.query(trx).insertAndFetch(readyToInsert)
+        return this.tableClass.transaction(async trx => {
+            const insertRow = await this.tableClass.query(trx).insertAndFetch(readyToInsert)
             await this._saveHistory(insertRow, "insert", trx)
             return insertRow
         })
@@ -152,13 +166,27 @@ module.exports = class Table {
         const onlyModData = await this._onlyModifyWithId(data, actualData)
         const onlyModWithCompleteJson = await this._additionColJSON(onlyModData, actualData)
         const readyToPatch = this._stringifyColJSON(onlyModWithCompleteJson)
-        await this._tableClass.transaction(async trx => {
-            await this._tableClass.query(trx)
+        await this.tableClass.transaction(async trx => {
+            await this.tableClass.query(trx)
                 .findById(data.id)
                 .patch(_.omit(readyToPatch, "id"))
             await this._saveHistory(onlyModData, "patch", trx)
         })
         return Object.assign(actualData, onlyModWithCompleteJson)
+    }
+
+    async patch(data) {
+        const actualData = await this._getActualData(data.id)
+        const onlyModData = await this._onlyModifyWithId(data, actualData)
+        const onlyModWithCompleteJson = await this._additionColJSON(onlyModData, actualData)
+        const readyToPatch = this._stringifyColJSON(onlyModWithCompleteJson)
+        await this.tableClass.transaction(async trx => {
+            await this.tableClass.query(trx)
+                .findById(data.id)
+                .patch(_.omit(readyToPatch, "id"))
+            await this._saveHistory(onlyModData, "patch", trx)
+        })
+        return data.id
     }
 
     createError400Pattern(dataPath, message) {
@@ -172,7 +200,7 @@ module.exports = class Table {
 
 
     async delete(findData) {
-        return this._tableClass.transaction(async trx => {
+        return this.tableClass.transaction(async trx => {
             const deletedData = await this.query(trx).where(findData)
             if (deletedData[0]) {
                 const ids = _.map(deletedData, 'id')
@@ -188,7 +216,7 @@ module.exports = class Table {
     }
 
     async deleteById(id) {
-        return this._tableClass.transaction(async trx => {
+        return this.tableClass.transaction(async trx => {
             const res = await this.query(trx).deleteById(id)
             if (res) {
                 this._saveHistory({ id }, "delete", trx)
@@ -200,11 +228,11 @@ module.exports = class Table {
     }
 
     get() {
-        return this._tableClass.query()
+        return this.tableClass.query()
     }
 
     getMap(fn) {
-        return this._tableClass.query().then(async res => {
+        return this.tableClass.query().then(async res => {
             for (let key in res) {
                 const newRow = await fn(res[key])
                 const newRes = []
@@ -218,6 +246,6 @@ module.exports = class Table {
     }
 
     query() {
-        return this._tableClass.query()
+        return this.tableClass.query()
     }
 }  
