@@ -11,6 +11,7 @@ const Table = require("./table")
 const _ = require("lodash")
 const createError = require('http-errors')
 const Status = require("../orm/status")
+const History = require("../orm/history")
 
 module.exports = class TableDevice extends Table {
 
@@ -27,7 +28,7 @@ module.exports = class TableDevice extends Table {
      * Возвращает массив оборудования с неподтвержденными статусами
      */
     async getTabUnconfStat() {
-        Device.query().
+        History.
     }
 
     /**
