@@ -20,7 +20,7 @@ const Status = require("./model/orm/status")
 const Location = require("./model/orm/location")
 const Device = require("./model/orm/device")
 const GlobalHistory = require("./model/libs/globalHistory")
-const Events = require("./model/libs/events")
+const Events = require("./model/libs/events1")
 
 module.exports = function (app) {
 

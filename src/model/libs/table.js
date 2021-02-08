@@ -2,6 +2,7 @@
 /**
  * @typedef { import("objection") } Objection
  * @typedef { import("../../types/index").tableOptions } tableOptions
+ * @typedef { import("../../types/index").TableEvents } TableEvents
  */
 
 "use strict"
@@ -13,6 +14,7 @@ const _ = require("lodash")
 const createError = require('http-errors')
 
 const History = require("../orm/history")
+const TableEvents = require("./events")
 
 module.exports = class Table {
     /**
@@ -27,8 +29,14 @@ module.exports = class Table {
         this._options = {}
         /**
          * @protected 
+         * @readonly
          */
         this.tableClass = tableClass
+        /**
+        * @protected
+        * @readonly
+        */
+        this.events = new TableEvents(this.tableClass.tableName)
         this._tableName = this.tableClass.tableName
 
         options.isSaveHistory = _.isNil(options.isSaveHistory) ? true : Boolean(options.isSaveHistory)
@@ -150,6 +158,25 @@ module.exports = class Table {
             }
         }
         return fillteredData
+    }
+
+
+    /**
+     * Возвращает массив оборудования с неподтвержденными статусами
+     * @returns {Promise<Array<Object>>}
+     */
+    async getTabUnconfStat() {
+        const tableData = await this.tableClass.query()
+        /**@type {Object<number,Object>} */
+        let tableDataIdKey = _.keyBy(tableData, "id")
+        /**@type {Array<Object>} */
+        const tableDataUnconf = await this.events.getUnconfirmData()
+        for (let elem of tableDataUnconf) {
+            Object.assign(tableDataIdKey[elem.id],elem)
+        }
+        /**@type {Array<Object>} */
+        const tableWithUnfonfData = _.values(tableDataIdKey)
+        return tableWithUnfonfData
     }
 
     async insertAndFetch(data) {

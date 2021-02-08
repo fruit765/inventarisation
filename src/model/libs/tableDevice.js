@@ -1,6 +1,5 @@
 // @ts-check
 /**
- * @typedef { import("objection") } Objection
  * @typedef { import("../../types/index").tableOptions } tableOptions
  */
 
@@ -21,53 +20,31 @@ module.exports = class TableDevice extends Table {
      */
     constructor(options) {
         super(Device, options)
-        this.events = TableEvents(Device)
-    }
-
-    /**
-     * Возвращает массив оборудования с неподтвержденными статусами
-     */
-    async getTabUnconfStat() {
-        History.
-    }
-
-    /**
-     * Возвращает статус оборудования с данным id
-     * @param {*} deviceId
-     * @returns {Promise<string>}
-     * @private 
-     */
-    async getUnconfStatusById(deviceId) {
-        return this.getTabUnconfStat()
-            .first()
-            .findById(deviceId)
-            .then(res => res.status)
     }
 
      /**
      * Возвращает оборудование с данным id и с неподтвержденным текущим статусом
-     * @param {*} deviceId
-     * @returns {Promise<string>}
+     * @param {number} deviceId
+     * @returns {Promise<Object>}
      * @private 
      */
     async getTabUnconfStatById(deviceId) {
-        return this.getTabUnconfStat()
-            .first()
-            .findById(deviceId)
-            .then(res => res.status)
+        /**@type {Object} */
+        const tableElemData = await this.tableClass.query().findById(deviceId)
+        /**@type {Object} */
+        const tableElemDataUnconf = await this.events.getUnconfirmDataById(deviceId)
+        return Object.assign(tableElemData, tableElemDataUnconf)
     }
 
     /**
-     * Возвращает оборудование с данным id и с неподтвержденным текущим статусом
-     * @param {*} deviceId
+     * Возвращает неподтвержденный статус оборудование с данным id
+     * @param {number} deviceId
      * @returns {Promise<string>}
      * @private 
      */
-    async getTabUnconfStatById(deviceId) {
-        return this.getWithUnconfirmStatus()
-            .first()
-            .findById(deviceId)
-            .then(res => res.status)
+    async getUnconfStatusById(deviceId) {
+        const tableElemDataUnconf = await this.events.getUnconfirmDataById(deviceId)
+        return tableElemDataUnconf.status
     }
 
     /**
@@ -139,10 +116,10 @@ module.exports = class TableDevice extends Table {
             case "given":
                 throw new createError.NotAcceptable("This action is not acceptable with this object")
             case "givenIncomplete":
-                await this.tableEvents.rejectAllByStatus("givenIncomplete")
+                await this.events.rejectAllByStatus("givenIncomplete")
                 break
             case "return":
-                await this.tableEvents.rejectAllByStatus("return")
+                await this.events.rejectAllByStatus("return")
                 break
         }
 
