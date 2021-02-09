@@ -27,6 +27,7 @@ module.exports = class Table {
         if (!options) {
             options = {}
         }
+        options.isSaveHistory = Boolean(options.isSaveHistory ?? true)
         /**
          * @protected 
          * @type {{actor_id?: number}}
@@ -46,7 +47,7 @@ module.exports = class Table {
         * @protected
         * @readonly
         */
-        this.history = new GlobalHistory(this.tableClass.tableName)
+        this.history = new GlobalHistory(this.tableClass)
         /**
         * @protected
         * @readonly
@@ -57,8 +58,11 @@ module.exports = class Table {
          * @type {{trx: *}}
          */
         this.trx = { trx: null }
-
-        options.isSaveHistory = _.isNil(options.isSaveHistory) ? true : Boolean(options.isSaveHistory)
+        /**
+         * @protected
+         * @type {Promise}
+         */
+        this.isSaveHistory = undefined
 
         this.setOpt(options)
     }
@@ -81,135 +85,117 @@ module.exports = class Table {
             if (isSaveHistory) {
                 /**@protected*/
                 this.hisColName = this.tableName + "_id"
-                this._isSaveHistory = knex.schema.hasColumn(History.tableName, this.hisColName)
+                this.isSaveHistory = knex.schema.hasColumn(History.tableName, this.hisColName)
             } else {
-                this._isSaveHistory = Promise.resolve(false)
+                this.isSaveHistory = Promise.resolve(false)
             }
         }
     }
 
-    /**
-     * Возвращает обьект не содержащий ключи с пустыми значениями
-     * @param {*} obj 
-     * @private
-     */
-    delUndefined(obj) {
-        const result = {}
-        for (let key in obj) {
-            if (obj[key] !== undefined) {
-                result[key] = obj[key]
-            }
-        }
+    // /**
+    //  * Возвращает обьект не содержащий ключи с пустыми значениями
+    //  * @param {*} obj 
+    //  * @private
+    //  */
+    // delUndefined(obj) {
+    //     const result = {}
+    //     for (let key in obj) {
+    //         if (obj[key] !== undefined) {
+    //             result[key] = obj[key]
+    //         }
+    //     }
 
-        return result
-    }
+    //     return result
+    // }
 
-    async _checkEvents(historyId) {
+    // async _checkEvents(historyId) {
 
-    }
+    // }
 
-    /**
-     * Сохраняет историю
-     * @param {*} data новые данные
-     * @param {string} actionTag тег действия
-     * @returns {Promise<{[key: string]: any, id: number}>} Возвращает поле из таблицы истории
-     * @private
-     */
-    async saveHistory(data, actionTag) {
-        const isSaveHistory = await this._isSaveHistory
-        const dataWithoutId = this.delUndefined(_.omit(data, "id"))
+    // /**
+    //  * Сохраняет историю
+    //  * @param {*} data новые данные
+    //  * @param {string} actionTag тег действия
+    //  * @returns {Promise<{[key: string]: any, id: number}>} Возвращает поле из таблицы истории
+    //  * @private
+    //  */
+    // async saveHistory(data, actionTag) {
+    //     const isSaveHistory = await this.isSaveHistory
+    //     const dataWithoutId = this.delUndefined(_.omit(data, "id"))
 
-        if (!isSaveHistory ||
-            (!Object.keys(dataWithoutId).length && actionTag !== "delete") ||
-            this.options.actor_id == undefined) {
-            return null
-        }
+    //     if (!isSaveHistory ||
+    //         (!Object.keys(dataWithoutId).length && actionTag !== "delete") ||
+    //         this.options.actor_id == undefined) {
+    //         return null
+    //     }
 
-        const historyInsertData = {}
-        historyInsertData[this.hisColName] = data.id
-        historyInsertData["actor_id"] = this.options.actor_id
-        historyInsertData["diff"] = JSON.stringify(dataWithoutId)
-        historyInsertData["action_tag"] = actionTag
-        const hisRec = await History.query(this.trx.trx).insert(historyInsertData)
-        await this.history.checkAndGenEvents(hisRec.id)
-        return hisRec
-    }
+    //     const historyInsertData = {}
+    //     historyInsertData[this.hisColName] = data.id
+    //     historyInsertData["actor_id"] = this.options.actor_id
+    //     historyInsertData["diff"] = JSON.stringify(dataWithoutId)
+    //     historyInsertData["action_tag"] = actionTag
+    //     const hisRec = await History.query(this.trx.trx).insert(historyInsertData)
+    //     await this.history.checkAndGenEvents(hisRec.id)
+    //     return hisRec
+    // }
 
-    /**
-     * Получает текущие данные таблицы
-     * @param {number} id 
-     * @private
-     */
-    async getActualData(id) {
-        let actualData = await this.tableClass.query().findById(id)
-        if (!actualData) {
-            throw this.createError400Pattern("id", "This id was not found")
-        }
-        return actualData
-    }
+    // /**
+    //  * Получает текущие данные таблицы
+    //  * @param {number} id 
+    //  * @private
+    //  */
+    // async getActualData(id) {
+    //     let actualData = await this.tableClass.query().findById(id)
+    //     if (!actualData) {
+    //         throw this.createError400Pattern("id", "This id was not found")
+    //     }
+    //     return actualData
+    // }
 
-    /**
-     * Возвращает разницу между оригинальным и обновленны объектом
-     * @param {*} originalObj 
-     * @param {*} updatedObj 
-     */
-    diff(originalObj, updatedObj) {
-        return this.delUndefined(diff(originalObj, updatedObj))
-    }
+    // /**
+    //  * Возвращает разницу между оригинальным и обновленны объектом
+    //  * @param {*} originalObj 
+    //  * @param {*} updatedObj 
+    //  */
+    // diff(originalObj, updatedObj) {
+    //     return this.delUndefined(diff(originalObj, updatedObj))
+    // }
 
-    /**
-     * Применяет JSON.stringify ко всем вложенным объектам
-     * @param {*} data 
-     * @private
-     */
-    stringifyColJSON(data) {
-        const fillteredData = {}
-        for (let key in data) {
-            if (typeof data[key] === "object") {
-                fillteredData[key] = JSON.stringify(data[key])
-            } else {
-                fillteredData[key] = data[key]
-            }
-        }
-        return fillteredData
-    }
+    // /**
+    //  * Применяет JSON.stringify ко всем вложенным объектам
+    //  * @param {*} data 
+    //  * @private
+    //  */
+    // stringifyColJSON(data) {
+    //     const fillteredData = {}
+    //     for (let key in data) {
+    //         if (typeof data[key] === "object") {
+    //             fillteredData[key] = JSON.stringify(data[key])
+    //         } else {
+    //             fillteredData[key] = data[key]
+    //         }
+    //     }
+    //     return fillteredData
+    // }
 
-    /**
-     * Возвращает массив оборудования с неподтвержденными статусами
-     * @returns {Promise<Array<Object>>}
-     */
-    async getTabUnconfStat() {
-        const tableData = await this.tableClass.query()
-        /**@type {Object<number,Object>} */
-        let tableDataIdKey = _.keyBy(tableData, "id")
-        /**@type {Array<Object>} */
-        const tableDataUnconf = await this.events.getUnconfirmData()
-        for (let elem of tableDataUnconf) {
-            Object.assign(tableDataIdKey[elem.id], elem)
-        }
-        /**@type {Array<Object>} */
-        const tableWithUnfonfData = _.values(tableDataIdKey)
-        return tableWithUnfonfData
-    }
+        // createError400Pattern(dataPath, message) {
+    //     const err = createError(400)
+    //     err.message = [{
+    //         "dataPath": "." + dataPath,
+    //         "message": message
+    //     }]
+    //     return err
+    // }
 
-    async insertAndFetch(data) {
-        const readyToInsert = this.stringifyColJSON(data)
-        return this.tableClass.transaction(async trx => {
-            const insertRow = await this.tableClass.query(trx).insertAndFetch(readyToInsert)
-            await this.saveHistory(insertRow, "insert", trx)
-            return insertRow
-        })
-    }
-
-    /**
-     * Изменяет данные и возвращает объект с неподтвержденными данными
-     * @param {*} data 
-     */
-    async patchAndFetch(data) {
-        const id = await this.patch(data)
-        return this.events.getUnconfirmDataById(id)
-    }
-
+        // async insertAndFetch(data) {
+    //     const readyToInsert = this.stringifyColJSON(data)
+    //     return this.tableClass.transaction(async trx => {
+    //         const insertRow = await this.tableClass.query(trx).insertAndFetch(readyToInsert)
+    //         await this.saveHistory(insertRow, "insert", trx)
+    //         return insertRow
+    //     })
+    // }
+    
     // /**
     //  * Добавляет данные в таблицу возвражает id записи
     //  * @param {*} data 
@@ -220,7 +206,7 @@ module.exports = class Table {
     //     const onlyModData = this.diff(actualData, data)
     //     const readyToPatch = this.stringifyColJSON(data)
     //     await this.startTransaction(async () => {
-    //         if (await this._isSaveHistory) {
+    //         if (await this.isSaveHistory) {
     //             const hisRec = await this.saveHistory(onlyModData, "patch")
     //             await this.history.commitHisRec(hisRec.id)
     //         } else {
@@ -231,50 +217,6 @@ module.exports = class Table {
     //     })
     //     return data.id
     // }
-
-    createError400Pattern(dataPath, message) {
-        const err = createError(400)
-        err.message = [{
-            "dataPath": "." + dataPath,
-            "message": message
-        }]
-        return err
-    }
-
-    /**
-     * Исполняет указанное действие
-     * Возвращает id измененной записи
-     * @param {*} data 
-     * @param {*} actionTag 
-     * @protected
-     */
-    async applyAction(data, actionTag) {
-        return this.startTransaction(async () => {
-            if (await this._isSaveHistory) {
-
-            } else {
-                const genHistRec = await this.history.genHistRec(data, actionTag)
-                const patchHisRec = await this.history.applyHisRec(genHistRec)
-            }
-
-            const hisRec = await this.saveHistory(data, actionTag)
-            const id = await this.history.commitHisRec(hisRec.id)
-            return id
-        })
-    }
-
-    async deleteById(id) {
-        return this.applyAction({ id }, "delete")
-    }
-
-    /**
-     * Добавляет данные в таблицу возвражает id записи
-     * @param {*} data 
-     * @returns {Promise<number>}
-     */
-    async patch(data) {
-        return this.applyAction(data, "patch")
-    }
 
     // async delete(findData) {
     //     return this.startTransaction(async () => {
@@ -303,6 +245,98 @@ module.exports = class Table {
     //         }
     //     })
     // }
+    
+    /**
+     * Возвращает массив данных с неподтвержденными статусами
+     * @returns {Promise<Array<Object>>}
+     */
+    async getTabUnconfStat() {
+        const tableData = await this.tableClass.query()
+        /**@type {Object<number,Object>} */
+        let tableDataIdKey = _.keyBy(tableData, "id")
+        /**@type {Array<Object>} */
+        const tableDataUnconf = await this.events.getUnconfirmData()
+        for (let elem of tableDataUnconf) {
+            Object.assign(tableDataIdKey[elem.id], elem)
+        }
+        /**@type {Array<Object>} */
+        const tableWithUnfonfData = _.values(tableDataIdKey)
+        return tableWithUnfonfData
+    }
+
+
+
+
+
+
+    /**
+     * Исполняет указанное действие
+     * Возвращает id измененной записи
+     * @param {*} data 
+     * @param {*} actionTag 
+     * @protected
+     */
+    async applyAction(data, actionTag) {
+        return this.startTransaction(async () => {
+            let id
+            if (await this.isSaveHistory) {
+                const saveHis = await this.history.saveAndApply(data, actionTag)
+                id = saveHis[this.hisColName]
+            } else {
+                const genHistRec = await this.history.genHistRec(data, actionTag)
+                id = await this.history.applyHisRec(genHistRec)
+            }
+            return id
+        })
+    }
+
+    /**
+     * Удаляет данные из таблицы по id
+     * @param {number} id 
+     */
+    async deleteById(id) {
+        return this.applyAction({ id }, "delete")
+    }
+
+    /**
+     * Обновляет данные в таблице возвражает id записи
+     * @param {{id: number, [key: string] : any}} data 
+     * @returns {Promise<number>}
+     */
+    async patch(data) {
+        return this.applyAction(data, "patch")
+    }
+
+    /**
+     * Добовляет данные в таблицу возвражает id записи
+     * @param {*} data 
+     * @returns {Promise<number>}
+     */
+    async insert(data) {
+        return this.applyAction(data, "insert")
+    }
+
+    /**
+     * Добовляет данные и возвращает объект с неподтвержденными данными
+     * @param {*} data 
+     */
+    async insertAndFetch(data) {
+        const id = await this.patch(data)
+        return this.events.getUnconfirmDataById(id)
+    }
+
+    /**
+     * Изменяет данные и возвращает объект с неподтвержденными данными
+     * @param {{id: number, [key: string] : any}} data 
+     */
+    async patchAndFetch(data) {
+        const id = await this.patch(data)
+        return this.events.getUnconfirmDataById(id)
+    }
+
+
+    
+
 
     /**
      * Принимает колбэк, все методы в нем будут выполнены в рамках одной транзакции

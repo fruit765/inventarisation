@@ -1,4 +1,7 @@
-//@ts-check
+//@ts-check\
+/**
+ *  @typedef { import("objection") } Objection
+ */
 "use strict"
 
 const Knex = require("knex")
@@ -12,8 +15,11 @@ const knex = Knex(dbConfig)
 const _ = require("lodash")
 
 module.exports = class GlobalHistory {
-    constructor() {
-
+    /**
+     * @param {Objection["Model"]} tableClass 
+     */
+    constructor(tableClass) {
+        this.tableClass = tableClass
     }
 
     /**
@@ -245,5 +251,17 @@ module.exports = class GlobalHistory {
      */
     async checkAndGenEvents(id) {
          History.query()
+    }
+
+    async validate(data) {
+        const trx = await this.tableClass.startTransaction()
+    }
+
+    async saveAndApply(data, actionTag) {
+        const validData = await this.history.validate(data)
+        const hisRec = await this.history.genHistRec(validData, actionTag)
+        const hisId = await this.history.insertHistory(hisRec)
+        await this.events.checkAndGenEvents(hisId)
+        await this.history.commitHistory(hisId)
     }
 }
