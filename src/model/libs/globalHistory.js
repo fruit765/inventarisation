@@ -1,3 +1,4 @@
+//@ts-check
 "use strict"
 
 const Knex = require("knex")
@@ -15,7 +16,13 @@ module.exports = class GlobalHistory {
 
     }
 
-    async _selectSqlStrToValue(sqlValuesRaw) {
+    /**
+     * На входе может быть только select запрос
+     * Делает запрос, получаем массив значений
+     * @param {string} sqlValuesRaw 
+     * @private
+     */
+    async selectSqlStrToValue(sqlValuesRaw) {
         let sqlStringArray = []
         let sqlValues = []
 
@@ -39,8 +46,9 @@ module.exports = class GlobalHistory {
     /**
      * Если приходит не массив упоковывает значение в массив
      * @param {*} value 
+     * @private
      */
-    _warpToArray(value) {
+    warpToArray(value) {
         if (_.isArray(value)) {
             return value
         } else {
@@ -52,11 +60,12 @@ module.exports = class GlobalHistory {
      * Собирает логическую цепочку для массива определенной длинны, счетчик нужен
      * для установки начало отсчета
      * Приходит ("foo", 3, 4), получаем "( foo4 or foo5 or foo6 )"
-     * @param {*} prefix 
-     * @param {*} length 
-     * @param {*} counter 
+     * @param {string} prefix 
+     * @param {number} length 
+     * @param {number} counter 
+     * @private
      */
-    _arrayAndPrefixToLogicOr(prefix, length, counter) {
+    arrayAndPrefixToLogicOr(prefix, length, counter) {
         const res = []
         for (let key = counter; key < counter + length; key++) {
             res.push(prefix + counter)
@@ -71,8 +80,9 @@ module.exports = class GlobalHistory {
      * @param {string} sign
      * @param {*} regExpStr 
      * @param {*} logicCh 
+     * @private
      */
-    _addDefaultSignLogicCh(sign, regExpStr, logicCh) {
+    addDefaultSignLogicCh(sign, regExpStr, logicCh) {
         return logicCh.trim().split(" ").map(x => {
             const regExp = new RegExp(regExpStr, "gi")
             return x.match(regExp) ? sign + x : x
@@ -86,8 +96,8 @@ module.exports = class GlobalHistory {
                 _.forEach(valArray, (subValue, subKey) => {
                     if (x.match(new RegExp("[=<>!]" + valType + subKey + "$", "gi"))) {
                         const sign = x.match(/[=><!]/gi).join("")
-                        const subValueArray = this._warpToArray(subValue)
-                        const res = this._arrayAndPrefixToLogicOr(sign + valType, subValueArray.length, counter)
+                        const subValueArray = this.warpToArray(subValue)
+                        const res = this.arrayAndPrefixToLogicOr(sign + valType, subValueArray.length, counter)
                         counter += subValueArray.length
                         return res
                     }
@@ -103,8 +113,8 @@ module.exports = class GlobalHistory {
             _.forOwn(columnsVal, (columnArray, columnName) => {
                 columnArray.forEach((columnSubArray, columnKey) => {
                     if (x.match(new RegExp("^" + columnName + columnKey + "$", "gi"))) {
-                        const columnSubArrayWrp = this._warpToArray(columnSubArray)
-                        const res = this._arrayAndPrefixToLogicOr(columnName + columnKey, columnSubArrayWrp.length, counter)
+                        const columnSubArrayWrp = this.warpToArray(columnSubArray)
+                        const res = this.arrayAndPrefixToLogicOr(columnName + columnKey, columnSubArrayWrp.length, counter)
                         counter += columnSubArrayWrp.length
                         return res
                     }
@@ -118,7 +128,7 @@ module.exports = class GlobalHistory {
         let logicChain = ""
         const logicArray = []
         if (typeof logicChainRaw === "string") {
-            logicChain = this._addDefaultSignLogicCh("=", `^(${_.keys(keyValues).join("|")})`, logicChainRaw)
+            logicChain = this.addDefaultSignLogicCh("=", `^(${_.keys(keyValues).join("|")})`, logicChainRaw)
             logicChain = this._flatternArrayWithLogicVal(logicChain, keyValues)
         } else {
             _.forOwn(keyValues, (valArray, valType) => {
@@ -194,7 +204,7 @@ module.exports = class GlobalHistory {
     }
 
     async _buildQueryStrByColObj(colObj, columnName) {
-        const sqlValues = await this._selectSqlStrToValue(colObj.sql) //получаем 2 мерный массив [[1,3],[3,5],[6]]
+        const sqlValues = await this.selectSqlStrToValue(colObj.sql) //получаем 2 мерный массив [[1,3],[3,5],[6]]
         const values = colObj.values
         //подготавливает логическую цепочку, возвращает цепочку по умолчанию если она пустая, изменяет
         //ее для двумерного массива
@@ -211,7 +221,7 @@ module.exports = class GlobalHistory {
 
         const columnsValues = {}
         for (let columnName in columns) {
-            columnsValues[columnName] = await Promise.all(this._warpToArray(columns[columnName]).map(x => {
+            columnsValues[columnName] = await Promise.all(this.warpToArray(columns[columnName]).map(x => {
                 return this._buildQueryStrByColObj(x, columnName)
             }))
         }
@@ -227,5 +237,13 @@ module.exports = class GlobalHistory {
     async getByPreset(tableName, preset) {
         const cond = await this._buildQueryStrByPreset(preset)
         return History.query().whereRaw(cond)
+    }
+
+    /**
+     * Проверяет запись в истории на наличие евентов и создает записи евентов
+     * @param {number} id 
+     */
+    async checkAndGenEvents(id) {
+         History.query()
     }
 }
