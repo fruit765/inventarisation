@@ -178,7 +178,7 @@ module.exports = class Table {
     //     return fillteredData
     // }
 
-        // createError400Pattern(dataPath, message) {
+    // createError400Pattern(dataPath, message) {
     //     const err = createError(400)
     //     err.message = [{
     //         "dataPath": "." + dataPath,
@@ -187,7 +187,7 @@ module.exports = class Table {
     //     return err
     // }
 
-        // async insertAndFetch(data) {
+    // async insertAndFetch(data) {
     //     const readyToInsert = this.stringifyColJSON(data)
     //     return this.tableClass.transaction(async trx => {
     //         const insertRow = await this.tableClass.query(trx).insertAndFetch(readyToInsert)
@@ -195,7 +195,7 @@ module.exports = class Table {
     //         return insertRow
     //     })
     // }
-    
+
     // /**
     //  * Добавляет данные в таблицу возвражает id записи
     //  * @param {*} data 
@@ -245,7 +245,7 @@ module.exports = class Table {
     //         }
     //     })
     // }
-    
+
     /**
      * Возвращает массив данных с неподтвержденными статусами
      * @returns {Promise<Array<Object>>}
@@ -335,7 +335,7 @@ module.exports = class Table {
     }
 
 
-    
+
 
 
     /**
@@ -345,11 +345,30 @@ module.exports = class Table {
      */
     async startTransaction(fn) {
         const res = await this.tableClass.transaction(async trx => {
-            this.trx.trx = trx
-            return await fn()
+            const thisWTrx = new Proxy(this, {
+                get: (target, prop) => prop === "trx" ? trx : target[prop]
+            })
+            return await fn.apply(thisWTrx)
         })
         this.trx.trx = undefined
         return res
+    }
+
+    /**
+     * Принимает колбэк, все методы в нем будут выполнены в рамках одной транзакции
+     * @param {() => any} fn 
+     * @protected
+     */
+    async startTransaction(fn) {
+        const res = this.trx.queue = this.trx.queue.then(
+            () => this.tableClass.transaction(
+                async trx => {
+                    this.trx.trx = trx
+                    const response = await fn()
+                    this.trx.trx = undefined
+                    return response
+                }).catch(err => new Error(err))
+        )
     }
 
     get() {

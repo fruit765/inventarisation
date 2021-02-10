@@ -41,8 +41,8 @@ module.exports = class GlobalHistory {
         if (sqlStringArray.length) {
             sqlValues = await Promise.all(sqlStringArray.map(async value => {
                 const query = _.get(value.trim().match(/^select.*/), "[0]")
-                const res = await knex.raw(query).then(x=>x[0])
-                return _.map(res,Object.keys(res[0])[0])
+                const res = await knex.raw(query).then(x => x[0])
+                return _.map(res, Object.keys(res[0])[0])
             }))
         }
 
@@ -141,7 +141,7 @@ module.exports = class GlobalHistory {
                 _.forEach(_.flatten(valArray), (subValue, subKey) => {
                     if (subValue != null) {
                         const prefix = valType + subKey
-                        logicArray.push("="+prefix)
+                        logicArray.push("=" + prefix)
                     }
                 })
             })
@@ -185,7 +185,7 @@ module.exports = class GlobalHistory {
         _.forOwn(keyValues, (valArray, valType) => {
             _.forEach(valArray, (subValue, subKey) => {
                 const regExp = new RegExp(valType + subKey + "[\\s]", "gi")
-                queryCondition = queryCondition.replace(regExp, subValue+" ")
+                queryCondition = queryCondition.replace(regExp, subValue + " ")
             })
         })
 
@@ -202,7 +202,7 @@ module.exports = class GlobalHistory {
         _.forOwn(columnsVal, (columnArray, columnName) => {
             _.forEach(columnArray, (columnValue, columnKey) => {
                 const regExp = new RegExp(`[\\s]` + columnName + columnKey + `[\\s]`, "gi")
-                queryCondition = logicChain.replace(regExp, " "+columnValue+" ")
+                queryCondition = logicChain.replace(regExp, " " + columnValue + " ")
             })
         })
 
@@ -221,7 +221,7 @@ module.exports = class GlobalHistory {
 
     async _buildQueryStrByPreset(preset) {
 
-        const columns =_.mapValues(preset.columns, (columnVal, columnName) => {
+        const columns = _.mapValues(preset.columns, (columnVal, columnName) => {
             return columnVal.new ? columnVal.new : columnVal
         })
 
@@ -233,7 +233,7 @@ module.exports = class GlobalHistory {
         }
 
         const logicChain = this._prepareLogicChColumn(preset.logicChain, columnsValues)
-        const columnsValuesFlattern = _.mapValues(columnsValues, (val)=>{
+        const columnsValuesFlattern = _.mapValues(columnsValues, (val) => {
             return _.flatten(val)
         })
         const queryStr = this._buildQueryStrByLogicChCol(logicChain, columnsValuesFlattern)
@@ -250,16 +250,37 @@ module.exports = class GlobalHistory {
      * @param {number} id 
      */
     async checkAndGenEvents(id) {
-         History.query()
+        History.query()
     }
 
-    async validate(data) {
+    /**
+     * Проверяет будут ли ошибки при вставке в БД
+     * возвращает id объекта, при вставке генерируется id
+     * @param {*} data 
+     * @param {string} actionTag 
+     * @private
+     */
+    async validate(data, actionTag) {
         const trx = await this.tableClass.startTransaction()
+        const oldTrx = this.trx.trx
+        this.trx.trx = trx
+        const response = this.applyHisRec(data, actionTag).then(
+            async (res) => {
+                await this.trx.trx.rollback()
+                this.trx.trx = oldTrx
+                return res
+            },
+            async err => {
+                await this.trx.trx.rollback()
+                this.trx.trx = oldTrx
+                return Promise.reject(err)
+            })
+        return response
     }
 
     async saveAndApply(data, actionTag) {
-        const validData = await this.history.validate(data)
-        const hisRec = await this.history.genHistRec(validData, actionTag)
+        await this.validate(data, actionTag)
+        const hisRec = await this.history.genHistRec(data, actionTag)
         const hisId = await this.history.insertHistory(hisRec)
         await this.events.checkAndGenEvents(hisId)
         await this.history.commitHistory(hisId)
