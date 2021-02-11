@@ -51,7 +51,7 @@ module.exports = class Events {
             .skipUndefined()
             .where(this.tableClass.tableName + "_id", id)
             .where("table", this.tableClass.tableName)
-            .select(this.tableClass.tableName + "_id", "status.status", "status.status_id", "diff")
+            .select(this.tableClass.tableName + "_id", "status.status", "status.status_id", "diff","view_priority")
             .whereNull("date_completed")
             .joinRelated(`[history.${this.tableClass.tableName},event_confirm_preset.status]`)
         return unconfirmed
@@ -63,6 +63,11 @@ module.exports = class Events {
      */
     async getUnconfirmSnapshot(id) {
         const unconfirmed = await this.getUnconfirm(id)
+        unconfirmed.forEach(value => {
+            if (value.view_priority <= 0) {
+                value.diff={}
+            }
+        })
         a=_.groupBy(unconfirmed, this.tableClass.tableName + "_id")
         _.mapValues(a, (value)=>{
             _.reduce(value, )
