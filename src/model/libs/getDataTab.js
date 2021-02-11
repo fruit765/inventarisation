@@ -55,7 +55,7 @@ module.exports = class GetDataTab {
             unconfSnapshot = await this.events.getUnconfirmSnapshot()
         }
         const tableData = await this.getAll()
-        const tableWoutUnconfId = _.pullAllBy(tableData, unconfSnapshot, "id")
-        return tableWoutUnconfId.concat(unconfSnapshot)
+        _.pullAllBy(tableData, unconfSnapshot, "id")
+        return tableData.concat(unconfSnapshot)
     }
 }

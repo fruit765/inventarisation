@@ -9,6 +9,7 @@
 const Event_confirm = require("../orm/event_confirm")
 const Event_confirm_preset = require("../orm/event_confirm_preset")
 const _ = require("lodash")
+const { attemptP } = require("fluture")
 
 /**
  * @class
@@ -32,8 +33,8 @@ module.exports = class Events {
          * @type {{priority: number}}
          * @private
          */
-        this.options = { 
-            priority: options.priority ?? 0 
+        this.options = {
+            priority: options.priority ?? 0
         }
 
     }
@@ -45,14 +46,15 @@ module.exports = class Events {
     async getUnconfirm(id) {
         id = id ?? undefined
 
-        const unconfirmed = await Event_confirm
+        const unconfirmed = Event_confirm
             .query()
             .skipUndefined()
+            .where(this.tableClass.tableName + "_id", id)
             .where("table", this.tableClass.tableName)
             .select(this.tableClass.tableName + "_id", "status.status", "status.status_id", "diff")
             .whereNull("date_completed")
-            .joinRelated(`[history.${tableName},event_confirm_preset.status]`)
-
+            .joinRelated(`[history.${this.tableClass.tableName},event_confirm_preset.status]`)
+        return unconfirmed
     }
 
     /**
@@ -60,16 +62,11 @@ module.exports = class Events {
      * @param {?*} id 
      */
     async getUnconfirmSnapshot(id) {
-        id = id ?? undefined
-
-        const unconfirmed = await Event_confirm
-            .query()
-            .skipUndefined()
-            .where(this.tableClass.tableName + "_id", id)
-            .where("table", this.tableClass.tableName)
-            .select(tableName + "_id", "status.status", "status.status_id", "diff")
-            .whereNull("date_completed")
-            .joinRelated(`[history.${tableName},event_confirm_preset.status]`)
+        const unconfirmed = await this.getUnconfirm(id)
+        a=_.groupBy(unconfirmed, this.tableClass.tableName + "_id")
+        _.mapValues(a, (value)=>{
+            _.reduce(value, )
+        })
 
     }
 
