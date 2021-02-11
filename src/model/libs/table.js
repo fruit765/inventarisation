@@ -15,6 +15,7 @@ const { diff } = require("deep-object-diff")
 
 const History = require("../orm/history")
 const Events = require("./events")
+const ApplyAction = require("./applyAction")
 const GlobalHistory = require("./globalHistory")
 
 module.exports = class Table {
@@ -63,6 +64,8 @@ module.exports = class Table {
          * @type {Promise}
          */
         this.isSaveHistory = undefined
+        /**@private */
+        this.applyActionClass = new ApplyAction(tableClass)
 
         this.setOpt(options)
     }
@@ -247,29 +250,6 @@ module.exports = class Table {
     // }
 
     /**
-     * Возвращает массив данных с неподтвержденными статусами
-     * @returns {Promise<Array<Object>>}
-     */
-    async getTabUnconfStat() {
-        const tableData = await this.tableClass.query()
-        /**@type {Object<number,Object>} */
-        let tableDataIdKey = _.keyBy(tableData, "id")
-        /**@type {Array<Object>} */
-        const tableDataUnconf = await this.events.getUnconfirmData()
-        for (let elem of tableDataUnconf) {
-            Object.assign(tableDataIdKey[elem.id], elem)
-        }
-        /**@type {Array<Object>} */
-        const tableWithUnfonfData = _.values(tableDataIdKey)
-        return tableWithUnfonfData
-    }
-
-
-
-
-
-
-    /**
      * Исполняет указанное действие
      * Возвращает id измененной записи
      * @param {*} data 
@@ -277,14 +257,13 @@ module.exports = class Table {
      * @protected
      */
     async applyAction(data, actionTag) {
-        return this.startTransaction(async () => {
+        return this.tableClass.transaction(async trx => {
             let id
             if (await this.isSaveHistory) {
-                const saveHis = await this.history.saveAndApply(data, actionTag)
+                const saveHis = await this.history.saveAndApply(data, actionTag, trx)
                 id = saveHis[this.hisColName]
             } else {
-                const genHistRec = await this.history.genHistRec(data, actionTag)
-                id = await this.history.applyHisRec(genHistRec)
+                id = await this.applyActionClass.applyAction(data, actionTag, trx)
             }
             return id
         })
@@ -332,43 +311,6 @@ module.exports = class Table {
     async patchAndFetch(data) {
         const id = await this.patch(data)
         return this.events.getUnconfirmDataById(id)
-    }
-
-
-
-
-
-    /**
-     * Принимает колбэк, все методы в нем будут выполнены в рамках одной транзакции
-     * @param {() => any} fn 
-     * @protected
-     */
-    async startTransaction(fn) {
-        const res = await this.tableClass.transaction(async trx => {
-            const thisWTrx = new Proxy(this, {
-                get: (target, prop) => prop === "trx" ? trx : target[prop]
-            })
-            return await fn.apply(thisWTrx)
-        })
-        this.trx.trx = undefined
-        return res
-    }
-
-    /**
-     * Принимает колбэк, все методы в нем будут выполнены в рамках одной транзакции
-     * @param {() => any} fn 
-     * @protected
-     */
-    async startTransaction(fn) {
-        const res = this.trx.queue = this.trx.queue.then(
-            () => this.tableClass.transaction(
-                async trx => {
-                    this.trx.trx = trx
-                    const response = await fn()
-                    this.trx.trx = undefined
-                    return response
-                }).catch(err => new Error(err))
-        )
     }
 
     get() {

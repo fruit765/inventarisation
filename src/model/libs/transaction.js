@@ -5,19 +5,57 @@ const { modelPaths } = require("../orm/act");
 module.exports = class Transaction {
     constructor() {
         this.trx = undefined
-        /**@type {Promise<any>} */
+        /**
+         * @type {Promise<any>} 
+         * @private
+        */
         this.queue = Promise.resolve()
+        /**
+         * @type {Promise<any>} 
+         * @private
+        */
+        this.queueRollback = Promise.resolve()
     }
 
     async startTransaction(fn) {
-        const res = this.trx.queue = this.trx.queue.then(
+        const resP = this.queue = this.queue.then(
             () => this.tableClass.transaction(
                 async trx => {
-                    this.trx.trx = trx
+                    const trxOld = this.trx
+                    this.trx = trx
                     const response = await fn()
-                    this.trx.trx = undefined
+                    this.trx = trxOld
                     return response
-                }).catch(err => new Error(err))
+                }).catch(err => [new Error("err"), err])
         )
+
+        const res = await resP
+
+        if (typeof res === "object" && res[0] instanceof Error && res[0].message === "err") {
+            throw res[1]
+        }
+
+        return res
+    }
+
+    async startTransRollback (fn) {
+        const resP = this.queue = this.queue.then(
+            () => this.tableClass.transaction(
+                async trx => {
+                    const trxOld = this.trx
+                    this.trx = trx
+                    const response = await fn()
+                    this.trx = trxOld
+                    return response
+                }).catch(err => [new Error("err"), err])
+        )
+
+        const res = await resP
+
+        if (typeof res === "object" && res[0] instanceof Error && res[0].message === "err") {
+            throw res[1]
+        }
+
+        return res
     }
 }

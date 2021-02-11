@@ -116,6 +116,25 @@ module.exports = class Events {
 
     }
 
+
+    /**
+     * Возвращает массив данных с неподтвержденными статусами
+     * @returns {Promise<Array<Object>>}
+     */
+    async getTabUnconfStat() {
+        const tableData = await this.tableClass.query()
+        /**@type {Object<number,Object>} */
+        let tableDataIdKey = _.keyBy(tableData, "id")
+        /**@type {Array<Object>} */
+        const tableDataUnconf = await this.events.getUnconfirmData()
+        for (let elem of tableDataUnconf) {
+            Object.assign(tableDataIdKey[elem.id], elem)
+        }
+        /**@type {Array<Object>} */
+        const tableWithUnfonfData = _.values(tableDataIdKey)
+        return tableWithUnfonfData
+    }
+
     static getEvents() {
 
     }

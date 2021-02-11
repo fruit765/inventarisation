@@ -1,4 +1,4 @@
-//@ts-check\
+//@ts-check
 /**
  *  @typedef { import("objection") } Objection
  */
@@ -10,6 +10,8 @@ const Device = require("../orm/device")
 const Event_confirm = require("../orm/event_confirm")
 const Event_confirm_preset = require("../orm/event_confirm_preset")
 const History = require("../orm/history")
+const ApplyAction = require("./applyAction")
+
 const Table = require("./table")
 const knex = Knex(dbConfig)
 const _ = require("lodash")
@@ -20,6 +22,16 @@ module.exports = class GlobalHistory {
      */
     constructor(tableClass) {
         this.tableClass = tableClass
+        /**@private */
+        this.applyActionClass = new ApplyAction(tableClass)
+    }
+
+    /**
+     * Проверяет сохраняется ли история у данной таблицы
+     * @param {string} tableName
+     */
+    static async hasHistory(tableName) {
+        return knex.schema.hasColumn(History.tableName, tableName) 
     }
 
     /**
@@ -254,35 +266,35 @@ module.exports = class GlobalHistory {
     }
 
     /**
-     * Проверяет будут ли ошибки при вставке в БД
-     * возвращает id объекта, при вставке генерируется id
-     * @param {*} data 
-     * @param {string} actionTag 
+     * Получает текущие данные таблицы
+     * @param {number} id 
      * @private
      */
-    async validate(data, actionTag) {
-        const trx = await this.tableClass.startTransaction()
-        const oldTrx = this.trx.trx
-        this.trx.trx = trx
-        const response = this.applyHisRec(data, actionTag).then(
-            async (res) => {
-                await this.trx.trx.rollback()
-                this.trx.trx = oldTrx
-                return res
-            },
-            async err => {
-                await this.trx.trx.rollback()
-                this.trx.trx = oldTrx
-                return Promise.reject(err)
-            })
-        return response
+    async getActualData(id) {
+        let actualData = await this.tableClass.query().findById(id)
+        if (!actualData) {
+            throw this.createError400Pattern("id", "This id was not found")
+        }
+        return actualData
+    }
+
+    /**
+     * Вставляет данные в формате diff строки истории в целевую таблицу
+     * @param {*} data {diff:{foo: bar}}
+     * @param {string} actionTag 
+     * @param {*} trx 
+     */
+    async saveHistoryOnly(data, actionTag, trx) {
+        this.getActualData()
     }
 
     async saveAndApply(data, actionTag) {
-        await this.validate(data, actionTag)
-        const hisRec = await this.history.genHistRec(data, actionTag)
-        const hisId = await this.history.insertHistory(hisRec)
-        await this.events.checkAndGenEvents(hisId)
-        await this.history.commitHistory(hisId)
+        return this.tableClass.transaction(async (trx) => {
+            const id = await this.applyActionClass.validate(data, actionTag)
+            const dataWithValidId = Object.assign({ id }, data)
+            const hisRec = await this.saveHistoryOnly(dataWithValidId, actionTag, trx)
+            await this.events.checkAndGenEvents(hisRec.id)
+            await this.commitHistory(hisId)
+        })
     }
 }
