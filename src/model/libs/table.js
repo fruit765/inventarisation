@@ -14,7 +14,7 @@ const createError = require('http-errors')
 const { diff } = require("deep-object-diff")
 
 const History = require("../orm/history")
-const Events = require("./events")
+const Events = require("./events2")
 const ApplyAction = require("./applyAction")
 const GlobalHistory = require("./globalHistory")
 

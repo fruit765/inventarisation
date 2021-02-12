@@ -41,6 +41,7 @@
     "axios": "^0.20.0",
     "chai": "^4.2.0",
     "gulp-nodemon": "^2.5.0",
+    "gulp-typescript": "^6.0.0-alpha.1",
     "mocha": "^8.2.1",
     "redoc": "^2.0.0-rc.45",
     "redoc-cli": "^0.9.13",

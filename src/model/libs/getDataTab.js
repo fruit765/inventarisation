@@ -14,7 +14,7 @@ const _ = require("lodash")
 module.exports = class GetDataTab {
     /**
      * @param {Objection["Model"]} tableClass 
-     * @param {Options} options
+     * @param {Options} [options]
      * 
      * @typedef {Object} Options
      * @property {number} priority
@@ -47,6 +47,14 @@ module.exports = class GetDataTab {
     }
 
     /**
+     * Получает текущие данные из таблицы по ID
+     * @param {number} id
+     */
+    async getById(id) {
+        return this.tableClass.query().findById(id)
+    }
+
+    /**
      * Получает данные из таблицы с новой еще не закомиченной информацией
      */
     async getUnconfirm() {
@@ -55,7 +63,6 @@ module.exports = class GetDataTab {
             unconfSnapshot = await this.events.getUnconfirmSnapshot()
         }
         const tableData = await this.getAll()
-        _.pullAllBy(tableData, unconfSnapshot, "id")
-        return tableData.concat(unconfSnapshot)
+        return tableData.concat(_.pullAllBy(tableData, unconfSnapshot, "id"))
     }
 }

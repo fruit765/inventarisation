@@ -10,7 +10,10 @@ const Device = require("../orm/device")
 const Event_confirm = require("../orm/event_confirm")
 const Event_confirm_preset = require("../orm/event_confirm_preset")
 const History = require("../orm/history")
+const GetDataTab = require("./getDataTab")
 const ApplyAction = require("./applyAction")
+const { addedDiff, updatedDiff } = require("deep-object-diff")
+const Events = require("../libs/events")
 
 const Table = require("./table")
 const knex = Knex(dbConfig)
@@ -18,12 +21,23 @@ const _ = require("lodash")
 
 module.exports = class GlobalHistory {
     /**
+     * @typedef {Object} Options
+     * @property {number} actorId
      * @param {Objection["Model"]} tableClass 
+     * @param {Options} options
      */
-    constructor(tableClass) {
+    constructor(tableClass, options) {
         this.tableClass = tableClass
         /**@private */
         this.applyActionClass = new ApplyAction(tableClass)
+        /**@private */
+        this.colName = tableClass.tableName + "_id"
+        /**
+         * @private 
+         * @type {{actorId: number}}
+        */
+        this.options = { actorId: options.actorId }
+        this.events= new Events(tableClass)
     }
 
     /**
@@ -31,7 +45,7 @@ module.exports = class GlobalHistory {
      * @param {string} tableName
      */
     static async hasHistory(tableName) {
-        return knex.schema.hasColumn(History.tableName, tableName) 
+        return knex.schema.hasColumn(History.tableName, tableName)
     }
 
     /**
@@ -258,34 +272,37 @@ module.exports = class GlobalHistory {
     }
 
     /**
-     * Проверяет запись в истории на наличие евентов и создает записи евентов
-     * @param {number} id 
-     */
-    async checkAndGenEvents(id) {
-        History.query()
-    }
-
-    /**
-     * Получает текущие данные таблицы
-     * @param {number} id 
+     * Возвращает измененные и добавленные данные
+     * @param {*} originalObj 
+     * @param {*} updatedObj 
      * @private
      */
-    async getActualData(id) {
-        let actualData = await this.tableClass.query().findById(id)
-        if (!actualData) {
-            throw this.createError400Pattern("id", "This id was not found")
-        }
-        return actualData
+    diff(originalObj, updatedObj) {
+        return Object.assign(addedDiff(originalObj, updatedObj), updatedDiff(originalObj, updatedObj))
     }
 
     /**
-     * Вставляет данные в формате diff строки истории в целевую таблицу
-     * @param {*} data {diff:{foo: bar}}
+     * Сохраняет запись в историю
+     * @param {{id:number, [key: string]: any}} data обязательно должен содержать id
      * @param {string} actionTag 
      * @param {*} trx 
+     * @returns {Promise<Object>} Возвращает добавленное поле истории
+     * @private
      */
     async saveHistoryOnly(data, actionTag, trx) {
-        this.getActualData()
+        let dataCopy = { ...data }
+        const actualData = await this.tableClass.query().findById(data.id) ?? {}
+        if (actionTag === "delete") {
+            dataCopy = { id: data.id }
+        }
+        const modData = this.diff(actualData, dataCopy)
+        const historyInsertData = {
+            actor_id: this.options.actorId,
+            diff: JSON.stringify(modData),
+            action_tag: actionTag
+        }
+        historyInsertData[this.colName] = data.id
+        return History.query(trx).insert(historyInsertData)
     }
 
     async saveAndApply(data, actionTag) {
@@ -293,8 +310,8 @@ module.exports = class GlobalHistory {
             const id = await this.applyActionClass.validate(data, actionTag)
             const dataWithValidId = Object.assign({ id }, data)
             const hisRec = await this.saveHistoryOnly(dataWithValidId, actionTag, trx)
-            await this.events.checkAndGenEvents(hisRec.id)
-            await this.commitHistory(hisId)
+            await this.events.genEventsById(hisRec.id)
+            await this.commitHistory(hisRec.id)
         })
     }
 }
