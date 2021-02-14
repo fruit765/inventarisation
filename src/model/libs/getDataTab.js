@@ -27,15 +27,12 @@ module.exports = class GetDataTab {
         this.tableClass = tableClass
         /**@private*/
         this.events = undefined
-        /**
-         * @readonly
-         * @private
-         */
-        this.hasHistory = GlobalHistory.hasHistory(this.tableClass.tableName)
-        this.hasHistory.then((x) => {
+        /**@private*/
+        this.hasHistory = GlobalHistory.hasHistory(this.tableClass.tableName).then((x) => {
             if (x) {
-                this.events = new Events(tableClass, { priority: options.priority })
+                this.events = new Events(tableClass, { priority: options?.priority ?? 0 })
             }
+            return x
         })
     }
 
@@ -56,13 +53,14 @@ module.exports = class GetDataTab {
 
     /**
      * Получает данные из таблицы с новой еще не закомиченной информацией
+     * @param {number=} id
      */
-    async getUnconfirm() {
+    async getUnconfirm(id) {
         let unconfSnapshot = []
-        if (await this.hasHistory) {
-            unconfSnapshot = await this.events.getUnconfirmSnapshot()
+        if (await this.hasHistory && this.events) {
+            unconfSnapshot = await this.events.getUnconfirmSnapshot(id)
         }
-        const tableData = await this.getAll()
+        const tableData = await this.tableClass.query().skipUndefined().where("id", /**@type {*}*/(id))
         return tableData.concat(_.pullAllBy(tableData, unconfSnapshot, "id"))
     }
 }

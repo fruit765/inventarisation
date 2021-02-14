@@ -9,7 +9,9 @@
 const Event_confirm = require("../orm/event_confirm")
 const Event_confirm_preset = require("../orm/event_confirm_preset")
 const History = require("../orm/history")
+const Transaction = require("./transaction")
 const _ = require("lodash")
+const dayjs = require("dayjs")
 
 /**
  * @class
@@ -34,21 +36,20 @@ module.exports = class Events {
          * @private
          */
         this.options = {
-            priority: options.priority ?? 0
+            priority: options?.priority ?? 0
         }
 
     }
 
     /**
      * Снимок неподтвержденных данных, вычисляется в зависимости от приоритета
-     * @param {?*} id 
+     * @param {number=} id 
      */
     async getUnconfirmSnapshot(id) {
-        id = id ?? undefined
         const unconfirmed = await Event_confirm
             .query()
             .skipUndefined()
-            .where(this.tableClass.tableName + "_id", id)
+            .where(this.tableClass.tableName + "_id", /**@type {*}*/(id))
             .where("table", this.tableClass.tableName)
             .select(this.tableClass.tableName + "_id", "status.status", "status.status_id", "diff", "view_priority", "event_confirm_preset_id")
             .whereNull("date_completed")
@@ -58,7 +59,7 @@ module.exports = class Events {
         const unconfirmedGroupArray = _.values(unconfirmedGroup)
         //Преобразуем двумерный массив в одномерный удаляя в группах значения с наивысшим приоритетом
         const unconfirmedPrior = _.map(unconfirmedGroupArray, (value) => {
-            return value.reduce((accumulator, currentValue) => {
+            return value.reduce((accumulator, /**@type {*}*/currentValue) => {
                 if ((accumulator.view_priority < currentValue.view_priority) ||
                     (
                         accumulator.view_priority === currentValue.view_priority &&
@@ -68,7 +69,7 @@ module.exports = class Events {
                 } else {
                     return accumulator
                 }
-            }, /**@type {*}*/({}))
+            }, /**@type {*}*/{})
         })
         //Преобразуем с коллекции записей в истории
         //в коллекцию записей таблицы
@@ -78,22 +79,59 @@ module.exports = class Events {
                 status: unconfirmedPrior[val].status,
                 status_id: unconfirmedPrior[val].status_id,
             }
-            unconfirmedPrior[val] = Object.assign(statObj,unconfirmedPrior[val].diff)
+            unconfirmedPrior[val] = Object.assign(statObj, unconfirmedPrior[val].diff)
         }
 
         return unconfirmedPrior
     }
 
     /**
+     * Возвращает активные присеты
+     */
+    async getActualPresets() {
+        const curretDataTime = dayjs().format('YYYY-MM-DD HH:mm:ss')
+        return Event_confirm_preset.query()
+            .where("start_preset_date", "<", curretDataTime)
+            .andWhere(
+                /**@this {any}*/
+                function () {
+                    this.whereNull("end_preset_date").orWhere("end_preset_date", ">", curretDataTime)
+                })
+    }
+
+    /**
+     * Проверяет соответствует ли история с данным id конкретному пресету
+     * @param {number} hisId 
+     * @param {*} preset 
+     */
+    async isHisMatchPreset(hisId, preset) {
+
+    }
+
+    /**
      * Проверяет на наличие событий запись в истории и записывает их в события
      * @param {number} hisId 
-     * @param {*} trx 
+     * @param {*=} trxOpt 
+     * @returns {Promise<any[]>}
      */
-    async genEventsById(hisId, trx) {
-        Event_confirm_preset.query()
-        this.presetParse.presetToCond()
-        const hisRec = await History.query().findById(hisId)
-        
+    async genEventsById(hisId, trxOpt) {
+        return Transaction.startTransOpt(trxOpt, async (trx) => {
+            const res = []
+            const actualPresets = await this.getActualPresets()
+            for (let elem of actualPresets) {
+                if (await this.isHisMatchPreset(hisId, elem.preset)) {
+                    const eventRec = {
+                        event_confirm_preset_id: elem.id,
+                        history_id: hisId,
+                        status: "pending"
+                    }
+                    res.push(eventRec)
+                    await Event_confirm.query(trx).insert(eventRec)
+                }
+            }
+            return res
+        })
+
     }
 
 }
