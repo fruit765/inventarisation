@@ -1,7 +1,14 @@
 {
+    "include": ["src/**/*"],
     "compilerOptions": {
         "allowJs": true,
-        "checkJs": true,
-        "strict": true
+        "checkJs": false,
+        "strict": true,
+        "target": "es2019",
+        "lib": ["es2020"],
+        "moduleResolution":"Node",
+        "module": "commonjs",
+        "outDir": "dist",
+        "declaration": true
     }
 }

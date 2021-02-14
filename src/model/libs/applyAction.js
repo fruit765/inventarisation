@@ -23,6 +23,7 @@ module.exports = class ApplyAction {
      * @private
      */
     stringifyColJSON(data) {
+        /**@type {*}*/
         const fillteredData = {}
         for (let key in data) {
             if (typeof data[key] === "object") {
@@ -60,29 +61,31 @@ module.exports = class ApplyAction {
      * никакие проверки и модификация данных не производится
      * @param {*} data
      * @param {string} actionTag 
-     * @param {*} trx 
+     * @param {*=} trx 
      */
     async applyAction(data, actionTag, trx) {
         /**@type {number} */
         let id = data.id
+        /**@type {?number} */
+        let resId = id
         const rdyData = this.stringifyColJSON(data)
         switch (actionTag) {
             case "delete":
                 const delRes = await this.tableClass.query(trx).deleteById(rdyData.id)
-                id = delRes === 0 ? null : id
+                resId = delRes === 0 ? null : id
                 break
             case "insert":
                 /**@type {{id: number, [key: string]: any}} */
                 const resIns = /** @type {any} */ (await this.tableClass.query(trx).insert(rdyData))
-                id = resIns.id
+                resId = resIns.id
                 break
             case "patch":
                 const resPatch = await this.tableClass.query(trx).findById(id).patch(_.omit(rdyData, "id"))
-                id = resPatch === 0 ? null : id
+                resId = resPatch === 0 ? null : id
                 break
         }
 
-        return id
+        return resId
     }
 
 
