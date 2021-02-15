@@ -9,8 +9,16 @@ module.exports = class presetParse {
 
     }
 
+    /**
+     * Переводит сокращенный вид к полному
+     * @param {*} preset 
+     */
     convertToDefault (preset) {
         return preset
+    }
+
+    async sqlResolving(preset) {
+        
     }
 
     async isHisMatchPreset(data, presetRaw) {
