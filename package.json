@@ -38,12 +38,14 @@
     "winston-console-format": "^1.0.8"
   },
   "devDependencies": {
+    "@types/express-session": "^1.17.3",
     "@types/lodash": "^4.14.168",
     "axios": "^0.20.0",
     "chai": "^4.2.0",
     "gulp-nodemon": "^2.5.0",
     "gulp-typescript": "^6.0.0-alpha.1",
     "mocha": "^8.2.1",
+    "openapi-types": "^7.2.3",
     "redoc": "^2.0.0-rc.45",
     "redoc-cli": "^0.9.13",
     "rewire": "^5.0.0",

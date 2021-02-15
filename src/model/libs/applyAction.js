@@ -1,7 +1,6 @@
 // @ts-check
 /**
  * @typedef { import("objection") } Objection
- * @typedef { import("../../types/index").tableOptions } tableOptions
  */
 
 "use strict"
@@ -10,7 +9,7 @@ const _ = require("lodash")
 
 module.exports = class ApplyAction {
     /**
-     * @param {@param {Objection["Model"]} tableClass } tableClass 
+     * @param {Objection["Model"]} tableClass
      */
     constructor(tableClass) {
         /**@private */

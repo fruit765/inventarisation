@@ -44,9 +44,31 @@ module.exports = class Events {
 
     }
 
+    /**
+     * Возвращает список всех событий
+     */
     static async getEvents() {
-        const events = await Event_confirm.query()
-        
+        const res = []
+        const events = await Event_confirm.query().joinRelated("[events_confirm_preset,history]")
+        res.push({
+            history_id: events.history_id,
+            event_confirm_preset_id: events.event_confirm_preset_id,
+            // confirm_need: need_confirm,
+            // confirm: confirm_tmp,
+            // confirm_reject: confirm_tmp,
+            status: events.status,
+            table: events.table,
+            table_id: events[events.table + "_id"],
+            name: events.name,
+            name_rus: events.name_rus,
+            actor_id: events.actor_id,
+            // personal_ids: personal_ids,
+            // additional: { device_user_id: eventHistory.diff.user_id },
+            date: events.date,
+            date_completed: events.date_completed
+        })
+
+        return res
     }
 
     /**
