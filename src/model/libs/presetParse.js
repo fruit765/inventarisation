@@ -1,10 +1,41 @@
 //@ts-check
 "use srtict"
 
+const _ = require("lodash")
+
 module.exports = class presetParse {
-    
+
     constructor() {
 
+    }
+
+    convertToDefault (preset) {
+        return preset
+    }
+
+    async isHisMatchPreset(data, presetRaw) {
+
+        const presetDefault = this.convertToDefault(presetRaw)
+        const presetOnlyValue = await this.sqlResolving(presetDefault)
+        const preset
+
+        const columns = _.mapValues(preset.columns, (columnVal, columnName) => {
+            return columnVal.new ? columnVal.new : columnVal
+        })
+
+        const columnsValues = {}
+        for (let columnName in columns) {
+            columnsValues[columnName] = await Promise.all(this.warpToArray(columns[columnName]).map(x => {
+                return this._buildQueryStrByColObj(x, columnName)
+            }))
+        }
+
+        const logicChain = this._prepareLogicChColumn(preset.logicChain, columnsValues)
+        const columnsValuesFlattern = _.mapValues(columnsValues, (val) => {
+            return _.flatten(val)
+        })
+        const queryStr = this._buildQueryStrByLogicChCol(logicChain, columnsValuesFlattern)
+        return queryStr
     }
 
     /**
