@@ -4,7 +4,7 @@ const nodemon = require('gulp-nodemon')
 
 function backendServer(done) {
     nodemon({
-        script: './src/app.js'
+        script: './dist/app.js'
       , ext: 'js html'
       , ignore: ['./session/*']
       , env: { 'NODE_ENV': 'development' }

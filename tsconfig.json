@@ -8,7 +8,6 @@
         "lib": ["es2020"],
         "moduleResolution":"Node",
         "module": "commonjs",
-        "outDir": "dist",
-        "declaration": true
+        "outDir": "dist"
     }
 }
