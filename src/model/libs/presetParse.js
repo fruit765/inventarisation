@@ -2,6 +2,9 @@
 "use srtict"
 
 const _ = require("lodash")
+const Knex = require("knex")
+const dbConfig = require("../../../serverConfig").db
+const knex = Knex(dbConfig)
 
 module.exports = class presetParse {
 
@@ -10,22 +13,55 @@ module.exports = class presetParse {
     }
 
     /**
+     * На входе массив select запросов
+     * Делает запрос, получаем массив значений
+     * @param {string[]} sqlStrings
+     * @private
+     */
+    async selectSqlStrToValue(sqlStrings) {
+        const sqlRes = []
+        for (let sqlString of sqlStrings) {
+            const query = sqlString.split(";")[0].trim().match(/^select.*$/)?.[0]
+            if (query) {
+                const dbRes = await knex.raw(query).then(x => x[0])
+                const firstKey = Object.keys(dbRes[0])[0]
+                const resArray = _.groupBy(dbRes, firstKey)[firstKey]
+                sqlRes.push(resArray[0] ? resArray : [NaN])
+            } else {
+                sqlRes.push([NaN])
+            }
+        }
+
+        return sqlRes
+    }
+
+    /**
      * Переводит сокращенный вид к полному
      * @param {*} preset 
      */
-    convertToDefault (preset) {
+    convertToDefault(preset) {
         return preset
     }
 
+    /**
+     * Изменяет объект, заменяет запросы на значения
+     * @param {*} preset 
+     */
     async sqlResolving(preset) {
-        
+        for (let column of preset.columns) {
+            column.new.sql = await this.selectSqlStrToValue(column.new.sql)
+            column.old.sql = await this.selectSqlStrToValue(column.old.sql)
+        }
+        return preset
     }
 
     async isHisMatchPreset(data, presetRaw) {
-
         const presetDefault = this.convertToDefault(presetRaw)
         const presetOnlyValue = await this.sqlResolving(presetDefault)
-        const preset
+        _.mapValues(presetOnlyValue.columns, (value, keys) => {
+            this.checkColumns(data[keys], value)
+        })
+        const a = this.checkDa
 
         const columns = _.mapValues(preset.columns, (columnVal, columnName) => {
             return columnVal.new ? columnVal.new : columnVal
@@ -46,32 +82,7 @@ module.exports = class presetParse {
         return queryStr
     }
 
-    /**
-     * На входе может быть только select запрос
-     * Делает запрос, получаем массив значений
-     * @param {string} sqlValuesRaw 
-     * @private
-     */
-    async selectSqlStrToValue(sqlValuesRaw) {
-        let sqlStringArray = []
-        let sqlValues = []
 
-        if (typeof sqlValuesRaw === "string") {
-            sqlStringArray = [sqlValuesRaw]
-        } else if (typeof sqlValuesRaw === "object") {
-            sqlStringArray = sqlValuesRaw
-        }
-
-        if (sqlStringArray.length) {
-            sqlValues = await Promise.all(sqlStringArray.map(async value => {
-                const query = _.get(value.trim().match(/^select.*/), "[0]")
-                const res = await knex.raw(query).then(x => x[0])
-                return _.map(res, Object.keys(res[0])[0])
-            }))
-        }
-
-        return sqlValues
-    }
 
     /**
      * Если приходит не массив упоковывает значение в массив
