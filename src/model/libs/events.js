@@ -10,6 +10,7 @@ const Event_confirm = require("../orm/event_confirm")
 const Event_confirm_preset = require("../orm/event_confirm_preset")
 const History = require("../orm/history")
 const Transaction = require("./transaction")
+const PresetParse = require("./presetParse")
 const _ = require("lodash")
 const dayjs = require("dayjs")
 
@@ -38,7 +39,14 @@ module.exports = class Events {
         this.options = {
             priority: options?.priority ?? 0
         }
+        /**@private */
+        this.presetParse = new PresetParse()
 
+    }
+
+    static async getEvents() {
+        const events = await Event_confirm.query()
+        
     }
 
     /**
@@ -103,9 +111,12 @@ module.exports = class Events {
      * Проверяет соответствует ли история с данным id конкретному пресету
      * @param {number} hisId 
      * @param {*} preset 
+     * @private
      */
     async isHisMatchPreset(hisId, preset) {
-
+        const hisRec = await History.query().findById(hisId)
+        const currentRec = await this.tableClass.query().findById(hisRec[this.tableClass + "_id"])
+        return this.presetParse.isDataMatchPreset(hisRec.diff, currentRec, preset)
     }
 
     /**
