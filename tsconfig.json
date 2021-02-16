@@ -1,14 +1,21 @@
 {
-    "include": ["src/**/*"],
+    "include": [
+        "src/**/*",
+        "serverConfig.js"
+    ],
     "compilerOptions": {
         "allowJs": true,
         "checkJs": false,
         "strict": true,
         "target": "es2019",
-        "lib": ["es2020"],
-        "moduleResolution":"Node",
+        "lib": [
+            "es2020"
+        ],
+        "moduleResolution": "Node",
         "module": "commonjs",
         "outDir": "dist",
-        "allowSyntheticDefaultImports": true
+        "allowSyntheticDefaultImports": true,
+        "declaration": false,
+        "sourceMap": false
     }
 }

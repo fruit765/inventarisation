@@ -8,11 +8,10 @@ const prefix = require("../serverConfig").server.prefix
 const router = express.Router()
 const helmet = require("helmet")
 
-//app.use(helmet())
+app.use(helmet())
 
 require("./middlewares")(router)
 require("./routes.js")(router)
 
 app.use('/'+prefix, router)
-
 app.listen(port)

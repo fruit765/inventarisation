@@ -39,8 +39,6 @@ module.exports = class Events {
         this.options = {
             priority: options?.priority ?? 0
         }
-        /**@private */
-        this.presetParse = new PresetParse()
 
     }
 
@@ -48,24 +46,27 @@ module.exports = class Events {
      * Возвращает список всех событий
      */
     static async getEvents() {
+        /**@type {*[]} */
         const res = []
         const events = await Event_confirm.query().joinRelated("[events_confirm_preset,history]")
-        res.push({
-            history_id: events.history_id,
-            event_confirm_preset_id: events.event_confirm_preset_id,
-            // confirm_need: need_confirm,
-            // confirm: confirm_tmp,
-            // confirm_reject: confirm_tmp,
-            status: events.status,
-            table: events.table,
-            table_id: events[events.table + "_id"],
-            name: events.name,
-            name_rus: events.name_rus,
-            actor_id: events.actor_id,
-            // personal_ids: personal_ids,
-            // additional: { device_user_id: eventHistory.diff.user_id },
-            date: events.date,
-            date_completed: events.date_completed
+        events.forEach((/**@type {*}*/event) => {
+            res.push({
+                history_id: event.history_id,
+                event_confirm_preset_id: event.event_confirm_preset_id,
+                // confirm_need: need_confirm,
+                // confirm: confirm_tmp,
+                // confirm_reject: confirm_tmp,
+                status: event.status,
+                table: event.table,
+                table_id: event[event.table + "_id"],
+                name: event.name,
+                name_rus: event.name_rus,
+                actor_id: event.actor_id,
+                // personal_ids: personal_ids,
+                // additional: { device_user_id: eventHistory.diff.user_id },
+                date: event.date,
+                date_completed: event.date_completed
+            })
         })
 
         return res
@@ -89,7 +90,7 @@ module.exports = class Events {
         const unconfirmedGroupArray = _.values(unconfirmedGroup)
         //Преобразуем двумерный массив в одномерный удаляя в группах значения с наивысшим приоритетом
         const unconfirmedPrior = _.map(unconfirmedGroupArray, (value) => {
-            return value.reduce((accumulator, /**@type {*}*/currentValue) => {
+            return value.reduce((/**@type {*}*/accumulator, /**@type {*}*/currentValue) => {
                 if ((accumulator.view_priority < currentValue.view_priority) ||
                     (
                         accumulator.view_priority === currentValue.view_priority &&
@@ -99,7 +100,7 @@ module.exports = class Events {
                 } else {
                     return accumulator
                 }
-            }, /**@type {*}*/{})
+            }, {})
         })
         //Преобразуем с коллекции записей в истории
         //в коллекцию записей таблицы
@@ -117,6 +118,7 @@ module.exports = class Events {
 
     /**
      * Возвращает активные присеты
+     * @private
      */
     async getActualPresets() {
         const curretDataTime = dayjs().format('YYYY-MM-DD HH:mm:ss')
@@ -138,7 +140,7 @@ module.exports = class Events {
     async isHisMatchPreset(hisId, preset) {
         const hisRec = await History.query().findById(hisId)
         const currentRec = await this.tableClass.query().findById(hisRec[this.tableClass + "_id"])
-        return this.presetParse.isDataMatchPreset(hisRec.diff, currentRec, preset)
+        return PresetParse.isDataMatchPreset(hisRec.diff, currentRec, preset)
     }
 
     /**
@@ -153,6 +155,7 @@ module.exports = class Events {
             const actualPresets = await this.getActualPresets()
             for (let elem of actualPresets) {
                 if (await this.isHisMatchPreset(hisId, elem.preset)) {
+                    /**@type {*} */
                     const eventRec = {
                         event_confirm_preset_id: elem.id,
                         history_id: hisId,

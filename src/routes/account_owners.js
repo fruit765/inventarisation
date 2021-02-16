@@ -2,7 +2,7 @@
 
 const express = require('express')
 const { sendP } = require('../model/libs/command')
-const Table = require('../model/libs/table')
+const Table = require('../model/facade/table')
 const Account_owner = require('../model/orm/account_owner')
 const createError = require('http-errors')
 const table = new Table(Account_owner)
@@ -14,7 +14,7 @@ router.route('/account_owners')
         next()
     })
     .get((req, res, next) => {
-        sendP(next)(res)(table.query()
+        sendP(next)(res)(Account_owner.query()
             .skipUndefined()
             .where({ user_id: req.query.userId, dep_loc_id: req.query.depLocId, account_id: req.query.accountId })
         )

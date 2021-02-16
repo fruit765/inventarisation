@@ -8,17 +8,13 @@ const knex = Knex(dbConfig)
 
 module.exports = class PresetParse {
 
-    constructor() {
-
-    }
-
     /**
      * На входе массив select запросов
      * Делает запрос, получаем массив значений
      * @param {string[]} sqlStrings
      * @private
      */
-    async selectSqlStrToValue(sqlStrings) {
+    static async selectSqlStrToValue(sqlStrings) {
         const sqlRes = []
         for (let sqlString of sqlStrings) {
             const query = sqlString.split(";")[0].trim().match(/^select.*$/)?.[0]
@@ -40,7 +36,7 @@ module.exports = class PresetParse {
      * @param {*} preset 
      * @private
      */
-    convertToDefault(preset) {
+    static convertToDefault(preset) {
         return preset
     }
 
@@ -49,7 +45,7 @@ module.exports = class PresetParse {
      * @param {*} preset 
      * @private
      */
-    async sqlResolving(preset) {
+    static async sqlResolving(preset) {
         for (let column of preset.columns) {
             column.new.sql = await this.selectSqlStrToValue(column.new.sql)
             column.old.sql = await this.selectSqlStrToValue(column.old.sql)
@@ -64,7 +60,7 @@ module.exports = class PresetParse {
      * @param {string} sign
      * @private
      */
-    arrayResolving(valueArray, data, sign) {
+    static arrayResolving(valueArray, data, sign) {
         /**@type {*[]} */
         const valueArrayStr = valueArray.map((/**@type {*}*/value) => {
             return String(value)
@@ -96,7 +92,7 @@ module.exports = class PresetParse {
      * @returns {boolean}
      * @private
      */
-    columnResolving(data, presetColumn) {
+    static columnResolving(data, presetColumn) {
         /**@type {string[]} */
         const logicValArray = presetColumn.logic.replace(/\s+/gi, " ").split(" ")
         const logicArray = logicValArray.map(
@@ -140,7 +136,7 @@ module.exports = class PresetParse {
      * @private
      * @returns {boolean}
      */
-    substitution(logic, valObj) {
+    static substitution(logic, valObj) {
         for (let key in valObj) {
             const regExp = new RegExp(`^${key}$`, "gi")
             logic = logic.raplace(regExp, valObj[key])
@@ -154,7 +150,7 @@ module.exports = class PresetParse {
      * @param {*} oldData данные до изменений
      * @param {*} presetRaw пресет
      */
-    async isDataMatchPreset(newData, oldData, presetRaw) {
+    static async isDataMatchPreset(newData, oldData, presetRaw) {
         const presetDefault = this.convertToDefault(presetRaw)
         const presetOnlyValue = await this.sqlResolving(presetDefault)
         presetOnlyValue.columns = _.mapValues(presetOnlyValue.columns, (value, keys) => {

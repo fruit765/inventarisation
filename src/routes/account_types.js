@@ -2,7 +2,7 @@
 
 const express = require('express')
 const { sendP } = require('../model/libs/command')
-const Table = require('../model/libs/table')
+const Table = require('../model/facade/table')
 const Account_type = require('../model/orm/account_type')
 const table = new Table(Account_type)
 const router = express.Router()
@@ -13,7 +13,7 @@ router.route('/account_types')
         next()
     })
     .get((req, res, next) => {
-        sendP(next)(res)(table.get())
+        sendP(next)(res)(table.getAll())
     })
     .post( (req, res, next) => {
         sendP(next)(res)(table.insertAndFetch(req.body))

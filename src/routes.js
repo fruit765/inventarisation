@@ -18,9 +18,6 @@ const events = require('./routes/events')
 
 const Status = require("./model/orm/status")
 const Location = require("./model/orm/location")
-const Device = require("./model/orm/device")
-const GlobalHistory = require("./model/libs/globalHistory")
-const Events = require("./model/libs/events1")
 
 module.exports = function (app) {
 
@@ -52,19 +49,17 @@ module.exports = function (app) {
 
     app.use(events)
 
-    app.get("/test", async (req, res, next) => {
-        const history = new GlobalHistory()
-        const events = new Events()
-        //sendP(next)(res)(getDevWithVirtualStatus(0))
-        //const a = await Device.query().findById(2)
-        const preset = {
-            columns: {
-                status_id: {
-                    sql: "select id from status where status = 'given'"
-                }
-            }
+    class Test {
+        constructor() {
+            this.a = 0
         }
-        console.log(await events.getEvents())
+    }
+
+    const test1 = new Test
+    app.get("/test", async (req, res, next) => {
+        test1.a++
+        console.log(test1.a)
+        res.send("2")
     })
 
     app.use((err, req, res, next) => {

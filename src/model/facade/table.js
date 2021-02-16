@@ -56,8 +56,6 @@ module.exports = class Table {
         */
         this.tableName = this.tableClass.tableName
         /**@private*/
-        this.events = undefined
-        /**@private*/
         this.history = undefined
         /**@private */
         this.applyActionClass = new ApplyAction(tableClass)
@@ -71,8 +69,7 @@ module.exports = class Table {
      * @private
      */
     initHistoyClasses() {
-        if ((!this.events || !this.history) && this.options.actorId) {
-            this.events = new Events(this.tableClass)
+        if (!this.history && this.options.actorId) {
             this.history = new GlobalHistory(this.tableClass, { actorId: this.options.actorId })
         }
     }
@@ -103,7 +100,7 @@ module.exports = class Table {
         if (isSaveHistory != undefined) {
             if (isSaveHistory && this.options.actorId) {
                 this.hisColName = this.tableName + "_id"
-                this.isSaveHistory = knex.schema.hasColumn(History.tableName, this.hisColName)
+                this.isSaveHistory = GlobalHistory.hasHistory(this.hisColName)
                     .then(x => {
                         if (x) {
                             this.initHistoyClasses()

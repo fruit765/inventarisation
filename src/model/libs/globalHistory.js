@@ -6,11 +6,8 @@
 
 const Knex = require("knex")
 const dbConfig = require("../../../serverConfig").db
-const Device = require("../orm/device")
 const Event_confirm = require("../orm/event_confirm")
-const Event_confirm_preset = require("../orm/event_confirm_preset")
 const History = require("../orm/history")
-const GetDataTab = require("./getDataTab")
 const Transaction = require("./transaction")
 const ApplyAction = require("./applyAction")
 const { addedDiff, updatedDiff } = require("deep-object-diff")
