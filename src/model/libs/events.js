@@ -82,9 +82,9 @@ module.exports = class Events {
             .skipUndefined()
             .where(this.tableClass.tableName + "_id", /**@type {*}*/(id))
             .where("table", this.tableClass.tableName)
-            .select(this.tableClass.tableName + "_id", "status.status", "status.status_id", "diff", "view_priority", "event_confirm_preset_id")
+            .select(this.tableClass.tableName + "_id", "event_confirm_preset.status_id", "diff", "view_priority", "event_confirm_preset_id")
             .whereNull("date_completed")
-            .joinRelated(`[history.${this.tableClass.tableName},event_confirm_preset.status]`)
+            .joinRelated(`[history.${this.tableClass.tableName},event_confirm_preset]`)
 
         const unconfirmedGroup = _.groupBy(unconfirmed, this.tableClass.tableName + "_id")
         const unconfirmedGroupArray = _.values(unconfirmedGroup)
@@ -107,7 +107,6 @@ module.exports = class Events {
         for (let val in unconfirmedPrior) {
             const statObj = {
                 id: this.tableClass.tableName + "_id",
-                status: unconfirmedPrior[val].status,
                 status_id: unconfirmedPrior[val].status_id,
             }
             unconfirmedPrior[val] = Object.assign(statObj, unconfirmedPrior[val].diff)

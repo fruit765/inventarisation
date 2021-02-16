@@ -40,6 +40,7 @@
   "devDependencies": {
     "@types/express-session": "^1.17.3",
     "@types/lodash": "^4.14.168",
+    "@types/passport": "^1.0.6",
     "axios": "^0.20.0",
     "chai": "^4.2.0",
     "gulp-nodemon": "^2.5.0",
