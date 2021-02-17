@@ -1,0 +1,34 @@
+{
+    "confirms": [
+        {
+            "sql": [
+                "select id from status where status = 'given'"
+            ],
+            "group": {
+                "value": "dsdsd"
+            },
+            "logic": "sql0"
+        },
+        {
+            "sql": [
+                "select user_id from device where id = ${table_id}"
+            ],
+            "logic": "sql0"
+        },
+        {
+            "value": ["actor_id"],
+            "logic": "value0"
+        }
+    ],
+
+    "veto": [
+        {
+            "sql": [
+                "select id from status where status = 'stock'"
+            ],
+            "logic": "sql0"
+        }
+    ],
+
+    "personal" : [1,2]
+}

@@ -6,7 +6,6 @@
 
 const Knex = require("knex")
 const dbConfig = require("../../../serverConfig").db
-const Event_confirm = require("../orm/event_confirm")
 const History = require("../orm/history")
 const Transaction = require("./transaction")
 const ApplyAction = require("./applyAction")
@@ -14,7 +13,6 @@ const { addedDiff, updatedDiff } = require("deep-object-diff")
 const Events = require("../libs/events")
 const knex = Knex(dbConfig)
 const _ = require("lodash")
-const dayjs = require("dayjs")
 
 module.exports = class GlobalHistory {
     /**
@@ -78,24 +76,6 @@ module.exports = class GlobalHistory {
     }
 
     /**
-     * Если нет открытых событий связынных с этой записью то коммитит запись в истории
-     * @param {number} hisId 
-     * @param {*=} trxOpt
-     */
-    async commitHistory(hisId, trxOpt) {
-        return Transaction.startTransOpt(trxOpt, async (trx) => {
-            const openEvents = await Event_confirm.query().where("history_id", hisId).whereNotNull("date_completed")
-            if (!openEvents.length) {
-                const curretDataTime = dayjs().format('YYYY-MM-DD HH:mm:ss')
-                await History.query(trx).where("id", hisId).whereNull("commit_date").patch({ commit_date: curretDataTime })
-                const hisRec = await History.query().findById(hisId)
-                await this.applyActionClass.applyAction({ ...hisRec.diff, id: hisRec[this.colName] }, hisRec.action_tag, trx)
-                return hisRec.id
-            }
-        })
-    }
-
-    /**
      * Сохраянет историю, генерирует события,
      * если в строке не найдется открытых событий, запись сразу будет закоммичена
      * @param {*} data 
@@ -109,7 +89,7 @@ module.exports = class GlobalHistory {
             const dataWithValidId = Object.assign({ id }, data)
             const hisRec = await this.saveHistoryOnly(dataWithValidId, actionTag, trx)
             await this.events.genEventsById(hisRec.id, trx)
-            await this.commitHistory(hisRec.id, trx)
+            await this.applyActionClass.commitHistory(hisRec.id, trx)
             return hisRec
         })
     }

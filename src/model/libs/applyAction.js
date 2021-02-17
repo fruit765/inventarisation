@@ -5,7 +5,11 @@
 
 "use strict"
 
+const dayjs = require("dayjs")
+const Transaction = require("./transaction")
 const _ = require("lodash")
+const Event_confirm = require("../orm/event_confirm")
+const History = require("../orm/history")
 
 module.exports = class ApplyAction {
     /**
@@ -85,6 +89,24 @@ module.exports = class ApplyAction {
         }
 
         return resId
+    }
+
+    /**
+     * Если нет открытых событий связынных с этой записью то коммитит запись в истории
+     * @param {number} hisId 
+     * @param {*=} trxOpt
+     */
+    async commitHistory(hisId, trxOpt) {
+        return Transaction.startTransOpt(trxOpt, async (trx) => {
+            const openEvents = await Event_confirm.query().where("history_id", hisId).whereNotNull("date_completed")
+            if (!openEvents.length) {
+                const curretDataTime = dayjs().format('YYYY-MM-DD HH:mm:ss')
+                await History.query(trx).where("id", hisId).whereNull("commit_date").patch({ commit_date: curretDataTime })
+                const hisRec = await History.query().findById(hisId)
+                await this.applyAction({ ...hisRec.diff, id: hisRec[this.tableClass.tableName+"_id"] }, hisRec.action_tag, trx)
+                return hisRec.id
+            }
+        })
     }
 
 
