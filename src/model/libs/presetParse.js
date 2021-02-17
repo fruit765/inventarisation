@@ -32,11 +32,20 @@ module.exports = class PresetParse {
     }
 
     /**
-     * Переводит сокращенный вид к полному
+     * Переводит сокращенный вид к полному для пресета
      * @param {*} preset 
      * @private
      */
-    static convertToDefault(preset) {
+    static presetCompletion(preset) {
+        return preset
+    }
+
+    /**
+     * Переводит сокращенный вид к полному для формата подтверждений
+     * @param {*} preset 
+     * @private
+     */
+    static confirmCompletion(preset) {
         return preset
     }
 
@@ -151,7 +160,7 @@ module.exports = class PresetParse {
      * @param {*} presetRaw пресет
      */
     static async isDataMatchPreset(newData, oldData, presetRaw) {
-        const presetDefault = this.convertToDefault(presetRaw)
+        const presetDefault = this.presetCompletion(presetRaw)
         const presetOnlyValue = await this.sqlResolving(presetDefault)
         presetOnlyValue.columns = _.mapValues(presetOnlyValue.columns, (value, keys) => {
            return (this.columnResolving(newData[keys], value.new) &&

@@ -1,34 +1,57 @@
-{
-    "confirms": [
-        {
-            "sql": [
-                "select id from status where status = 'given'"
-            ],
-            "group": {
-                "value": "dsdsd"
+[
+    {
+        "confirms": [
+            {
+                "sql": [
+                    "select id from status where status = 'given'"
+                ],
+                "group": {
+                    "value": "dsdsd"
+                },
+                "type": "accept"
             },
-            "logic": "sql0"
+            {
+                "sql": [
+                    "select user_id from device where id = ${table_id}"
+                ],
+                "type": "act"
+            },
+            {
+                "value": [
+                    "actor_id"
+                ]
+            }
+        ],
+        "veto": [
+            {
+                "sql": [
+                    "select id from status where status = 'stock'"
+                ],
+                "logic": "sql0"
+            }
+        ],
+        "personal": [
+            1,
+            2
+        ]
+    },
+    [
+        {
+            "id": 1,
+            "type": "accept",
+            "date": "2021-02-18 00:15:26"
         },
         {
-            "sql": [
-                "select user_id from device where id = ${table_id}"
-            ],
-            "logic": "sql0"
+            "id": 2,
+            "type": "reject",
+            "date": "2021-02-18 00:15:26"
         },
         {
-            "value": ["actor_id"],
-            "logic": "value0"
+            "id": 3,
+            "type": "act",
+            "date": "2021-02-18 00:15:26",
+            "act": 1
         }
-    ],
-
-    "veto": [
-        {
-            "sql": [
-                "select id from status where status = 'stock'"
-            ],
-            "logic": "sql0"
-        }
-    ],
-
-    "personal" : [1,2]
-}
+        
+    ]
+]
