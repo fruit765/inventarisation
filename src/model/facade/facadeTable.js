@@ -4,13 +4,6 @@
  */
 "use strict"
 
-const Knex = require("knex")
-const dbConfig = require("../../../serverConfig").db
-const knex = Knex(dbConfig)
-const _ = require("lodash")
-
-const History = require("../orm/history")
-const Events = require("../libs/events")
 const ApplyAction = require("../libs/applyAction")
 const GlobalHistory = require("../libs/globalHistory")
 const GetDataTab = require("../libs/getDataTab")
@@ -19,7 +12,7 @@ const GetDataTab = require("../libs/getDataTab")
  * @class
  * @classdesc Класс фасад, для работы с таблицами
  */
-module.exports = class Table {
+module.exports = class FacadeTable {
     /**
      * @typedef {Object} tableOptions
      * @property {boolean} [isSaveHistory]

@@ -1,3 +1,3 @@
-const { packError, valueError } = require("./model/libs/exceptionHandling");
+const History = require("./model/orm/history");
 
-Promise.reject(Error("ddd")).catch(packError("yy")).catch(packError("ee")).catch(valueError(x=>3))
+History.query().then(x => {console.log(x.prototype)})

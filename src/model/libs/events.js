@@ -27,6 +27,7 @@ module.exports = class Events {
      * @typedef {Object} Options
      * @property {number=} priority
      * @property {number=} actorId
+     * 
      */
     constructor(tableClass, options) {
         /**
@@ -181,15 +182,20 @@ module.exports = class Events {
      */
     async eventAction(eventId, action) {
         const event = await Event_confirm.query()
-        .where({event_confirm_preset_id: eventId[0], history_id: eventId[1]})
-        .whereNull("date_completed")
-        .first()
+            .where({ event_confirm_preset_id: eventId[0], history_id: eventId[1] })
+            .whereNull("date_completed")
+            .first()
 
         if (!event) {
             return null
         }
 
-        checkConfirm()
+        const confirm = simpleConfirm()
+        await Event_confirm
+            .query()
+            .where({ event_confirm_preset_id: eventId[0], history_id: eventId[1] })
+            .patch({ confirm: JSON.stringify(confirm) })
+        
     }
 
     /**

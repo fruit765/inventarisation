@@ -3,7 +3,7 @@
 
 const express = require('express')
 const { sendP } = require('../model/libs/command')
-const Table = require('../model/facade/table')
+const Table = require('../model/facade/facadeTable')
 const Dep_loc = require('../model/orm/dep_loc')
 const table = new Table(Dep_loc)
 const router = express.Router()

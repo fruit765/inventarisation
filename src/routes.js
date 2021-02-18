@@ -18,6 +18,7 @@ const events = require('./routes/events')
 
 const Status = require("./model/orm/status")
 const Location = require("./model/orm/location")
+const History = require("./model/orm/history")
 
 module.exports = function (app) {
 
@@ -49,17 +50,9 @@ module.exports = function (app) {
 
     app.use(events)
 
-    class Test {
-        constructor() {
-            this.a = 0
-        }
-    }
-
-    const test1 = new Test
     app.get("/test", async (req, res, next) => {
-        test1.a++
-        console.log(test1.a)
-        res.send("2")
+        const a = History.query()
+        console.log(a)
     })
 
     app.use((err, req, res, next) => {
