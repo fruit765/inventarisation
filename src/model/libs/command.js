@@ -113,4 +113,20 @@ const getDevWithVirtualStatus = async (devId) => {
     return fp.values(devicesKeyId)
 }
 
-module.exports = { getDevWithVirtualStatus, validateDataBySchema, getTable, getCell, send, sendP, insertTable, updateTable, deleteTable, getDevRelatedTabValueAssociatedCatId, dateToIso }
+function getTabIdFromHis (hisRec) {
+    for (let key in hisRec) {
+        if (String(key).match(/_id$/gi) && key !== "actor_id" && value != null) {
+            return hisRec[key]
+        } 
+    }
+}
+
+function getTabNameFromHis (hisRec) {
+    for (let key in hisRec) {
+        if (String(key).match(/_id$/gi) && key !== "actor_id" && value != null) {
+            return key
+        } 
+    }
+}
+
+module.exports = { getTabNameFromHis, getTabIdFromHis, getDevWithVirtualStatus, validateDataBySchema, getTable, getCell, send, sendP, insertTable, updateTable, deleteTable, getDevRelatedTabValueAssociatedCatId, dateToIso }

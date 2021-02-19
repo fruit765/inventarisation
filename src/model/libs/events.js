@@ -14,6 +14,10 @@ const PresetParse = require("./presetParse")
 const ApplyAction = require("./applyAction")
 const _ = require("lodash")
 const dayjs = require("dayjs")
+const { getTabIdFromHis, getTabNameFromHis } = require("./command")
+const Knex = require("knex")
+const dbConfig = require("../../../serverConfig").db
+const knex = Knex(dbConfig)
 
 /**
  * @class
@@ -21,48 +25,63 @@ const dayjs = require("dayjs")
  */
 module.exports = class Events {
     /**
-     * @param {Objection["Model"]} tableClass 
-     * @param {Options} [options]
-     * 
-     * @typedef {Object} Options
-     * @property {number=} priority
-     * @property {number=} actorId
-     * 
+     * @param {*} eventRec
+     * @param {*} hisRec
+     * @param {*} eventPresetRec
+     * @param {*} statusRec
      */
-    constructor(tableClass, options) {
-        /**
-         * @readonly
-         * @private
-         */
-        this.tableClass = tableClass
-        /**@private */
-        this.applyActionClass = new ApplyAction(tableClass)
-        /**
-         * @type {{priority: number, actorId?: number}}
-         * @private
-         */
-        this.options = {
-            priority: options?.priority ?? 0,
-            actorId: options?.actorId
+    constructor(eventRec, hisRec, eventPresetRec, statusRec) {
+        this.records = {
+            event: eventRec,
+            history: hisRec,
+            preset: eventPresetRec,
+            other: {
+                table_id: getTabIdFromHis(hisRec)
+            }
         }
+        this.initGetPropFn()
+    }
+
+    initGetPropFn() {
+        this.prop = {
+            history: function () {
+
+            },
+            diff: function () {
+
+            },
+            status: function () {
+
+            },
+            records: this.records,
+            
+        }
+    }
+
+    addToProp() {
+
+    }
+
+    getProp() {
 
     }
 
     /**
      * Снимок неподтвержденных данных, вычисляется в зависимости от приоритета
+     * @param {string} tableName
      * @param {number=} id 
      */
-    async getUnconfirmSnapshot(id) {
+    static async getUnconfirmSnapshot(tableName, id) {
         const unconfirmed = await Event_confirm
             .query()
             .skipUndefined()
-            .where(this.tableClass.tableName + "_id", /**@type {*}*/(id))
-            .where("table", this.tableClass.tableName)
-            .select(this.tableClass.tableName + "_id", "event_confirm_preset.status_id", "diff", "view_priority", "event_confirm_preset_id")
+            .where(tableName + "_id", /**@type {*}*/(id))
+            .where("table", tableName)
+            .select(tableName + "_id", "event_confirm_preset.status_id", "diff", "view_priority", "event_confirm_preset_id")
             .whereNull("date_completed")
-            .joinRelated(`[history.${this.tableClass.tableName},event_confirm_preset]`)
+            .joinRelated(`[history.${tableName},event_confirm_preset]`)
 
-        const unconfirmedGroup = _.groupBy(unconfirmed, this.tableClass.tableName + "_id")
+        const unconfirmedGroup = _.groupBy(unconfirmed, tableName + "_id")
         const unconfirmedGroupArray = _.values(unconfirmedGroup)
         //Преобразуем двумерный массив в одномерный удаляя в группах значения с наивысшим приоритетом
         const unconfirmedPrior = _.map(unconfirmedGroupArray, (value) => {
@@ -82,7 +101,7 @@ module.exports = class Events {
         //в коллекцию записей таблицы
         for (let val in unconfirmedPrior) {
             const statObj = {
-                id: this.tableClass.tableName + "_id",
+                id: tableName + "_id",
                 status_id: unconfirmedPrior[val].status_id,
             }
             unconfirmedPrior[val] = Object.assign(statObj, unconfirmedPrior[val].diff)
@@ -92,10 +111,10 @@ module.exports = class Events {
     }
 
     /**
-     * Возвращает активные присеты
+     * Возвращает активные пресеты
      * @private
      */
-    async getActualPresets() {
+    static async getActualPresets() {
         const curretDataTime = dayjs().format('YYYY-MM-DD HH:mm:ss')
         return Event_confirm_preset.query()
             .where("start_preset_date", "<", curretDataTime)
@@ -112,9 +131,11 @@ module.exports = class Events {
      * @param {*} preset 
      * @private
      */
-    async isHisMatchPreset(hisId, preset) {
+    static async isHisMatchPreset(hisId, preset) {
         const hisRec = await History.query().findById(hisId)
-        const currentRec = await this.tableClass.query().findById(hisRec[this.tableClass + "_id"])
+        const tableId = getTabIdFromHis(hisRec)
+        const tableName = getTabNameFromHis(hisRec)
+        const currentRec = await knex(tableName).where("id", tableId).first()
         return PresetParse.isDataMatchPreset(hisRec.diff, currentRec, preset)
     }
 
@@ -124,7 +145,7 @@ module.exports = class Events {
      * @param {*=} trxOpt 
      * @returns {Promise<any[]>}
      */
-    async genEventsById(hisId, trxOpt) {
+    static async genEventsById(hisId, trxOpt) {
         return Transaction.startTransOpt(trxOpt, async (trx) => {
             const res = []
             const actualPresets = await this.getActualPresets()
@@ -195,7 +216,7 @@ module.exports = class Events {
             .query()
             .where({ event_confirm_preset_id: eventId[0], history_id: eventId[1] })
             .patch({ confirm: JSON.stringify(confirm) })
-        
+
     }
 
     /**
