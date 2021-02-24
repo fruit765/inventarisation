@@ -29,9 +29,6 @@
 //      */
 "use strict"
 
-let a = {
-    a: 3,
-    fn: function () { return this }
-}
-
-console.log(a.fn())
+const Event_confirm = require("./model/orm/event_confirm")
+console.log("start")
+Event_confirm.query().then(x => console.log(x))

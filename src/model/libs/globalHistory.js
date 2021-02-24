@@ -32,8 +32,6 @@ module.exports = class GlobalHistory {
          * @type {{actorId: number}}
         */
         this.options = { actorId: options.actorId }
-        /**@private */
-        this.events = new Events(tableClass)
     }
 
     /**
@@ -88,7 +86,7 @@ module.exports = class GlobalHistory {
             const id = await this.applyActionClass.validate(data, actionTag)
             const dataWithValidId = Object.assign({ id }, data)
             const hisRec = await this.saveHistoryOnly(dataWithValidId, actionTag, trx)
-            await this.events.genEventsById(hisRec.id, trx)
+            await Events.genEventsById(hisRec.id, trx)
             await this.applyActionClass.commitHistory(hisRec.id, trx)
             return hisRec
         })

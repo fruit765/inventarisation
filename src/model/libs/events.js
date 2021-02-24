@@ -49,6 +49,9 @@ module.exports = class Events {
         this.actorId = actorId
     }
 
+    /**
+     * Устанавливает общие поля в блок подтверждения
+     */
     confirmDefaultCol() {
         return { date: dayjs().format('YYYY-MM-DD HH:mm:ss') }
     }
@@ -64,7 +67,7 @@ module.exports = class Events {
                 return false
             }
             const needConfirm = PresetParse.needConfirm(this.confirmPresetValueOnly?.confirms, this.records.event?.confirms)
-            const confirmsGroup = PresetParse.getConfirmsGroup(needConfirm, this.actorId)
+            const confirmsGroup = await PresetParse.getConfirmsGroup(needConfirm, this.actorId)
             if (confirmsGroup.length) {
                 return false
             }
@@ -120,14 +123,29 @@ module.exports = class Events {
         if (this.records.event.status !== "pending") {
             return false
         }
-        const query = Event_confirm.query(trx).where({
-            history_id: this.records.history.id,
-            event_confirm_preset_id: this.records.preset.id
-        })
         if (_.find(this.records.event.confirms, { action: "reject" })) {
-            await query.patch({ status: "reject", date_complete: dayjs().format('YYYY-MM-DD HH:mm:ss') })
-        } else if (Object.keys(this.records.event.confirms).length) {
-            await query.patch({ status: "complete", date_complete: dayjs().format('YYYY-MM-DD HH:mm:ss') })
+            await Event_confirm
+                .query(trx)
+                .where({
+                    history_id: this.records.history.id,
+                    event_confirm_preset_id: this.records.preset.id
+                })
+                .patch({
+                    status: "reject",
+                    date_complete: dayjs().format('YYYY-MM-DD HH:mm:ss')
+                })
+        } else if (Object.keys(this.records.event.confirms).length ===
+            Object.keys(this.confirmPresetValueOnly.confirms).length) {
+            await Event_confirm
+                .query(trx)
+                .where({
+                    history_id: this.records.history.id,
+                    event_confirm_preset_id: this.records.preset.id
+                })
+                .patch({
+                    status: "complete",
+                    date_complete: dayjs().format('YYYY-MM-DD HH:mm:ss')
+                })
         }
         return true
     }
@@ -235,30 +253,8 @@ module.exports = class Events {
     /**
      * Возвращает список всех событий
      */
-    static async getEvents() {
-        /**@type {*[]} */
-        const res = []
-        const events = await Event_confirm.query().joinRelated("[events_confirm_preset,history]")
-        events.forEach((/**@type {*}*/event) => {
-            res.push({
-                history_id: event.history_id,
-                event_confirm_preset_id: event.event_confirm_preset_id,
-                // confirm_need: need_confirm,
-                // confirm: confirm_tmp,
-                // confirm_reject: confirm_tmp,
-                status: event.status,
-                table: event.table,
-                table_id: event[event.table + "_id"],
-                name: event.name,
-                name_rus: event.name_rus,
-                actor_id: event.actor_id,
-                // personal_ids: personal_ids,
-                // additional: { device_user_id: eventHistory.diff.user_id },
-                date: event.date,
-                date_completed: event.date_completed
-            })
-        })
-
-        return res
+    static async getEvents(actorId) {
+        await Event_confirm.query().withGraphFetched("[event_confirm_preset.status, history]")
+        new this
     }
 }

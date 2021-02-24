@@ -50,7 +50,7 @@ module.exports = class GetDataTab {
      */
     async getUnconfirm(id) {
         let unconfSnapshot = []
-        if (await this.hasHistory && this.events) {
+        if (await this.hasHistory) {
             unconfSnapshot = await Events.getUnconfirmSnapshot(this.tableClass.tableName ,id)
         }
         const tableData = await this.tableClass.query().skipUndefined().where("id", /**@type {*}*/(id))

@@ -17,13 +17,44 @@ module.exports = class PresetParse {
         return preset
     }
 
+    /**
+     * Заменяет в обьекте все sql значения, но обычные value значения
+     * @param {*} confirmsBlocks 
+     */
+    static async confirmSqlToValue (confirmsBlocks) {
+        for (let key in confirmsBlocks) {
+            if(confirmsBlocks[key]?.sql?.[0]) {
+                confirmsBlocks[key].value = (await this.selectSqlStrToValue(confirmsBlocks[key].sql))[0]
+                confirmsBlocks[key].sql = undefined
+            }
+        }
+        return confirmsBlocks
+    }
+
+    /**
+     * Возвращает обьект который определяет какие подтверждения еще требуются
+     * @param {*} presetConfirms 
+     * @param {*} alreadyConfirms 
+     */
     static needConfirm(presetConfirms, alreadyConfirms) {
         const alreadyKeys = Object.keys(alreadyConfirms)
-        _.mapValues(presetConfirms, (value, key) => {
-            if(!alreadyKeys.includes(key)) {
-                return value
+        return _.pickBy(presetConfirms, x => !alreadyKeys.includes(x))
+    }
+
+    /**
+     * 
+     * @param {*} needConfirm 
+     * @param {number} actorId 
+     */
+    static async getConfirmsGroup(needConfirm, actorId) {
+        const needConfirmValOnly = await this.confirmSqlToValue(needConfirm)
+        /**@type {string[]}*/
+        const groupArray = _.transform(needConfirmValOnly, (/**@type {string[]}*/result, value, key) => {
+            if(needConfirmValOnly[key].value.includes(actorId)) {
+                result.push(String(key))
             }
-        })
+        }, [])
+        return groupArray
     }
 
     /**
