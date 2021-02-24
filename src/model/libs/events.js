@@ -39,33 +39,21 @@ module.exports = class Events {
                 table_id: getTabIdFromHis(hisRec)
             }
         }
-        this.initGetPropFn()
     }
 
-    initGetPropFn() {
-        this.prop = {
-            history: function () {
-
-            },
-            diff: function () {
-
-            },
-            status: function () {
-
-            },
-            records: this.records,
-            
-        }
+    async accept(actorId, trx) {
+        const confirmGroup = this.presetParse.getConfirmGroup(this.getNeedConfirm(), actorId)
+        const confirmBlock = this.genConfirmBlock(confirmGroup, actorId)
+        async Event_confirm.query().first().where({
+            history_id: this.records.event.history_id,
+            event_confirm_preset_id: this.records.event.event_confirm_preset_id
+        }).patch({confirm: JSON.stringify(confirmBlock)})
+        this.records.event.confirm=confirmBlock
     }
 
-    addToProp() {
+    async reject(actorId) {
 
     }
-
-    getProp() {
-
-    }
-
     /**
      * Снимок неподтвержденных данных, вычисляется в зависимости от приоритета
      * @param {string} tableName
