@@ -29,31 +29,109 @@ module.exports = class Events {
      * @param {*} hisRec
      * @param {*} eventPresetRec
      * @param {*} statusRec
+     * @param {*} confirmPresetValueOnly
+     * @param {number} actorId
      */
-    constructor(eventRec, hisRec, eventPresetRec, statusRec) {
+    constructor(eventRec, hisRec, eventPresetRec, statusRec, confirmPresetValueOnly, actorId) {
+
         this.records = {
             event: eventRec,
             history: hisRec,
+            status: statusRec,
             preset: eventPresetRec,
             other: {
                 table_id: getTabIdFromHis(hisRec)
             }
         }
+
+        this.confirmPresetValueOnly = confirmPresetValueOnly
+        this.applyAction = new ApplyAction((eval(`require("./orm/${this.records.preset.table.toLocaleLowerCase()}")`)))
+        this.actorId = actorId
     }
 
-    async accept(actorId, trx) {
-        const confirmGroup = this.presetParse.getConfirmGroup(this.getNeedConfirm(), actorId)
-        const confirmBlock = this.genConfirmBlock(confirmGroup, actorId)
-        async Event_confirm.query().first().where({
-            history_id: this.records.event.history_id,
-            event_confirm_preset_id: this.records.event.event_confirm_preset_id
-        }).patch({confirm: JSON.stringify(confirmBlock)})
-        this.records.event.confirm=confirmBlock
+    confirmDefaultCol() {
+        return { date: dayjs().format('YYYY-MM-DD HH:mm:ss') }
     }
 
-    async reject(actorId) {
+    /**
+     * Выполняет подтверждение события
+     * @param {(type: string) => any} fn блок подтверждения
+     * @param {*} [trxOpt]
+     */
+    async confirm(fn, trxOpt) {
+        Transaction.startTransOpt(trxOpt, async trx => {
+            if (this.records.event.status !== "pending") {
+                return false
+            }
+            const needConfirm = PresetParse.needConfirm(this.confirmPresetValueOnly?.confirms, this.records.event?.confirms)
+            const confirmsGroup = PresetParse.getConfirmsGroup(needConfirm, this.actorId)
+            if (confirmsGroup.length) {
+                return false
+            }
 
+            /**@type {*} */
+            const newConfirmsBlocks = {}
+
+            for (let key in this.confirmPresetValueOnly.confirms) {
+                if (!this.records.event?.confirms?.[key] && confirmsGroup.includes(key)) {
+                    newConfirmsBlocks[key] = await fn(this.confirmPresetValueOnly.confirms[key].type)
+                } else {
+                    newConfirmsBlocks[key] = this.records.event?.confirms?.[key]
+                }
+            }
+
+            const newConfirm = Object.assign({}, this.records.event, { confirms: newConfirmsBlocks })
+
+            await Event_confirm.query(trx).where({
+                history_id: this.records.history.id,
+                event_confirm_preset_id: this.records.preset.id
+            }).patch({ confirm: JSON.stringify(newConfirm) })
+            this.records.event = newConfirm
+            await this.tryComplete(trx)
+            await this.applyAction.commitHistory(this.records.history.id, trx)
+            return true
+        })
     }
+
+    /**
+     * Подтверждает события простого типа
+     * @param {("reject"|"accept")} actionTag 
+     * @param {*} [trx]
+     */
+    async simpleConfirm(actionTag, trx) {
+        this.confirm((type) => {
+            if (type === "simple") {
+                Object.assign(
+                    this.confirmDefaultCol,
+                    {
+                        type: "simple",
+                        action: actionTag,
+                        id: this.actorId
+                    })
+            }
+        }, trx)
+    }
+
+    /**
+     * Прометит событие как завершенное если оно имеет все подтверждения
+     * @param {*} [trx]
+     */
+    async tryComplete(trx) {
+        if (this.records.event.status !== "pending") {
+            return false
+        }
+        const query = Event_confirm.query(trx).where({
+            history_id: this.records.history.id,
+            event_confirm_preset_id: this.records.preset.id
+        })
+        if (_.find(this.records.event.confirms, { action: "reject" })) {
+            await query.patch({ status: "reject", date_complete: dayjs().format('YYYY-MM-DD HH:mm:ss') })
+        } else if (Object.keys(this.records.event.confirms).length) {
+            await query.patch({ status: "complete", date_complete: dayjs().format('YYYY-MM-DD HH:mm:ss') })
+        }
+        return true
+    }
+
     /**
      * Снимок неподтвержденных данных, вычисляется в зависимости от приоритета
      * @param {string} tableName
@@ -182,37 +260,5 @@ module.exports = class Events {
         })
 
         return res
-    }
-
-    /**
-     * Применить к событию действие
-     * @param {[number,number]} eventId
-     * @param {string} action
-     */
-    async eventAction(eventId, action) {
-        const event = await Event_confirm.query()
-            .where({ event_confirm_preset_id: eventId[0], history_id: eventId[1] })
-            .whereNull("date_completed")
-            .first()
-
-        if (!event) {
-            return null
-        }
-
-        const confirm = simpleConfirm()
-        await Event_confirm
-            .query()
-            .where({ event_confirm_preset_id: eventId[0], history_id: eventId[1] })
-            .patch({ confirm: JSON.stringify(confirm) })
-
-    }
-
-    /**
-     * Отклонить событие
-     * @param {[number,number]} eventId
-     */
-    async reject(eventId) {
-        this.eventAction(eventId, "reject")
-        return
     }
 }

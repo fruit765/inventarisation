@@ -9,6 +9,24 @@ const knex = Knex(dbConfig)
 module.exports = class PresetParse {
 
     /**
+     * Переводит сокращенный вид к полному для формата подтверждений
+     * @param {*} preset 
+     * @private
+     */
+    static confirmCompletion(preset) {
+        return preset
+    }
+
+    static needConfirm(presetConfirms, alreadyConfirms) {
+        const alreadyKeys = Object.keys(alreadyConfirms)
+        _.mapValues(presetConfirms, (value, key) => {
+            if(!alreadyKeys.includes(key)) {
+                return value
+            }
+        })
+    }
+
+    /**
      * На входе массив select запросов
      * Делает запрос, получаем массив значений
      * @param {string[]} sqlStrings
@@ -37,15 +55,6 @@ module.exports = class PresetParse {
      * @private
      */
     static presetCompletion(preset) {
-        return preset
-    }
-
-    /**
-     * Переводит сокращенный вид к полному для формата подтверждений
-     * @param {*} preset 
-     * @private
-     */
-    static confirmCompletion(preset) {
         return preset
     }
 
