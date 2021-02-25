@@ -17,6 +17,8 @@ const dayjs = require("dayjs")
 const { getTabIdFromHis, getTabNameFromHis } = require("./command")
 const Knex = require("knex")
 const dbConfig = require("../../../serverConfig").db
+const Status = require("../orm/status")
+const { delete } = require("../../routes/users")
 const knex = Knex(dbConfig)
 
 /**
@@ -33,16 +35,48 @@ module.exports = class Events {
      * @param {number} actorId
      */
     constructor(eventRec, hisRec, eventPresetRec, statusRec, confirmPresetValueOnly, actorId) {
+        const alreadyConfKeys = Object.keys(eventRec.confirm)
+        let confirms = []
+        for(let key in confirmPresetValueOnly.confirms) {
+            const value = confirmPresetValueOnly.confirms[key]
+            confirms[Number(key)] = {
+                group: value.group?.value?.[0],
+                users: this.uniqObjToBoolObj(value.value),
+                type: value.type
+            }
+        }
 
+        let alreadyConfirms = []
+        for(let key in eventRec.confirm.confirms) {
+            const value = eventRec.confirm.confirms[key]
+            const valuePresetConfirms = confirms[Number(key)]
+            alreadyConfirms.push({
+                group: valuePresetConfirms.group?.value?.[0],
+                users: this.uniqObjToBoolObj(value.value),
+                type: value.type,
+                action: value.action,
+                date: value.date
+            })
+        }
+
+        const needConfirms = _.remove(confirms, (val,key) => !alreadyConfKeys.includes(String(key)))
+        const acceptConfirms = _.filter(eventRec.confirm.confirms, {action: "accept"})
+        const rejectConfirms =_.filter(eventRec.confirm.confirms, {action: "reject"})
+        
         this.records = {
             event: eventRec,
             history: hisRec,
             status: statusRec,
             preset: eventPresetRec,
             other: {
-                table_id: getTabIdFromHis(hisRec)
+                table_id: getTabIdFromHis(hisRec),
+                personal_ids: confirmPresetValueOnly.personal,
+                confirm_need: needConfirms,
+                confirm_accept: acceptConfirms,
+                confirm_reject: rejectConfirms
             }
         }
+
 
         this.confirmPresetValueOnly = confirmPresetValueOnly
         this.applyAction = new ApplyAction((eval(`require("./orm/${this.records.preset.table.toLocaleLowerCase()}")`)))
@@ -56,6 +90,40 @@ module.exports = class Events {
         return { date: dayjs().format('YYYY-MM-DD HH:mm:ss') }
     }
 
+    /**
+     * {"a":2,"b":3, "1":5} => {2: true, 3: true, 5:true}
+     * @param {*} obj 
+     */
+    uniqObjToBoolObj(obj) {
+        /**@type {*} */
+        const boolObj = {}
+        for (let key in obj) {
+            if(obj[key]) {
+                boolObj[obj[key]] = true
+            }
+        }
+        return boolObj
+    }
+
+    get() {
+        return {
+            history_id: this.records.history.id,
+            event_confirm_preset_id: this.records.preset.id,
+            confirm_need: this.records.other.confirm_need,
+            confirm: this.records.other.confirm_accept,
+            confirm_reject: this.records.other.confirm_reject,
+            status: this.records.event.status,
+            table: this.records.preset.table,
+            table_id: this.records.other.table_id,
+            name: this.records.preset.name,
+            name_rus: this.records.preset.name_rus,
+            actor_id: this.records.history.actor_id,
+            personal_ids: this.uniqObjToBoolObj(this.records.other.personal_ids),
+            additional: { device_user_id: eventHistory.diff.user_id },
+            date: this.records.event.date,
+            date_completed: this.records.event.date_completed
+        }
+    }
     /**
      * Выполняет подтверждение события
      * @param {(type: string) => any} fn блок подтверждения
@@ -252,9 +320,27 @@ module.exports = class Events {
 
     /**
      * Возвращает список всех событий
+     * @param {number} actorId
      */
     static async getEvents(actorId) {
-        await Event_confirm.query().withGraphFetched("[event_confirm_preset.status, history]")
-        new this
+        const eventRecArray = await Event_confirm.query()
+        const hisIds = _.map(eventRecArray, "history_id")
+        const presetIds = _.map(eventRecArray, "event_confirm_preset_id")
+        const hisRecIndexed = _.keyBy(await History.query().findByIds(hisIds), "id")
+        const presetRecIndexed = _.keyBy(await Event_confirm_preset.query().findByIds(presetIds), "id")
+        const confirmCompletion = PresetParse.confirmCompletionMemoize()
+        /**@type {*} */
+        const statusIndexed = _.keyBy(await Status.query(), "id")
+        const eventsArray = []
+        for (let eventRec of eventRecArray) {
+            const hisRec = hisRecIndexed[eventRec.history_id]
+            const presetRec = presetRecIndexed[eventRec.event_confirm_preset_id]
+            const statusRec = statusIndexed(presetRec.status_id)
+            const confirmPresetValueOnly = await confirmCompletion(presetRec, hisRec)
+            const eventsInst = new this(eventRec, hisRec, presetRec, statusRec, confirmPresetValueOnly, actorId)
+            eventsArray.push(eventsInst)
+        }
+
+        return eventsArray
     }
 }

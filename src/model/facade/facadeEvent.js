@@ -9,15 +9,17 @@ const Events = require("../libs/events")
  */
 module.exports = class FacadeEvent {
     /**
-     * @param {{actorId: number}} actorId 
+     * @param {number} actorId 
      */
     constructor(actorId) {
         this.actorId = actorId
-        this.events = new Events()
     }
 
     getEvents() {
-        return Events.getEvents()
+        const eventsArray = await Events.getEvents(this.actorId)
+        eventsArray.map((val, key)=> {
+            val.get()
+        })
         /**@type {*[]} */
         const res = []
         const events = await Event_confirm.query().joinRelated("[events_confirm_preset,history]")

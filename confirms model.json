@@ -18,8 +18,9 @@
             },
             {
                 "value": [
-                    "actor_id"
-                ]
+                    "${actor_id}"
+                ],
+                "type": "accept"
             }
         ],
         "veto": [
@@ -39,18 +40,21 @@
         "confirms": {
             "0": {
                 "id": 1,
-                "type": "accept",
-                "date": "2021-02-18 00:15:26"
+                "type": "simple",
+                "date": "2021-02-18 00:15:26",
+                "action": "reject"
             },
             "1": {
                 "id": 2,
-                "type": "reject",
-                "date": "2021-02-18 00:15:26"
+                "type": "simple",
+                "date": "2021-02-18 00:15:26",
+                "action": "accept"
             },
             "2": {
                 "id": 3,
                 "type": "act",
                 "date": "2021-02-18 00:15:26",
+                "action": "accept",
                 "act": 1
             }
         }

@@ -9,26 +9,70 @@ const knex = Knex(dbConfig)
 module.exports = class PresetParse {
 
     /**
-     * Переводит сокращенный вид к полному для формата подтверждений
-     * @param {*} preset 
-     * @private
+     * Версия с мемоизированными sql запросами confirmCompletion
      */
-    static confirmCompletion(preset) {
-        return preset
+    static confirmCompletionMemoize() {
+        const queryMemo = _.memoize(this.knexQuery)
+        const that = new Proxy(this, {
+            get(target, prop) {
+                if (prop === "knexQuery") {
+                    return queryMemo
+                } else {
+                    return Reflect.get(target, prop)
+                }
+            }
+        })
+        return this.confirmCompletion.bind(that)
     }
 
     /**
-     * Заменяет в обьекте все sql значения, но обычные value значения
-     * @param {*} confirmsBlocks 
+     * Переводит сокращенный вид к полному для формата подтверждений
+     * @param {*} preset 
+     * @param {*} hisRec
      */
-    static async confirmSqlToValue (confirmsBlocks) {
-        for (let key in confirmsBlocks) {
-            if(confirmsBlocks[key]?.sql?.[0]) {
-                confirmsBlocks[key].value = (await this.selectSqlStrToValue(confirmsBlocks[key].sql))[0]
-                confirmsBlocks[key].sql = undefined
+    static async confirmCompletion(preset, hisRec) {
+        const presetLocal = _.cloneDeep(preset)
+        this.repHistoryRec(presetLocal, hisRec)
+        await this.confirmAllSqlToValue(presetLocal)
+        return presetLocal
+    }
+
+    /**
+     * Заполняет все данные формата ${value}, полями из истории или любого другого объекта
+     * @param {*} preset 
+     * @param {*} hisRec
+     * @private
+     */
+    static repHistoryRec(preset, hisRec) {
+        for (let key in preset) {
+            const val = preset[key]
+            if (typeof val === "string") {
+                val.match(/(?<=\${)(.+?)(?=})/g)?.forEach((value) => {
+                    preset[key] = preset[key].replace(new RegExp("\\${" + value + "}", "g"), _.get(hisRec, value))
+                })
+            } else if (typeof val === "object") {
+                this.repHistoryRec(val, hisRec)
             }
         }
-        return confirmsBlocks
+    }
+
+    /**
+     * Заменяет в пресете подтверждений все sql значения, на обычные value значения
+     * @param {*} preset 
+     * @private
+     */
+    static async confirmAllSqlToValue(preset) {
+        if (Object.keys(preset).includes("sql")) {
+            const sql = _.flatten(await this.selectSqlStrToValue(preset.sql))
+            preset.value = _.union(preset.value, sql)
+            delete (preset.sql)
+        }
+
+        for (let key in preset) {
+            if(key !== "value" && key !== "sql" && typeof preset[key] === "object") {
+                this.confirmAllSqlToValue(preset[key])
+            }
+        }
     }
 
     /**
@@ -42,21 +86,33 @@ module.exports = class PresetParse {
     }
 
     /**
-     * 
+     * возвращает номер групп в которых разрешенно подтверждение от данного актора
      * @param {*} needConfirm 
      * @param {number} actorId 
      */
     static async getConfirmsGroup(needConfirm, actorId) {
-        const needConfirmValOnly = await this.confirmSqlToValue(needConfirm)
         /**@type {string[]}*/
-        const groupArray = _.transform(needConfirmValOnly, (/**@type {string[]}*/result, value, key) => {
-            if(needConfirmValOnly[key].value.includes(actorId)) {
+        const groupArray = _.transform(needConfirm, (/**@type {string[]}*/result, value, key) => {
+            if (needConfirm[key].value.includes(actorId)) {
                 result.push(String(key))
             }
         }, [])
         return groupArray
     }
 
+    /**
+     * Заменяет personal, на значения id
+     * @param {*} preset 
+     */
+    static async repPersonalId(preset) {
+        const personalIdsRaw = preset.personal
+        const personalRepRaw = []
+        for (let key in personalIdsRaw) {
+            personalRepRaw.push(preset.confirms[personalIdsRaw[key]])
+        }
+        const personalRepVal = _.map(personalRepRaw, "value")
+        return Object.assign({}, preset, { personal: _.flatten(personalRepVal) })
+    }
     /**
      * На входе массив select запросов
      * Делает запрос, получаем массив значений
@@ -68,7 +124,7 @@ module.exports = class PresetParse {
         for (let sqlString of sqlStrings) {
             const query = sqlString.split(";")[0].trim().match(/^select.*$/)?.[0]
             if (query) {
-                const dbRes = await knex.raw(query).then(x => x[0])
+                const dbRes = await this.knexQuery(query)
                 const firstKey = Object.keys(dbRes[0])[0]
                 const resArray = _.groupBy(dbRes, firstKey)[firstKey]
                 sqlRes.push(resArray[0] ? resArray : [NaN])
@@ -78,6 +134,15 @@ module.exports = class PresetParse {
         }
 
         return sqlRes
+    }
+
+    /**
+     * Делает запрос в базу данных
+     * @param {string} query
+     * @private
+     */
+    static async knexQuery(query) {
+        return knex.raw(query).then(x => x[0])
     }
 
     /**
@@ -203,8 +268,8 @@ module.exports = class PresetParse {
         const presetDefault = this.presetCompletion(presetRaw)
         const presetOnlyValue = await this.sqlResolving(presetDefault)
         presetOnlyValue.columns = _.mapValues(presetOnlyValue.columns, (value, keys) => {
-           return (this.columnResolving(newData[keys], value.new) &&
-                this.columnResolving(oldData[keys], value.old)) 
+            return (this.columnResolving(newData[keys], value.new) &&
+                this.columnResolving(oldData[keys], value.old))
         })
 
         return this.substitution(presetOnlyValue.logic, presetOnlyValue.columns)
