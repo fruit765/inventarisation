@@ -29,6 +29,31 @@
 //      */
 "use strict"
 
+const Knex = require("knex")
+const dbConfig = require("../serverConfig").db
+const knex = Knex(dbConfig)
+
+const Device = require("./model/orm/device")
 const Event_confirm = require("./model/orm/event_confirm")
-console.log("start")
-Event_confirm.query().then(x => console.log(x))
+
+Device.query().from(function () {
+    Object.assign(this, Device.query().innerJoin(
+        function () {
+            Object.assign(this, Device.query().max("price as maxPrice").select("category_id").groupBy("category_id").as("d0"))
+        },
+        function () {
+            this.on("d0.category_id", "device.category_id").andOn("d0.maxPrice", "device.price")
+        }
+    ).as("d1"))
+}).groupBy("category_id").then(console.log)
+
+// Device.query().innerJoin(
+//     function () {
+//         Object.assign(this, Device.query().max("price as maxPrice").select("category_id").groupBy("category_id").as("d0"))
+//     },
+//     function () {
+//         this.on("d0.category_id", "device.category_id").andOn("d0.maxPrice", "device.price")
+//     }
+// ).as("d1").then(console.log)
+
+//Device.query().max("price").select("category_id").groupBy("category_id").then(console.log)

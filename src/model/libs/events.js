@@ -18,7 +18,6 @@ const { getTabIdFromHis, getTabNameFromHis } = require("./command")
 const Knex = require("knex")
 const dbConfig = require("../../../serverConfig").db
 const Status = require("../orm/status")
-const { delete } = require("../../routes/users")
 const knex = Knex(dbConfig)
 
 /**
@@ -37,7 +36,7 @@ module.exports = class Events {
     constructor(eventRec, hisRec, eventPresetRec, statusRec, confirmPresetValueOnly, actorId) {
         const alreadyConfKeys = Object.keys(eventRec.confirm)
         let confirms = []
-        for(let key in confirmPresetValueOnly.confirms) {
+        for (let key in confirmPresetValueOnly.confirms) {
             const value = confirmPresetValueOnly.confirms[key]
             confirms[Number(key)] = {
                 group: value.group?.value?.[0],
@@ -47,7 +46,7 @@ module.exports = class Events {
         }
 
         let alreadyConfirms = []
-        for(let key in eventRec.confirm.confirms) {
+        for (let key in eventRec.confirm.confirms) {
             const value = eventRec.confirm.confirms[key]
             const valuePresetConfirms = confirms[Number(key)]
             alreadyConfirms.push({
@@ -59,10 +58,10 @@ module.exports = class Events {
             })
         }
 
-        const needConfirms = _.remove(confirms, (val,key) => !alreadyConfKeys.includes(String(key)))
-        const acceptConfirms = _.filter(eventRec.confirm.confirms, {action: "accept"})
-        const rejectConfirms =_.filter(eventRec.confirm.confirms, {action: "reject"})
-        
+        const needConfirms = _.remove(confirms, (val, key) => !alreadyConfKeys.includes(String(key)))
+        const acceptConfirms = _.filter(alreadyConfirms, { action: "accept" })
+        const rejectConfirms = _.filter(alreadyConfirms, { action: "reject" })
+
         this.records = {
             event: eventRec,
             history: hisRec,
@@ -98,7 +97,7 @@ module.exports = class Events {
         /**@type {*} */
         const boolObj = {}
         for (let key in obj) {
-            if(obj[key]) {
+            if (obj[key]) {
                 boolObj[obj[key]] = true
             }
         }
@@ -119,7 +118,7 @@ module.exports = class Events {
             name_rus: this.records.preset.name_rus,
             actor_id: this.records.history.actor_id,
             personal_ids: this.uniqObjToBoolObj(this.records.other.personal_ids),
-            additional: { device_user_id: eventHistory.diff.user_id },
+            //additional: { device_user_id: eventHistory.diff.user_id },
             date: this.records.event.date,
             date_completed: this.records.event.date_completed
         }
@@ -260,6 +259,44 @@ module.exports = class Events {
         }
 
         return unconfirmedPrior
+    }
+
+    /**
+     * Снимок неподтвержденных данных, вычисляется в зависимости от приоритета
+     * @param {string} tableName
+     * @param {number=} id 
+     */
+    static async getUnconfirmSnapshot(tableName, id) {
+        // const unconfirmed = await Event_confirm
+        //     .query()
+        //     .skipUndefined()
+        //     .where(tableName + "_id", /**@type {*}*/(id))
+        //     .where("table", tableName)
+        //     .select(tableName + "_id", "status_id", "diff", "view_priority", "status", "status_rus")
+        //     .whereNull("date_completed")
+        //     .joinRelated(`[history,event_confirm_preset.status]`)
+
+        // _.map(unconfirmed, (val, key) => {
+        //     const diff = val.diff
+        //     delete(val.diff)
+        //     return Object.assign(val, diff)
+        // })
+
+        // return unconfirmedPrior
+        const tableCol = tableName + "_id"
+        const eventUniqon = Event_confirm
+            .query()
+            .whereNull("date_completed")
+            .where("table", tableName)
+            .joinRelated(`[history,event_confirm_preset.status]`)
+
+        const eventUniqonGroupMaxPrior = eventUniqon
+            .max("view_prioity as max_view_prioity")
+            .select(tableCol)
+            .orderBy(tableCol)
+
+        const eventManyMaxPrior = eventUniqonGroupMaxPrior
+
     }
 
     /**
