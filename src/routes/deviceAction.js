@@ -1,3 +1,5 @@
+//@ts-check
+
 "use strict"
 
 const express = require('express')
@@ -7,24 +9,23 @@ const History = require('../model/orm/history')
 const Status = require('../model/orm/status')
 const router = express.Router()
 const fp = require("lodash/fp")
-const Table = require('../model/libs/table')
-const table = new Table(Device)
+const FacadeTableDev = require('../model/facade/facadeTableDev')
 
 router.route('/deviceAction')
     .all((req, res, next) => {
-        table.setActorId(req.user.id)
+        req.myObj = new FacadeTableDev(Device, {
+            actorId: /**@type {*}*/ (req.user)?.id
+        })
         next()
     })
     .post(async (req, res, next) => {
         if (req.query.action === "bind") {
-            const data = req.body
-            data.status_id = await Status.query().where("status", "given").first()
-            const response = table.patchAndFetch(data)
+            const response = req.myObj.bind(req.body.id, req.body.user_id)
             sendP(next)(res)(response)
-        } else if (req.query.action === "remove") {
-            
+        } else if(req.query.action === "remove") {
+            const response = req.myObj.remove(req.body.id, req.body.user_id)
+            sendP(next)(res)(response)
         }
-        send(next)(res)(insertTable(Device)(req.body))
     })
 
 module.exports = router
