@@ -6,7 +6,12 @@
 
 const ApplyAction = require("../libs/applyAction")
 const GlobalHistory = require("../libs/globalHistory")
-const GetDataTab = require("../libs/getDataTab")
+
+const Knex = require("knex")
+const dbConfig = require("../../../serverConfig").db
+const knex = Knex(dbConfig)
+const _ = require("lodash")
+const Status = require("../orm/status")
 
 /**
  * @class
@@ -53,7 +58,6 @@ module.exports = class FacadeTable {
         /**@private */
         this.applyActionClass = new ApplyAction(tableClass)
         /**@private */
-        this.getDataTab = new GetDataTab(tableClass)
         this.setOpt(options)
     }
 
@@ -156,7 +160,7 @@ module.exports = class FacadeTable {
      */
     async insertAndFetch(data) {
         const id = await this.patch(data)
-        return this.getDataTab.getUnconfirm(id)
+        return this.getUnconfirm(id)
     }
 
     /**
@@ -165,14 +169,78 @@ module.exports = class FacadeTable {
      */
     async patchAndFetch(data) {
         const id = await this.patch(data)
-        return this.getDataTab.getUnconfirm(id)
+        return this.getUnconfirm(id)
     }
 
-    getUnconfirm() {
-        return this.getDataTab.getUnconfirm()
+    /**
+     * Получает данные из таблицы с новой еще не закомиченной информацией
+     * @param {number=} id
+     */
+    async getUnconfirm(id) {
+        /**@type {*[]} */
+        let eventMaxPriorSingle = []
+        const priority = -0.1
+        const hisColName = this.hisColName
+        if (this.hisColName && GlobalHistory.hasHistory(this.hisColName)) {
+            const myEvents = knex("event_confirm")
+                .whereNull("date_completed")
+                .where(_.omitBy({[/**@type {string}*/(hisColName)]: id, table: this.tableName}, _.isUndefined))
+                .innerJoin("history", "history.id", "event_confirm.history_id")
+                .innerJoin("event_confirm_preset", "event_confirm_preset.id", "event_confirm.event_confirm_preset_id")
+
+            const groupMaxPriority = myEvents
+                .clone()
+                .select(/**@type {string}*/(hisColName))
+                .max("view_priority as max_view_priority")
+                .groupBy(/**@type {string}*/(hisColName))
+
+
+            const eventsMaxPriority = knex
+                .queryBuilder()
+                .from(/**@this {*}*/function () {
+                    const t1 = myEvents
+                        .select("device_id", "view_priority", "status_id", "diff")
+                        .as("t1")
+                    Object.assign(this, t1)
+                })
+                .innerJoin(
+                    /**@this {*}*/
+                    function () {
+                        const t0 = groupMaxPriority.as("t0")
+                        Object.assign(this, t0)
+                    },
+                    /**@this {*}*/
+                    function () {
+                        this.on("t0." + hisColName, "t1." + hisColName).andOn("t0.max_view_priority", "t1.view_priority")
+                    }
+                )
+            eventMaxPriorSingle = await eventsMaxPriority.select("t1.*").groupBy("t1." + hisColName)
+        }
+        /**@type {*[]} */
+        const tableData = await this.tableClass.query()
+        const status = await Status.query()
+        const statusIndex = _.keyBy(status, "id")
+        const tableDataIndex = _.keyBy(tableData, "id")
+        for (let value of eventMaxPriorSingle) {
+            if (tableDataIndex[value.device_id]) {
+                tableDataIndex[value.device_id].status_id = value.status_id
+                if (priority<value.view_priority) {
+                    Object.assign(tableDataIndex[value.device_id], value.diff)
+                }
+            }
+        }
+        const tableDataEdit = _.values(tableDataIndex)
+        for(let value of tableDataEdit) {
+            if(value.status_id != null) {
+                value.status = statusIndex[value.status_id]?.status
+                value.status_rus = statusIndex[value.status_id]?.status_rus
+            }
+        }
+
+        return tableDataEdit
     }
 
     getAll() {
-        return this.getDataTab.getAll()
+        return this.tableClass.query()
     }
 }
