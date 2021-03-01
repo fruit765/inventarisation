@@ -8,6 +8,7 @@ const { Left } = require("sanctuary")
 const luxon = require('luxon')
 const Device = require("../orm/device")
 const Act = require("../orm/act")
+const createError = require('http-errors')
 
 const send = next => res => fluture => fork(valueError(next))((x) => res.json(x))(fluture)
 const sendP = next => res => pomise => pomise.then((x) => res.json(x)).catch(valueError(next))
@@ -113,20 +114,26 @@ const getDevWithVirtualStatus = async (devId) => {
     return fp.values(devicesKeyId)
 }
 
-function getTabIdFromHis (hisRec) {
+function getTabIdFromHis(hisRec) {
     for (let key in hisRec) {
         if (String(key).match(/_id$/gi) && key !== "actor_id" && value != null) {
             return hisRec[key]
-        } 
+        }
     }
 }
 
-function getTabNameFromHis (hisRec) {
+function getTabNameFromHis(hisRec) {
     for (let key in hisRec) {
         if (String(key).match(/_id$/gi) && key !== "actor_id" && value != null) {
             return key
-        } 
+        }
     }
 }
 
-module.exports = { getTabNameFromHis, getTabIdFromHis, getDevWithVirtualStatus, validateDataBySchema, getTable, getCell, send, sendP, insertTable, updateTable, deleteTable, getDevRelatedTabValueAssociatedCatId, dateToIso }
+function createException(errCode, message, dataPath) {
+    const err = new createError(errCode, message)
+    err.dataPath = "." + dataPath
+    return err
+}
+
+module.exports = { createException, getTabNameFromHis, getTabIdFromHis, getDevWithVirtualStatus, validateDataBySchema, getTable, getCell, send, sendP, insertTable, updateTable, deleteTable, getDevRelatedTabValueAssociatedCatId, dateToIso }

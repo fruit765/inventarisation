@@ -4,6 +4,7 @@ const ts = require("gulp-typescript")
 const tsProject = ts.createProject("tsconfig.json")
 const nodemon = require('gulp-nodemon')
 const exec = require('child_process').exec
+const del = require('del')
 
 function backendServer(done) {
     nodemon({
@@ -14,6 +15,11 @@ function backendServer(done) {
         , done: done
     })
 }
+
+function clean(cb) {
+    del(['./dist/']);
+    cb();
+  }
 
 function tsc() {
     return tsProject.src().pipe(tsProject()).js.pipe(dest("dist"))
@@ -28,7 +34,7 @@ function nodejs(cb) {
 }
 
 function tsWatch() {
-    watch(["src/**/*", "serverConfig.js"], tsc)
+    watch(["src/**/*", "serverConfig.js"], series(clean, tsc))
 }
 // function backendWatch () {
 //     watch("./**/*.js",() => {node 'index.js'});

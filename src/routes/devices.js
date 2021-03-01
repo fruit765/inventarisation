@@ -6,11 +6,11 @@ const express = require('express')
 const { sendP } = require('../model/libs/command')
 const Device = require('../model/orm/device')
 const router = express.Router()
-const FacadeTable = require('../model/facade/facadeTable')
+const FacadeTableDev = require('../model/facade/facadeTableDev')
 
 router.route('/devices')
     .all((req, res, next) => {
-        req.myObj = new FacadeTable(Device, {
+        req.myObj = new FacadeTableDev(Device, {
             actorId: /**@type {*}*/ (req.user)?.id
         })
         next()

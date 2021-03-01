@@ -96,7 +96,7 @@ const eventsMaxPriority = knex
         }
     )
 
-const eventMaxPriorSingle = eventsMaxPriority.select("t1.*").groupBy("t1." + tableCol)
+const eventMaxPriorSingle = eventsMaxPriority.select("t1.*","ddd").groupBy("t1." + tableCol)
 
 // const deviceWithUnconf = knex(tableName).select("*.status_id as sssss","*", knex.raw(`CASE WHEN t3.status_id THEN t3.status_id ELSE ${tableName}.status_id END as status_id`),).leftJoin(
 //     function () {

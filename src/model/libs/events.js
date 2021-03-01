@@ -289,6 +289,7 @@ module.exports = class Events {
         const eventsArray = []
         for (let eventRec of eventRecArray) {
             const hisRec = hisRecIndexed[eventRec.history_id]
+            /**@type {*} */
             const presetRec = presetRecIndexed[eventRec.event_confirm_preset_id]
             const statusRec = statusIndexed(presetRec.status_id)
             const confirmPresetValueOnly = await confirmCompletion(presetRec, hisRec)

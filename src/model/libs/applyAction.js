@@ -10,6 +10,7 @@ const Transaction = require("./transaction")
 const _ = require("lodash")
 const Event_confirm = require("../orm/event_confirm")
 const History = require("../orm/history")
+const { createException } = require("./command")
 
 module.exports = class ApplyAction {
     /**
@@ -65,11 +66,12 @@ module.exports = class ApplyAction {
      * @param {*} data
      * @param {string} actionTag 
      * @param {*=} trx 
+     * @returns {Promise<number>}
      */
     async applyAction(data, actionTag, trx) {
         /**@type {number} */
         let id = data.id
-        /**@type {?number} */
+        /**@type {number?} */
         let resId = id
         const rdyData = this.stringifyColJSON(data)
         switch (actionTag) {
@@ -87,7 +89,9 @@ module.exports = class ApplyAction {
                 resId = resPatch === 0 ? null : id
                 break
         }
-
+        if (resId == null) {
+            throw createException(400, "fail", "id")
+        }
         return resId
     }
 

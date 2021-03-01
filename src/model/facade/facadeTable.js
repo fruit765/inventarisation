@@ -34,12 +34,12 @@ module.exports = class FacadeTable {
          */
         this.options = {}
         /**
-         * @private
+         * @protected
          * @type {Promise<boolean>}
          */
         this.isSaveHistory = Promise.resolve(false)
         /**
-         * @private
+         * @protected
          * @type {string=}
          */
         this.hisColName = undefined
@@ -53,9 +53,9 @@ module.exports = class FacadeTable {
         * @readonly
         */
         this.tableName = this.tableClass.tableName
-        /**@private*/
+        /**@protected*/
         this.history = undefined
-        /**@private */
+        /**@protected */
         this.applyActionClass = new ApplyAction(tableClass)
         /**@private */
         this.setOpt(options)
@@ -110,6 +110,33 @@ module.exports = class FacadeTable {
         }
     }
 
+     /**
+     * Исполняет указанное действие с сохранением в историю
+     * Возвращает id измененной записи
+     * @param {*} data 
+     * @param {*} actionTag 
+     * @protected
+     */
+    async applyActionSaveHis(data, actionTag) {
+        if (await this.isSaveHistory && this.history && this.hisColName) {
+            const validId = await this.applyActionClass.validate(data, actionTag)
+            const validData = Object.assign({}, data, { id: validId })
+            const saveHis = await this.history.saveAndApply(validData, actionTag)
+            return saveHis[this.hisColName]
+        }
+    }
+
+    /**
+     * Исполняет указанное действие без сохранения в историю
+     * Возвращает id измененной записи
+     * @param {*} data 
+     * @param {*} actionTag 
+     * @protected
+     */
+    async applyActionNoSaveHis(data, actionTag) {
+        return this.applyActionClass.applyAction(data, actionTag)
+    }
+
     /**
      * Исполняет указанное действие
      * Возвращает id измененной записи
@@ -120,10 +147,9 @@ module.exports = class FacadeTable {
     async applyAction(data, actionTag) {
         let id
         if (await this.isSaveHistory && this.history && this.hisColName) {
-            const saveHis = await this.history.saveAndApply(data, actionTag)
-            id = saveHis[this.hisColName]
+            id = this.applyActionSaveHis(data, actionTag)
         } else {
-            id = await this.applyActionClass.applyAction(data, actionTag)
+            id = this.applyActionNoSaveHis(data, actionTag)
         }
         return id
     }
@@ -184,7 +210,7 @@ module.exports = class FacadeTable {
         if (this.hisColName && GlobalHistory.hasHistory(this.hisColName)) {
             const myEvents = knex("event_confirm")
                 .whereNull("date_completed")
-                .where(_.omitBy({[/**@type {string}*/(hisColName)]: id, table: this.tableName}, _.isUndefined))
+                .where(_.omitBy({ [/**@type {string}*/(hisColName)]: id, table: this.tableName }, _.isUndefined))
                 .innerJoin("history", "history.id", "event_confirm.history_id")
                 .innerJoin("event_confirm_preset", "event_confirm_preset.id", "event_confirm.event_confirm_preset_id")
 
@@ -224,14 +250,14 @@ module.exports = class FacadeTable {
         for (let value of eventMaxPriorSingle) {
             if (tableDataIndex[value.device_id]) {
                 tableDataIndex[value.device_id].status_id = value.status_id
-                if (priority<value.view_priority) {
+                if (priority < value.view_priority) {
                     Object.assign(tableDataIndex[value.device_id], value.diff)
                 }
             }
         }
         const tableDataEdit = _.values(tableDataIndex)
-        for(let value of tableDataEdit) {
-            if(value.status_id != null) {
+        for (let value of tableDataEdit) {
+            if (value.status_id != null) {
                 value.status = statusIndex[value.status_id]?.status
                 value.status_rus = statusIndex[value.status_id]?.status_rus
             }
