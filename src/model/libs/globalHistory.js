@@ -49,6 +49,9 @@ module.exports = class GlobalHistory {
      * @private
      */
     diff(originalObj, updatedObj) {
+        for (let key of _.concat(_.keys(originalObj), _.keys(updatedObj))) {
+            if(originalObj !== updatedObj)
+        }
         return Object.assign(addedDiff(originalObj, updatedObj), updatedDiff(originalObj, updatedObj))
     }
 
@@ -83,9 +86,7 @@ module.exports = class GlobalHistory {
      */
     async saveAndApply(data, actionTag, trxOpt) {
         return Transaction.startTransOpt(trxOpt, async (trx) => {
-            const id = await this.applyActionClass.validate(data, actionTag)
-            const dataWithValidId = Object.assign({ id }, data)
-            const hisRec = await this.saveHistoryOnly(dataWithValidId, actionTag, trx)
+            const hisRec = await this.saveHistoryOnly(data, actionTag, trx)
             await Events.genEventsById(hisRec.id, trx)
             await this.applyActionClass.commitHistory(hisRec.id, trx)
             return hisRec
