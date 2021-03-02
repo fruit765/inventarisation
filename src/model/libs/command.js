@@ -131,8 +131,11 @@ function getTabNameFromHis(hisRec) {
 }
 
 function createException(errCode, message, dataPath) {
-    const err = new createError(errCode, message)
-    err.dataPath = "." + dataPath
+    const buildMessage = [{
+        dataPath: "." + dataPath,
+        message: message
+    }]
+    const err = createError(errCode, buildMessage)
     return err
 }
 

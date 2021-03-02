@@ -7,6 +7,7 @@ const transform = require("lodash/fp/transform").convert({ 'cap': false })
 const forIn = require("lodash/fp/forIn").convert({ 'cap': false })
 const createError = require('http-errors')
 const { logger } = require('./exceptionHandling')
+const { bindAllKeywords } = require('./ajvKeywords')
 // проверка параметров пути не реализованна
 class OpenApiValid {
 
@@ -23,12 +24,7 @@ class OpenApiValid {
     }
 
     _addKeyword() {
-        forIn((value, key) => {
-            this.ajv.addKeyword(key, {
-                async: true,
-                validate: value
-            })
-        })(this.options.addKeywords)
+        bindAllKeywords(this.ajv)
     }
 
     _makeQueryJSchema(oApiMethodBlock) {
