@@ -13,6 +13,7 @@ const { addedDiff, updatedDiff } = require("deep-object-diff")
 const Events = require("../libs/events")
 const knex = Knex(dbConfig)
 const _ = require("lodash")
+const dayjs = require("dayjs")
 
 module.exports = class GlobalHistory {
     /**
@@ -52,8 +53,8 @@ module.exports = class GlobalHistory {
         /**@type {*} */
         const diffObj = {}
         for (let key of _.concat(_.keys(originalObj), _.keys(updatedObj))) {
-            if (originalObj !== updatedObj) { //предусмотреть сравнение чисел и строк и дат
-                diffObj[key] = updatedObj
+            if (this.isPrimitiveDiff(originalObj[key], updatedObj[key])) {
+                diffObj[key] = updatedObj[key]
             } else if (typeof updatedObj[key] === "object") {
                 diffObj[key] = this.diffObj(originalObj[key], updatedObj[key])
             }
@@ -81,11 +82,38 @@ module.exports = class GlobalHistory {
                 diffObj[key] = this.diffObj(originalObj?.[key] ?? {}, updatedObj[key])
             } else if (originalObj[key] !== undefined && updatedObj[key] === undefined) {
                 diffObj[key] = "undefined"
-            } else if (updatedObj[key] !== originalObj[key]) {
+            } else if (this.isPrimitiveDiff(originalObj[key], updatedObj[key])) {
                 diffObj[key] = updatedObj[key]
             }
         }
         return diffObj
+    }
+
+    /**
+     * Возвращает true если примитивы разные
+     * @typedef {(Date | string | boolean | number | null )} compareType
+     * @param {compareType} orig 
+     * @param {compareType} upd 
+     */
+    isPrimitiveDiff(orig, upd) {
+        if(typeof orig === "boolean") {
+            orig = Number(orig)
+        }
+
+        if(typeof upd === "boolean") {
+            upd = Number(upd)
+        }
+
+        if (orig !== upd ||
+            (
+                (orig instanceof Date || upd instanceof Date) && (
+                    orig === null || upd === null || 
+                    dayjs(orig).toISOString() !== dayjs(upd).toISOString()
+                )
+            )) {
+            return true
+        }
+        return false
     }
 
     /**

@@ -6,6 +6,9 @@
     "devices": {
       "type": "object",
       "additionalProperties": false,
+      "required": [
+        "get"
+      ],
       "properties": {
         "get": {
           "type": "object",
@@ -25,5 +28,8 @@
         }
       }
     }
-  }
+  },
+  "required": [
+    "devices"
+  ]
 }

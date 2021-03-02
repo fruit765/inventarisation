@@ -255,6 +255,7 @@ module.exports = class Events {
     static async genEventsById(hisId, trxOpt) {
         return Transaction.startTransOpt(trxOpt, async (trx) => {
             const res = []
+            /**@type {*[]} */
             const actualPresets = await this.getActualPresets()
             for (let elem of actualPresets) {
                 if (await this.isHisMatchPreset(hisId, elem.preset)) {

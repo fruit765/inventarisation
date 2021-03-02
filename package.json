@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@apidevtools/swagger-parser": "^10.0.2",
+    "ajv": "6",
     "body-parser": "^1.19.0",
     "connect-session-knex": "^2.0.0",
     "cookie-parser": "^1.4.5",
@@ -55,6 +56,7 @@
     "redoc-cli": "^0.9.13",
     "rewire": "^5.0.0",
     "sinon": "^9.2.1",
-    "ts-node": "^9.1.1"
+    "ts-node": "^9.1.1",
+    "yarn-audit-fix": "^3.3.0"
   }
 }

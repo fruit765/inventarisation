@@ -7,12 +7,18 @@ const { createException } = require("../libs/command")
 const Category = require("../orm/category")
 const CyrillicToTranslit = require("cyrillic-to-translit-js")
 const cyrillicToTranslit = new CyrillicToTranslit()
+const Ajv = require("ajv").default
+const ajv = new Ajv()
 const _ = require("lodash")
 
 module.exports = class FacadeTableDev extends FacadeTable {
 
-    async specValidation(spec) {
-        Category.query()
+    async specValidation(catId, spec) {
+        /**@type {*} */
+        const catRow = await Category.query().findById(catId)
+        const validate = ajv.compile(catRow.schema)
+        const valid = validate(spec)
+        if (!valid) console.log(validate.errors)
     }
 
     /**
@@ -49,6 +55,7 @@ module.exports = class FacadeTableDev extends FacadeTable {
             throw createException(400, "Not allowed for this user_id", "user_id")
         }
         const dataClone = _.cloneDeep(data)
+        await this.specValidation(dataClone.specifications)
         /**@type {number} */
         const status_id = (await Status.query().where("status", "stock").first()).id
         /**@type {*}*/
@@ -58,7 +65,6 @@ module.exports = class FacadeTableDev extends FacadeTable {
         const catName4Translit = cyrillicToTranslit.transform(catName4, "-")
         dataClone.status_id = dataClone.status_id ?? status_id
         dataClone.inv_number = dataClone.inv_number ?? catName4Translit + validId
-        await this.specValidation(dataClone.specifications)
         return super.insert(dataClone)
     }
 

@@ -118,4 +118,37 @@ const Device = require("./model/orm/device");
 
 // eventMaxPriorSingle.then(console.log)
 
-Device.query().then(x => {console.log(typeof x[0].id)})
+// Device.query().then(x => {console.dir(x[0].date_purchase instanceof Date)})
+const Ajv = require("ajv")
+const ajv = new Ajv({ errorDataPath: 'property' })
+// Ajv option allErrors is required
+//require("ajv-errors")(ajv /*, {singleError: true} */)
+
+const catRow = {schema: {
+    $async: true,
+  "type": "object",
+  "properties": {
+    "type": {
+      "enum": [
+        "ddr3",
+        "ddr4"
+      ],
+      "type": "string",
+      "title": "Тип"
+    },
+    "amount": {
+      "type": "integer",
+      "title": "Объем"
+    },
+    "latency": {
+      "type": "string",
+      "title": "Тайминги"
+    }
+  },
+  "required": ["amount"]
+}}
+const validateAsync = ajv.compile(catRow.schema)
+        const validate = ajv.compile(catRow.schema)
+        const valid = validate({}).catch(console.log)
+        
+        if (!valid) console.log(validate.errors)
