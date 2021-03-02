@@ -13,6 +13,7 @@ const createError = require("http-errors")
 const { authorizationRequest } = require("./model/libs/authorization")
 const openApiValidator = require("./model/libs/express-openapi-validator")
 const { dateToIso } = require("./model/libs/command")
+const ajvKeywords = require("./model/libs/ajvKeywords")
 
 const knex = Knex(dbConfig)
 const store = new KnexSessionStore({
@@ -61,45 +62,6 @@ module.exports = function (app) {
             validateRequests: {
                 removeAdditional: "all",
                 coerceTypes: true
-            },
-            addKeywords: {
-                "x-json": (keywordValue, data, jssch, gpth, objData, keyData) => {
-                    if (keywordValue === "stringify") {
-                        objData[keyData] = JSON.stringify(data)
-                    } else if (keywordValue === "parse") {
-                        try {
-                            objData[keyData] = JSON.parse(data)
-                        } catch {
-                            objData[keyData] = undefined
-                        }
-                    }
-
-                    return true
-                },
-
-                "x-date": (keywordValue, data, jssch, gpth, objData, keyData) => {
-                    if (keywordValue === "toIso") {
-                        objData[keyData] = dateToIso(data)
-                    }
-
-                    return true
-                },
-
-                "x-type": (keywordValue, data, jssch, gpth, objData, keyData) => {
-                    if (keywordValue === "intOrNull") {
-                        if (data === null || data === "null" || data === "") {
-                            objData[keyData] = null
-                        } else {
-                            objData[keyData] = parseInt(Number(data))
-                        }
-                    }
-
-                    if (isNaN(objData[keyData])) {
-                        throw new Error(keyData+" must be null or integer")
-                    } else {
-                        return true
-                    }
-                }
             }
         })
     )

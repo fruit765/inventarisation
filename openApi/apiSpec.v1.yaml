@@ -160,16 +160,15 @@ paths:
                   type: integer
                 isArchive:
                   type: integer
-                specifications:
-                  x-json: stringify
+                specifications: {}
                 date_purchase:
                   type: string
                   format: date
-                  x-date: toIso
+                  x-date-to-iso: true
                 date_warranty_end:
                   type: string
                   format: date
-                  x-date: toIso
+                  x-date-to-iso: true
                 inv_number:
                   type: string
               required:
@@ -260,16 +259,15 @@ paths:
                   type: integer
                 isArchive:
                   type: integer
-                specifications:
-                  x-json: stringify
+                specifications: {}
                 date_purchase:
                   type: string
                   format: date
-                  x-date: toIso
+                  x-date-to-iso: true
                 date_warranty_end:
                   type: string
                   format: date
-                  x-date: toIso
+                  x-date-to-iso: true
                 inv_number:
                   type: string
               required:
@@ -859,7 +857,6 @@ paths:
                   type: string
                   format: date
                 contact:
-                  x-json: stringify
                   type: object
                   properties:
                     phone:
@@ -927,7 +924,6 @@ paths:
                   type: string
                   format: date
                 contact:
-                  x-json: stringify
                   type: object
                   properties:
                     phone:

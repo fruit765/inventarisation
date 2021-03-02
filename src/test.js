@@ -1,7 +1,7 @@
 // // const History = require("./model/orm/history");
 
 const Device = require("./model/orm/device");
-
+const createError = require('http-errors')
 // // History.query().then(x => {console.log(x.prototype)})
 // //     /**
 // //      * @typedef {Object} eventRec 
@@ -124,31 +124,42 @@ const ajv = new Ajv({ errorDataPath: 'property' })
 // Ajv option allErrors is required
 //require("ajv-errors")(ajv /*, {singleError: true} */)
 
-const catRow = {schema: {
+const catRow = {
+  schema: {
     $async: true,
-  "type": "object",
-  "properties": {
-    "type": {
-      "enum": [
-        "ddr3",
-        "ddr4"
-      ],
-      "type": "string",
-      "title": "Тип"
+    "type": "object",
+    "properties": {
+      "type": {
+        "enum": [
+          "ddr3",
+          "ddr4"
+        ],
+        "type": "string",
+        "title": "Тип"
+      },
+      "amount": {
+        "type": "integer",
+        "title": "Объем",
+        "x-x": 1
+      },
+      "latency": {
+        "type": "string",
+        "title": "Тайминги"
+      }
     },
-    "amount": {
-      "type": "integer",
-      "title": "Объем"
-    },
-    "latency": {
-      "type": "string",
-      "title": "Тайминги"
-    }
-  },
-  "required": ["amount"]
-}}
-const validateAsync = ajv.compile(catRow.schema)
-        const validate = ajv.compile(catRow.schema)
-        const valid = validate({}).catch(console.log)
-        
-        if (!valid) console.log(validate.errors)
+    "required": ["amount"]
+  }
+}
+
+ajv.addKeyword("x-x", {
+  //keyword: "x-x",
+  async: true,
+  modifying: true,
+  //type: "number",
+  validate: async function (keywordValue, data, jssch, gpth, objData, keyData) {objData[keyData]=6; return false }
+})
+const validate = ajv.compile(catRow.schema)
+let a = { amount: 1 }
+const valid = validate(a).catch(x => console.log(x.errors)).then(console.log(a))
+
+        //if (!valid) console.log(validate.errors)

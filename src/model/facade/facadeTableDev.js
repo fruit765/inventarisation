@@ -7,18 +7,36 @@ const { createException } = require("../libs/command")
 const Category = require("../orm/category")
 const CyrillicToTranslit = require("cyrillic-to-translit-js")
 const cyrillicToTranslit = new CyrillicToTranslit()
-const Ajv = require("ajv").default
-const ajv = new Ajv()
+const Ajv = require("ajv")
+const ajv = new Ajv({ errorDataPath: 'property', coerceTypes: true, removeAdditional: "all" })
 const _ = require("lodash")
+const createError = require('http-errors')
+const Device = require("../orm/device")
 
 module.exports = class FacadeTableDev extends FacadeTable {
 
+    /**
+     * Проверка спецификации оборудования на схему в категории
+     * @param {number} catId 
+     * @param {*} spec мутирует этот объект
+     */
     async specValidation(catId, spec) {
         /**@type {*} */
         const catRow = await Category.query().findById(catId)
-        const validate = ajv.compile(catRow.schema)
+        const schema = Object.assign(catRow.schema, { $async: true })
+        const validate = ajv.compile(schema)
         const valid = validate(spec)
-        if (!valid) console.log(validate.errors)
+        if (typeof valid === "boolean") {
+            throw createException(500, "the spec in the category has no property $ async: true", "specifications")
+        }
+        await valid.then(null, err => {
+            if (!(err instanceof Ajv.ValidationError)) throw err
+            for (let key in err.errors) {
+                err.errors[key].dataPath = ".specifications" + err.errors[key].dataPath
+            }
+            throw createError(400, err.errors)
+        })
+        return spec
     }
 
     /**
@@ -55,7 +73,7 @@ module.exports = class FacadeTableDev extends FacadeTable {
             throw createException(400, "Not allowed for this user_id", "user_id")
         }
         const dataClone = _.cloneDeep(data)
-        await this.specValidation(dataClone.specifications)
+        await this.specValidation(data.category_id, dataClone.specifications)
         /**@type {number} */
         const status_id = (await Status.query().where("status", "stock").first()).id
         /**@type {*}*/
@@ -66,6 +84,19 @@ module.exports = class FacadeTableDev extends FacadeTable {
         dataClone.status_id = dataClone.status_id ?? status_id
         dataClone.inv_number = dataClone.inv_number ?? catName4Translit + validId
         return super.insert(dataClone)
+    }
+
+
+    /**
+     * Обновляет данные в таблице возвражает id записи
+     * Производит валидацию спецификации оборудования
+     * @param {*} data 
+     */
+    async patch(data) {
+        const dataClone = _.cloneDeep(data)
+        const categoryId = data.category_id ?? (await Device.query().findById(data.id)).category_id
+        await this.specValidation(categoryId, dataClone.specifications)
+        return super.patch(dataClone)
     }
 
     /**

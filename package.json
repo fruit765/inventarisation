@@ -46,6 +46,7 @@
     "@types/lodash": "^4.14.168",
     "@types/passport": "^1.0.6",
     "axios": "^0.20.0",
+    "better-docs": "^2.3.2",
     "chai": "^4.2.0",
     "del": "^6.0.0",
     "gulp-nodemon": "^2.5.0",
