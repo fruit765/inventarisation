@@ -142,8 +142,6 @@ paths:
                   nullable: true
                 category_id:
                   type: integer
-                status_id:
-                  type: integer
                 user_id:
                   type: integer
                 supplier_id:
@@ -173,7 +171,6 @@ paths:
                   type: string
               required:
                 - category_id
-                - status_id
                 - user_id
                 - supplier_id
                 - location_id
@@ -181,7 +178,6 @@ paths:
                 - model
                 - date_purchase
                 - date_warranty_end
-                - inv_number
     description: ''
     patch:
       summary: Редактировать оборудование

@@ -78,11 +78,12 @@ module.exports = class FacadeTableDev extends FacadeTable {
         const status_id = (await Status.query().where("status", "stock").first()).id
         /**@type {*}*/
         const category = await Category.query().findById(dataClone.category_id)
-        const validId = await this.applyActionClass.validate(dataClone, "insert")
         const catName4 = String(category.category).slice(0, 4)
         const catName4Translit = cyrillicToTranslit.transform(catName4, "-")
         dataClone.status_id = dataClone.status_id ?? status_id
+        const validId = await this.applyActionClass.validate(dataClone, "insert")
         dataClone.inv_number = dataClone.inv_number ?? catName4Translit + validId
+        console.log(dataClone)
         return super.insert(dataClone)
     }
 

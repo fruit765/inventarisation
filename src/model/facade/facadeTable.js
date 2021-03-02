@@ -185,7 +185,7 @@ module.exports = class FacadeTable {
      * @param {*} data 
      */
     async insertAndFetch(data) {
-        const id = await this.patch(data)
+        const id = await this.insert(data)
         return this.getUnconfirm(id)
     }
 
