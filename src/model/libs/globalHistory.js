@@ -43,16 +43,49 @@ module.exports = class GlobalHistory {
     }
 
     /**
-     * Возвращает измененные и добавленные данные
+     * Возвращает различия между старой записью и новой
      * @param {*} originalObj 
      * @param {*} updatedObj 
      * @private
      */
     diff(originalObj, updatedObj) {
+        /**@type {*} */
+        const diffObj = {}
         for (let key of _.concat(_.keys(originalObj), _.keys(updatedObj))) {
-            if(originalObj !== updatedObj)
+            if (originalObj !== updatedObj) { //предусмотреть сравнение чисел и строк и дат
+                diffObj[key] = updatedObj
+            } else if (typeof updatedObj[key] === "object") {
+                diffObj[key] = this.diffObj(originalObj[key], updatedObj[key])
+            }
         }
-        return Object.assign(addedDiff(originalObj, updatedObj), updatedDiff(originalObj, updatedObj))
+        return diffObj
+    }
+
+    /**
+     * Возвращает различия между объектами,
+     * удаленные поля имеют значения в diff "undefined"
+     * @param {*} originalObj 
+     * @param {*} updatedObj 
+     * @private
+     */
+    diffObj(originalObj, updatedObj) {
+        /**@type {*} */
+        let diffObj
+        if (_.isArray(updatedObj)) {
+            diffObj = []
+        } else {
+            diffObj = {}
+        }
+        for (let key of _.concat(_.keys(originalObj), _.keys(updatedObj))) {
+            if (typeof updatedObj[key] === "object") {
+                diffObj[key] = this.diffObj(originalObj?.[key] ?? {}, updatedObj[key])
+            } else if (originalObj[key] !== undefined && updatedObj[key] === undefined) {
+                diffObj[key] = "undefined"
+            } else if (updatedObj[key] !== originalObj[key]) {
+                diffObj[key] = updatedObj[key]
+            }
+        }
+        return diffObj
     }
 
     /**
