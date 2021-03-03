@@ -78,14 +78,14 @@ module.exports = class Device extends Model {
                 }
             },
 
-            history: {
-                relation: Model.HasManyRelation,
-                modelClass: History,
-                join: {
-                    from: "device.id",
-                    to: "history.device_id"
-                }
-            },
+            // history: {
+            //     relation: Model.HasManyRelation,
+            //     modelClass: History,
+            //     join: {
+            //         from: "device.id",
+            //         to: "history.device_id"
+            //     }
+            // },
 
             parent: {
                 relation: Model.BelongsToOneRelation,

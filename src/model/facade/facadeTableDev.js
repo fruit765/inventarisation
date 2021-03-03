@@ -82,8 +82,8 @@ module.exports = class FacadeTableDev extends FacadeTable {
         const catName4Translit = cyrillicToTranslit.transform(catName4, "-")
         dataClone.status_id = dataClone.status_id ?? status_id
         const validId = await this.applyActionClass.validate(dataClone, "insert")
+        dataClone.id = validId
         dataClone.inv_number = dataClone.inv_number ?? catName4Translit + validId
-        console.log(dataClone)
         return super.insert(dataClone)
     }
 

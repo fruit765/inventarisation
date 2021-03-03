@@ -31,14 +31,14 @@ module.exports = class User extends Model {
                 }
             },
 
-            history: {
-                relation: Model.HasManyRelation,
-                modelClass: History,
-                join: {
-                    from: "user.id",
-                    to: "history.user_id"
-                }
-            },
+            // history: {
+            //     relation: Model.HasManyRelation,
+            //     modelClass: History,
+            //     join: {
+            //         from: "user.id",
+            //         to: "history.user_id"
+            //     }
+            // },
 
             account_owner: {
                 relation: Model.HasManyRelation,

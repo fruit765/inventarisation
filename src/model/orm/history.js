@@ -7,15 +7,15 @@ const knex = Knex(dbConfig)
 
 Model.knex(knex)
 
-module.exports = class History extends Model {
+class History extends Model {
     static get tableName() {
         return "history"
     }
 
     static get relationMappings() {
         const User = require("./user")
-        const Account = require("./account")
-        const Device = require("./device")
+        // const Account = require("./account")
+        // const Device = require("./device")
         const Event_confirm = require("./event_confirm")
 
         return {
@@ -29,32 +29,32 @@ module.exports = class History extends Model {
                 }
             },
 
-            account: {
-                relation: Model.BelongsToOneRelation,
-                modelClass: Account,
-                join: {
-                    from: "history.account_id",
-                    to: "account.id"
-                }
-            },
+            // account: {
+            //     relation: Model.BelongsToOneRelation,
+            //     modelClass: Account,
+            //     join: {
+            //         from: "history.account_id",
+            //         to: "account.id"
+            //     }
+            // },
 
-            user: {
-                relation: Model.BelongsToOneRelation,
-                modelClass: User,
-                join: {
-                    from: "history.user_id",
-                    to: "user.id"
-                }
-            },
+            // user: {
+            //     relation: Model.BelongsToOneRelation,
+            //     modelClass: User,
+            //     join: {
+            //         from: "history.user_id",
+            //         to: "user.id"
+            //     }
+            // },
             
-            device: {
-                relation: Model.BelongsToOneRelation,
-                modelClass: Device,
-                join: {
-                    from: "history.device_id",
-                    to: "device.id"
-                }
-            },
+            // device: {
+            //     relation: Model.BelongsToOneRelation,
+            //     modelClass: Device,
+            //     join: {
+            //         from: "history.device_id",
+            //         to: "device.id"
+            //     }
+            // },
 
             event_confirm: {
                 relation: Model.HasManyRelation,
@@ -67,3 +67,5 @@ module.exports = class History extends Model {
         }
     }
 }
+
+module.exports = History

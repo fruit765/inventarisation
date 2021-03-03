@@ -265,6 +265,7 @@ module.exports = class PresetParse {
      * @param {*} presetRaw пресет
      */
     static async isDataMatchPreset(newData, oldData, presetRaw) {
+        console.log(newData, oldData, presetRaw)
         const presetDefault = this.presetCompletion(presetRaw)
         const presetOnlyValue = await this.sqlResolving(presetDefault)
         presetOnlyValue.columns = _.mapValues(presetOnlyValue.columns, (value, keys) => {

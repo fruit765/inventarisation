@@ -233,20 +233,6 @@ module.exports = class Events {
     }
 
     /**
-     * Проверяет соответствует ли история с данным id конкретному пресету
-     * @param {number} hisId 
-     * @param {*} preset 
-     * @private
-     */
-    static async isHisMatchPreset(hisId, preset) {
-        const hisRec = await History.query().findById(hisId)
-        const tableId = getTabIdFromHis(hisRec)
-        const tableName = getTabNameFromHis(hisRec)
-        const currentRec = await knex(tableName).where("id", tableId).first()
-        return PresetParse.isDataMatchPreset(hisRec.diff, currentRec, preset)
-    }
-
-    /**
      * Проверяет на наличие событий запись в истории, если они есть записывает их
      * @param {number} hisId 
      * @param {*=} trxOpt 
@@ -257,8 +243,14 @@ module.exports = class Events {
             const res = []
             /**@type {*[]} */
             const actualPresets = await this.getActualPresets()
+            /**@type {*}*/
+            const hisRec = await History.query(trx).findById(hisId)
+            const tableId = getTabIdFromHis(hisRec)
+            const tableName = getTabNameFromHis(hisRec)
+            const currentRec = await knex(tableName).where("id", tableId).first()
+            
             for (let elem of actualPresets) {
-                if (await this.isHisMatchPreset(hisId, elem.preset)) {
+                if (await PresetParse.isDataMatchPreset(hisRec.diff, currentRec, elem.preset)) {
                     /**@type {*} */
                     const eventRec = {
                         event_confirm_preset_id: elem.id,

@@ -128,6 +128,7 @@ module.exports = class GlobalHistory {
         let dataCopy = actionTag === "delete" ? { id: data.id } : { ...data }
         const actualData = await this.tableClass.query().findById(data.id) ?? {}
         const modData = this.diff(actualData, dataCopy)
+        /**@type {*} */
         const historyInsertData = {
             actor_id: this.options.actorId,
             diff: JSON.stringify(modData),

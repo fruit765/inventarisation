@@ -159,7 +159,8 @@ module.exports = class ApplyAction {
             const openEvents = await Event_confirm.query().where("history_id", hisId).whereNotNull("date_completed")
             if (!openEvents.length) {
                 const curretDataTime = dayjs().format('YYYY-MM-DD HH:mm:ss')
-                await History.query(trx).where("id", hisId).whereNull("commit_date").patch({ commit_date: curretDataTime })
+                await History.query(trx).where("id", hisId).whereNull("commit_date").patch(/**@type {*}*/({ commit_date: curretDataTime }))
+                /**@type {*} */
                 const hisRec = await History.query().findById(hisId)
                 const id = hisRec[this.tableClass.tableName + "_id"]
                 if (this.hasJsonCol(hisRec.diff)) {

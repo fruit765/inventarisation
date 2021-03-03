@@ -116,7 +116,7 @@ const getDevWithVirtualStatus = async (devId) => {
 
 function getTabIdFromHis(hisRec) {
     for (let key in hisRec) {
-        if (String(key).match(/_id$/gi) && key !== "actor_id" && value != null) {
+        if (String(key).match(/_id$/gi) && key !== "actor_id" && hisRec[key] != null) {
             return hisRec[key]
         }
     }
@@ -124,8 +124,8 @@ function getTabIdFromHis(hisRec) {
 
 function getTabNameFromHis(hisRec) {
     for (let key in hisRec) {
-        if (String(key).match(/_id$/gi) && key !== "actor_id" && value != null) {
-            return key
+        if (String(key).match(/_id$/gi) && key !== "actor_id" && hisRec[key] != null) {
+            return key.slice(0,-3)
         }
     }
 }
