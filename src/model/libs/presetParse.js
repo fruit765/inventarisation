@@ -126,7 +126,7 @@ module.exports = class PresetParse {
             if (query) {
                 const dbRes = await this.knexQuery(query)
                 const firstKey = Object.keys(dbRes[0])[0]
-                const resArray = _.groupBy(dbRes, firstKey)[firstKey]
+                const resArray = _.map(dbRes, firstKey)
                 sqlRes.push(resArray[0] ? resArray : [NaN])
             } else {
                 sqlRes.push([NaN])
