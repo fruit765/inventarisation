@@ -12,7 +12,7 @@
 
 const _ = require("lodash")
 const Knex = require("knex")
-const dbConfig = require("../../../../serverConfig").db
+const dbConfig = require("../../../../../serverConfig").db
 const knex = Knex(dbConfig)
 
 module.exports = class PresetSubCol {
@@ -25,6 +25,12 @@ module.exports = class PresetSubCol {
      * @param {presetSubCol} preset 
      */
     constructor(preset) {
+        /**
+         * @type {(undefined | Promise<boolean>)}
+         * @private
+         */
+        this.initAttr = undefined
+
         /**
          * @private
          * @type {any[]}
@@ -41,7 +47,7 @@ module.exports = class PresetSubCol {
          */
         this.logic = preset.logic ?? this.logicDefault()
         /**
-         * @private
+         * @public
          * @type {string}
          */
         this.evalLogic = ""
@@ -60,17 +66,19 @@ module.exports = class PresetSubCol {
          * @type {number}
          */
         this.maxValueNumber = Math.max(...this.valueKeysInLogic.map(Number))
+        this.maxValueNumber = Number.isFinite(this.maxValueNumber) ? this.maxValueNumber : -1
         /**
          * @private
          * @type {number}
          */
         this.maxSqlNumber = Math.max(...this.sqlKeysInLogic.map(Number))
+        this.maxSqlNumber = Number.isFinite(this.maxSqlNumber) ? this.maxSqlNumber : -1
         /**
          * @private
          * @type {number}
          */
         this.matchValue = NaN
-
+        
         this.logicSqlToValue()
         this.init()
         this.logicToEval()
@@ -84,11 +92,8 @@ module.exports = class PresetSubCol {
         if (this.initAttr) {
             return this.initAttr
         } else {
-            const fn = async () => {
-                await this.sqlToValue()
-                return true
-            }
-            this.initAttr = fn()
+            await this.sqlToValue()
+            this.initAttr = Promise.resolve(true)
             return this.initAttr
         }
     }
@@ -218,11 +223,11 @@ module.exports = class PresetSubCol {
     }
 
     /**
-     * проверяет значение на соответствие пресету
+     * Проверяет значение на соответствие пресету
      * @param {*} data 
      */
     match(data) {
         this.matchValue = data
-        return eval(this.evalLogic)
+        return Boolean(eval(this.evalLogic))
     }
 }

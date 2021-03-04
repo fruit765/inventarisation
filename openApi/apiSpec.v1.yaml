@@ -1062,6 +1062,8 @@ paths:
                   type: string
                 is_archive:
                   type: integer
+                url:
+                  type: string
               required:
                 - account_type_id
                 - login
@@ -1117,6 +1119,8 @@ paths:
                   type: string
                 is_archive:
                   type: integer
+                url:
+                  type: string
               required:
                 - id
   /warehouseResponsible:

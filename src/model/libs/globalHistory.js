@@ -9,11 +9,12 @@ const dbConfig = require("../../../serverConfig").db
 const History = require("../orm/history")
 const Transaction = require("./transaction")
 const ApplyAction = require("./applyAction")
-const { addedDiff, updatedDiff } = require("deep-object-diff")
+const Preset = require("./preset/preset")
 const Events = require("../libs/events")
 const knex = Knex(dbConfig)
 const _ = require("lodash")
 const dayjs = require("dayjs")
+const { getTabIdFromHis } = require("./command")
 
 module.exports = class GlobalHistory {
     /**
@@ -149,7 +150,12 @@ module.exports = class GlobalHistory {
     async saveAndApply(data, actionTag, trxOpt) {
         return Transaction.startTransOpt(trxOpt, async (trx) => {
             const hisRec = await this.saveHistoryOnly(data, actionTag, trx)
-            await Events.genEventsById(hisRec.id, trx)
+            const objId = getTabIdFromHis(hisRec)
+            const actualPresets = await Preset.getActualPresets()
+            const actualData = await this.tableClass.query().findById(objId)
+            for (let actualPreset of actualPresets) {
+                await actualPreset.genEventsByHisRec(hisRec, actualData)
+            }
             await this.applyActionClass.commitHistory(hisRec.id, trx)
             return hisRec
         })
