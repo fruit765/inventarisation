@@ -67,7 +67,6 @@ module.exports = class PresetOneCol {
      * @param {Array<any>} data 
      */
     match(data) {
-        //console.log(data)
         const [newData, oldData] = data
         const res = this.newClass.match(newData) && this.oldClass.match(oldData)
         return res

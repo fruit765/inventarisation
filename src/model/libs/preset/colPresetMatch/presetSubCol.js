@@ -227,6 +227,9 @@ module.exports = class PresetSubCol {
      * @param {*} data 
      */
     match(data) {
+        if (data === undefined) {
+            return false
+        }
         this.matchValue = data
         return Boolean(eval(this.evalLogic))
     }

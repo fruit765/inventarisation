@@ -11,6 +11,7 @@ const _ = require("lodash")
 const Event_confirm = require("../orm/event_confirm")
 const History = require("../orm/history")
 const { createException } = require("./command")
+const PackDiff = require("./namespace/packDiff")
 
 module.exports = class ApplyAction {
     /**
@@ -96,78 +97,23 @@ module.exports = class ApplyAction {
     }
 
     /**
-     * Дополняет json поля для всей строки для вставки в таблицу,
-     * добовляет актуальные данные и удаляет свойства если значения в 
-     * diff равны "undefined"
-     * @param {*} diff 
-     * @param {*} actual
-     * @private 
-     */
-    unpackDiff(diff, actual) {
-        return _.mapValues(diff, (val, key) => {
-            let res
-            if (typeof val === "object") {
-                res = this.unpackDiffObj(val, actual[key])
-            } else {
-                res = val
-            }
-            return res
-        })
-    }
-
-    /**
-     * Дополняет json поле для вставки в таблицу,
-     * добовляет актуальные данные и удаляет свойства если значения в 
-     * diff равны "undefined"
-     * @param {*} diffObj 
-     * @param {*} actualObj 
-     * @private
-     */
-    unpackDiffObj(diffObj, actualObj) {
-        for (let key of _.concat(_.keys(diffObj), _.keys(actualObj))) {
-            if (typeof diffObj[key] === "object") {
-                this.unpackDiffObj(diffObj[key], actualObj)
-            } else if (diffObj[key] === "undefined") {
-                diffObj[key] = undefined
-            } else if(actualObj[key] != null) {
-                diffObj[key] = actualObj[key]
-            }
-        }
-    }
-
-    /**
-     * Проверяет на наличее json полей
-     * @param {*} diff 
-     * @private
-     */
-    hasJsonCol(diff) {
-        for (let key in diff) {
-            if (typeof diff[key] === "object") {
-                return true
-            }
-            return false
-        }
-    }
-
-    /**
      * Если нет открытых событий связынных с этой записью то коммитит запись в истории
      * @param {number} hisId 
      * @param {*=} trxOpt
      */
     async commitHistory(hisId, trxOpt) {
         return Transaction.startTransOpt(trxOpt, async (trx) => {
-            const openEvents = await Event_confirm.query().where("history_id", hisId).whereNotNull("date_completed")
+            const openEvents = await Event_confirm.query(trx).where("history_id", hisId).whereNotNull("date_completed")
             if (!openEvents.length) {
                 const curretDataTime = dayjs().format('YYYY-MM-DD HH:mm:ss')
                 await History.query(trx).where("id", hisId).whereNull("commit_date").patch(/**@type {*}*/({ commit_date: curretDataTime }))
                 /**@type {*} */
-                const hisRec = await History.query().findById(hisId)
+                const hisRec = await History.query(trx).findById(hisId)
                 const id = hisRec[this.tableClass.tableName + "_id"]
-                if (this.hasJsonCol(hisRec.diff)) {
-                    const actualData = await this.tableClass.query().findById(id)
-                    hisRec.diff = this.unpackDiff(hisRec.diff, actualData)
-                }
-                await this.applyAction({ ...hisRec.diff, id: id }, hisRec.action_tag, trx)
+                const diff = PackDiff.unpack(hisRec.diff, () => {
+                    return this.tableClass.query(trx).findById(id)
+                })
+                await this.applyAction({ ...diff, id: id }, hisRec.action_tag, trx)
                 return hisRec.id
             }
         })
