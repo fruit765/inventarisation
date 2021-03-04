@@ -10,7 +10,7 @@ const History = require("../orm/history")
 const Transaction = require("./transaction")
 const ApplyAction = require("./applyAction")
 const Preset = require("./preset/preset")
-const Events = require("../libs/events")
+const PackDiff = require("./namespace/packDiff")
 const knex = Knex(dbConfig)
 const _ = require("lodash")
 const dayjs = require("dayjs")
@@ -45,79 +45,6 @@ module.exports = class GlobalHistory {
     }
 
     /**
-     * Возвращает различия между старой записью и новой
-     * @param {*} originalObj 
-     * @param {*} updatedObj 
-     * @private
-     */
-    diff(originalObj, updatedObj) {
-        /**@type {*} */
-        const diffObj = {}
-        for (let key of _.concat(_.keys(originalObj), _.keys(updatedObj))) {
-            if (this.isPrimitiveDiff(originalObj[key], updatedObj[key])) {
-                diffObj[key] = updatedObj[key]
-            } else if (typeof updatedObj[key] === "object") {
-                diffObj[key] = this.diffObj(originalObj[key], updatedObj[key])
-            }
-        }
-        return diffObj
-    }
-
-    /**
-     * Возвращает различия между объектами,
-     * удаленные поля имеют значения в diff "undefined"
-     * @param {*} originalObj 
-     * @param {*} updatedObj 
-     * @private
-     */
-    diffObj(originalObj, updatedObj) {
-        /**@type {*} */
-        let diffObj
-        if (_.isArray(updatedObj)) {
-            diffObj = []
-        } else {
-            diffObj = {}
-        }
-        for (let key of _.concat(_.keys(originalObj), _.keys(updatedObj))) {
-            if (typeof updatedObj[key] === "object") {
-                diffObj[key] = this.diffObj(originalObj?.[key] ?? {}, updatedObj[key])
-            } else if (originalObj[key] !== undefined && updatedObj[key] === undefined) {
-                diffObj[key] = "undefined"
-            } else if (this.isPrimitiveDiff(originalObj[key], updatedObj[key])) {
-                diffObj[key] = updatedObj[key]
-            }
-        }
-        return diffObj
-    }
-
-    /**
-     * Возвращает true если примитивы разные
-     * @typedef {(Date | string | boolean | number | null )} compareType
-     * @param {compareType} orig 
-     * @param {compareType} upd 
-     */
-    isPrimitiveDiff(orig, upd) {
-        if(typeof orig === "boolean") {
-            orig = Number(orig)
-        }
-
-        if(typeof upd === "boolean") {
-            upd = Number(upd)
-        }
-
-        if (orig !== upd ||
-            (
-                (orig instanceof Date || upd instanceof Date) && (
-                    orig === null || upd === null || 
-                    dayjs(orig).toISOString() !== dayjs(upd).toISOString()
-                )
-            )) {
-            return true
-        }
-        return false
-    }
-
-    /**
      * Сохраняет запись в историю
      * @param {{id:number, [key: string]: any}} data обязательно должен содержать id
      * @param {string} actionTag 
@@ -128,7 +55,7 @@ module.exports = class GlobalHistory {
     async saveHistoryOnly(data, actionTag, trx) {
         let dataCopy = actionTag === "delete" ? { id: data.id } : { ...data }
         const actualData = await this.tableClass.query().findById(data.id) ?? {}
-        const modData = this.diff(actualData, dataCopy)
+        const modData = PackDiff.pack(dataCopy, actualData)
         /**@type {*} */
         const historyInsertData = {
             actor_id: this.options.actorId,
@@ -136,7 +63,10 @@ module.exports = class GlobalHistory {
             action_tag: actionTag,
             [this.colName]: data.id
         }
-        return History.query(trx).insert(historyInsertData)
+        /**@type {*} */
+        const hisRec = await History.query(trx).insert(historyInsertData)
+        hisRec.diff = modData
+        return hisRec
     }
 
     /**
@@ -152,7 +82,7 @@ module.exports = class GlobalHistory {
             const hisRec = await this.saveHistoryOnly(data, actionTag, trx)
             const objId = getTabIdFromHis(hisRec)
             const actualPresets = await Preset.getActualPresets()
-            const actualData = await this.tableClass.query().findById(objId)
+            const actualData = await this.tableClass.query(trx).findById(objId)
             for (let actualPreset of actualPresets) {
                 await actualPreset.genEventsByHisRec(hisRec, actualData)
             }

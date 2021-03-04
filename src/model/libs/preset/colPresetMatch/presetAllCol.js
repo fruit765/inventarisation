@@ -98,14 +98,8 @@ module.exports = class PresetAllCol {
      * @param {*[]} data 
      */
     match(data) {
-        [this.newData, this.oldData] = data
         this.newData = data[0] ?? {}
         this.oldData = data[1] ?? {}
-        console.log(this.newData)
-        const test = this.newData.status_id
-        console.log(test)
-        console.log(this.newData.status_id)
-        eval("console.log(this.newData.status_id)")
         return Boolean(eval(this.eval))
     }
 }

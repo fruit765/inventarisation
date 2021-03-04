@@ -194,8 +194,8 @@ module.exports = class FacadeTable {
      * @param {{id: number, [key: string] : any}} data 
      */
     async patchAndFetch(data) {
-        const id = await this.patch(data)
-        return this.getUnconfirm(id)
+        await this.patch(data)
+        return this.getUnconfirm(data.id)
     }
 
     /**
@@ -242,8 +242,10 @@ module.exports = class FacadeTable {
                 )
             eventMaxPriorSingle = await eventsMaxPriority.select("t1.*").groupBy("t1." + hisColName)
         }
+        /**@type {*} */
+        const tableQuery = this.tableClass.query()
         /**@type {*[]} */
-        const tableData = await this.tableClass.query()
+        const tableData = await tableQuery.skipUndefined().where("id", id)
         const status = await Status.query()
         const statusIndex = _.keyBy(status, "id")
         const tableDataIndex = _.keyBy(tableData, "id")
