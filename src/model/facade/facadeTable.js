@@ -12,6 +12,7 @@ const dbConfig = require("../../../serverConfig").db
 const knex = Knex(dbConfig)
 const _ = require("lodash")
 const Status = require("../orm/status")
+const Transaction = require("../libs/transaction")
 
 /**
  * @class
@@ -110,20 +111,23 @@ module.exports = class FacadeTable {
         }
     }
 
-     /**
-     * Исполняет указанное действие с сохранением в историю
-     * Возвращает id измененной записи
-     * @param {*} data 
-     * @param {*} actionTag 
-     * @protected
-     */
-    async applyActionSaveHis(data, actionTag) {
-        if (await this.isSaveHistory && this.history && this.hisColName) {
-            const validId = await this.applyActionClass.validate(data, actionTag)
-            const validData = Object.assign({}, data, { id: validId })
-            const saveHis = await this.history.saveAndApply(validData, actionTag)
-            return saveHis[this.hisColName]
-        }
+    /**
+    * Исполняет указанное действие с сохранением в историю
+    * Возвращает id измененной записи
+    * @param {*} data 
+    * @param {*} actionTag 
+    * @param {*} [trxOpt]
+    * @protected
+    */
+    async applyActionSaveHis(data, actionTag, trxOpt) {
+        return Transaction.startTransOpt(trxOpt, async trx => {
+            if (await this.isSaveHistory && this.history && this.hisColName) {
+                const validId = await this.applyActionClass.validate(data, actionTag)
+                const validData = Object.assign({}, data, { id: validId })
+                const saveHis = await this.history.saveAndApply(validData, actionTag, trx)
+                return saveHis[this.hisColName]
+            }
+        })
     }
 
     /**
@@ -131,10 +135,13 @@ module.exports = class FacadeTable {
      * Возвращает id измененной записи
      * @param {*} data 
      * @param {*} actionTag 
+     * @param {*} [trxOpt]
      * @protected
      */
-    async applyActionNoSaveHis(data, actionTag) {
-        return this.applyActionClass.applyAction(data, actionTag)
+    async applyActionNoSaveHis(data, actionTag, trxOpt) {
+        return Transaction.startTransOpt(trxOpt, trx => {
+            return this.applyActionClass.applyAction(data, actionTag, trx)
+        })
     }
 
     /**
@@ -142,16 +149,19 @@ module.exports = class FacadeTable {
      * Возвращает id измененной записи
      * @param {*} data 
      * @param {*} actionTag 
+     * @param {*} [trxOpt]
      * @private
      */
-    async applyAction(data, actionTag) {
-        let id
-        if (await this.isSaveHistory && this.history && this.hisColName) {
-            id = this.applyActionSaveHis(data, actionTag)
-        } else {
-            id = this.applyActionNoSaveHis(data, actionTag)
-        }
-        return id
+    async applyAction(data, actionTag, trxOpt) {
+        return Transaction.startTransOpt(trxOpt, async trx => {
+            let id
+            if (await this.isSaveHistory && this.history && this.hisColName) {
+                id = this.applyActionSaveHis(data, actionTag, trx)
+            } else {
+                id = this.applyActionNoSaveHis(data, actionTag, trx)
+            }
+            return id
+        })
     }
 
     /**

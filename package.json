@@ -17,7 +17,7 @@
     "cors": "^2.8.5",
     "cyrillic-to-translit-js": "^3.1.0",
     "dayjs": "^1.10.4",
-    "deep-object-diff": "^1.1.0",
+    "deepdash": "^5.3.5",
     "express": "^4.17.1",
     "express-openapi-validator": "4.0.7",
     "express-session": "^1.17.1",

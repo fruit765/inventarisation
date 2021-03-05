@@ -1,6 +1,11 @@
 //@ts-check
 "use strict"
-const _ = require("lodash")
+
+/**@typedef { import("deepdash").default } deepdashType*/
+//@SuppressWarnings("javascript:S1110")
+const deepdash = /**@type {deepdashType}*/ (/**@type {*}*/(require("deepdash")))
+const lodash = require("lodash")
+const _ = deepdash(lodash)
 const dayjs = require("dayjs")
 /**
  * Отвечает за кодеривоание декодирование информации в поле diff истории
@@ -9,25 +14,45 @@ const dayjs = require("dayjs")
 module.exports = class PackDiff {
 
     /**
-     * Возвращает объект с информацией об изменении объекта
+     * Этим флагом помечаются удаленные поля
+     * @type {string}
+     * @private
+     */
+    static jsonDelFlag = "deleteV1StGXR8"
+
+    /**
+     * Возвращает объект с информацией об изменении строки таблицы
      * Возвращает различия между старой записью и новой
+     * deleteFlag в обьекте нулевого уровня отсудствует
      * @param {*} newData
      * @param {*} oldData
      */
     static pack(newData, oldData) {
+        const diffJson = this.packJson(newData, oldData)
+        const res = _.mapValues(diffJson, x=> x === this.jsonDelFlag ? undefined : x)
+        return res
+    }
+
+    /**
+     * Возвращает объект с информацией об изменении json поля
+     * Возвращает различия между старой записью и новой
+     * @private
+     * @param {*} newData
+     * @param {*} oldData
+     */
+    static packJson(newData, oldData) {
         const newCopy = _.cloneDeep(newData)
         const oldCopy = _.cloneDeep(oldData)
         /**@type {*} */
         const diffObj = {}
         const allKeys = _.concat(_.keys(newCopy), _.keys(oldCopy))
         for (let key of allKeys) {
-            diffObj[key] = this.oneFieldDiff(newCopy[key], oldCopy[key])
+            const x = this.oneFieldDiff(newCopy?.[key], oldCopy?.[key])
+            if (x !== undefined) {
+                diffObj[key] = x
+            }
         }
-        return diffObj
-    }
-
-    static async unpack(diff, getOldDataFn) {
-        const actual = await getActualFn()
+        return _.isEmpty(diffObj) ? undefined : diffObj
     }
 
     /**
@@ -37,122 +62,66 @@ module.exports = class PackDiff {
      * @param {*} oldData 
      */
     static oneFieldDiff(newData, oldData) {
-        if (this.isPrimitiveDiff(newData, oldData)) {
+        if (newData === undefined) {
+            return this.jsonDelFlag
+        } else if (oldData instanceof Date) {
+            return this.dataCompare(newData, oldData)
+        } else if (typeof newData === "object") {
+            return this.packJson(newData, oldData)
+        } else if (newData !== oldData) {
             return newData
-        } else if (typeof oldData === "object") {
-            return this.diffJson(newData, oldData)
         }
     }
 
     /**
-     * Возвращает true если примитивы разные
-     * @typedef {(Date | string | boolean | number | null | undefined )} compareType
-     * @param {compareType} oldData 
-     * @param {compareType} newData 
+     * Сравнивает даты возвращает новую если она отличается от старой
      * @private
+     * @param {*} newData 
+     * @param {*} oldData 
      */
-    static isPrimitiveDiff(newData, oldData) {
-        if (typeof oldData === "boolean") {
-            oldData = Number(oldData)
+    static dataCompare(newData, oldData) {
+        if (newData === null && oldData !== null) {
+            return newData
         }
-
-        if (typeof newData === "boolean") {
-            newData = Number(newData)
+        const newDate = dayjs(newData).toISOString()
+        const oldDate = dayjs(oldData).toISOString()
+        if (newDate !== oldDate) {
+            return newDate
         }
-        if (oldData instanceof Date) {
-            console.log(newData, dayjs(newData).toISOString(), dayjs(oldData).toISOString())
-        }
-
-
-        if (oldData !== newData ||
-            (
-                (oldData instanceof Date || newData instanceof Date) &&
-                (oldData === null || newData === null || dayjs(oldData).toISOString() !== dayjs(newData).toISOString())
-            )
-        ) {
-            return true
-        }
-        return false
     }
 
     /**
-     * Возвращает различия между объектами,
-     * удаленные поля имеют значения в diff "undefined"
-     * @param {*} originalObj 
-     * @param {*} updatedObj 
-     * @private
-     */
-    static diffJson(updatedObj, originalObj) {
-        /**@type {*} */
-        let diffObj
-        if (_.isArray(updatedObj)) {
-            diffObj = []
-        } else {
-            diffObj = {}
-        }
-        for (let key of _.concat(_.keys(originalObj), _.keys(updatedObj))) {
-            if (typeof updatedObj[key] === "object") {
-                diffObj[key] = this.diffObj(originalObj?.[key] ?? {}, updatedObj[key])
-            } else if (originalObj[key] !== undefined && updatedObj[key] === undefined) {
-                diffObj[key] = "undefined"
-            } else if (this.isPrimitiveDiff(originalObj[key], updatedObj[key])) {
-                diffObj[key] = updatedObj[key]
-            }
-        }
-        return diffObj
-    }
-
-    /**
-     * Дополняет json поля для всей строки для вставки в таблицу,
-     * добовляет актуальные данные и удаляет свойства если значения в 
-     * diff равны "undefined"
+     * Распоковывает данные из diff используя текущий обькт и разницу,
+     * возвращает объект
      * @param {*} diff 
-     * @param {*} actual
-     * @private 
+     * @param {Function} getOldDataFn 
      */
-    static unpackDiff(diff, actual) {
-        return _.mapValues(diff, (val, key) => {
-            let res
-            if (typeof val === "object") {
-                res = this.unpackDiffObj(val, actual[key])
-            } else {
-                res = val
-            }
-            return res
-        })
-    }
-
-    /**
-     * Дополняет json поле для вставки в таблицу,
-     * добовляет актуальные данные и удаляет свойства если значения в 
-     * diff равны "undefined"
-     * @param {*} diffObj 
-     * @param {*} actualObj 
-     * @private
-     */
-    static unpackDiffObj(diffObj, actualObj) {
-        for (let key of _.concat(_.keys(diffObj), _.keys(actualObj))) {
-            if (typeof diffObj[key] === "object") {
-                this.unpackDiffObj(diffObj[key], actualObj)
-            } else if (diffObj[key] === "undefined") {
-                diffObj[key] = undefined
-            } else if (actualObj[key] != null) {
-                diffObj[key] = actualObj[key]
+    static async unpack(diff, getOldDataFn) {
+        /**@type {*}*/
+        const diffJsonOnly = {}
+        const jsonKeys = _.keys(_.pickBy(diff, _.isObject))
+        if (jsonKeys.length) {
+            const actual = await getOldDataFn() ?? {}
+            for (let key of jsonKeys) {
+                diffJsonOnly[key] = this.unpackOneJson(diff[key], actual[key])
             }
         }
+        return { ...diff, ...diffJsonOnly }
     }
 
+
     /**
-     * Проверяет на наличее json полей
-     * @param {*} diff 
+     * Возвращает объект полученный наложением diff
+     * для json полей
      * @private
+     * @param {*} newData 
+     * @param {*} oldData 
      */
-    static hasJsonCol(diff) {
-        for (let key in diff) {
-            if (typeof diff[key] === "object") {
-                return true
-            }
-            return false
-        }
+    static unpackOneJson(newData, oldData) {
+        const unionData = _.merge(oldData, newData)
+        return _.mapValuesDeep(unionData,
+            x => x === this.jsonDelFlag ? undefined : x,
+            { leavesOnly: true })
+
     }
 }

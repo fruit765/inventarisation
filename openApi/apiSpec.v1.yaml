@@ -258,11 +258,9 @@ paths:
                 specifications: {}
                 date_purchase:
                   type: string
-                  format: date
                   x-date-to-iso: true
                 date_warranty_end:
                   type: string
-                  format: date
                   x-date-to-iso: true
                 inv_number:
                   type: string

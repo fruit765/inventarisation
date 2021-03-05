@@ -169,17 +169,8 @@ const Device = require("./model/orm/device");
 const Knex = require("knex")
 const dbConfig = require("../serverConfig").db;
 const Event_confirm = require("./model/orm/event_confirm");
+const dayjs = require("dayjs");
 
 const knex = Knex(dbConfig)
-const fn = async () => {
-    const a = knex("Device").where("id", 40).toSQL()
-    const b = knex('tableName')
-        .insert({
-            email: "ignore@example.com",
-            name: "John Doe"
-        })
-        .onConflict('email',"hhh")
-        .ignore().toSQL()
-    console.log(b)
-}
-fn()
+Device.query().first().then(x=>x.date_purchase).then(x=>console.log(dayjs(x).toISOString()))
+console.log(dayjs("2011-09-07").toISOString())

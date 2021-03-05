@@ -86,8 +86,11 @@ module.exports = class ApplyAction {
                 resId = resIns.id
                 break
             case "patch":
-                const resPatch = await this.tableClass.query(trx).findById(id).patch(_.omit(rdyData, "id"))
-                resId = resPatch === 0 ? null : id
+                let patchData = _.omit(rdyData, "id")
+                if (!_.isEmpty(patchData)) {
+                    await this.tableClass.query(trx).findById(id).patch(patchData)
+                }
+                resId = id
                 break
         }
         if (resId == null) {
@@ -105,12 +108,12 @@ module.exports = class ApplyAction {
         return Transaction.startTransOpt(trxOpt, async (trx) => {
             const openEvents = await Event_confirm.query(trx).where("history_id", hisId).whereNotNull("date_completed")
             if (!openEvents.length) {
-                const curretDataTime = dayjs().format('YYYY-MM-DD HH:mm:ss')
+                const curretDataTime = dayjs().toISOString()
                 await History.query(trx).where("id", hisId).whereNull("commit_date").patch(/**@type {*}*/({ commit_date: curretDataTime }))
                 /**@type {*} */
                 const hisRec = await History.query(trx).findById(hisId)
                 const id = hisRec[this.tableClass.tableName + "_id"]
-                const diff = PackDiff.unpack(hisRec.diff, () => {
+                const diff = await PackDiff.unpack(hisRec.diff, () => {
                     return this.tableClass.query(trx).findById(id)
                 })
                 await this.applyAction({ ...diff, id: id }, hisRec.action_tag, trx)
