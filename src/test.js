@@ -168,9 +168,9 @@ const Device = require("./model/orm/device");
 //         //if (!valid) console.log(validate.errors)
 const Knex = require("knex")
 const dbConfig = require("../serverConfig").db;
-const Event_confirm = require("./model/orm/event_confirm");
-const dayjs = require("dayjs");
+// const Event_confirm = require("./model/orm/event_confirm");
+// const dayjs = require("dayjs");
 
 const knex = Knex(dbConfig)
-Device.query().first().then(x=>x.date_purchase).then(x=>console.log(dayjs(x).toISOString()))
-console.log(dayjs("2011-09-07").toISOString())
+knex("brand").transacting(undefined).where("id", 1111).update({"brand": "ddddd"}).then(console.log)
+//console.log(dayjs("2011-09-07").toISOString())

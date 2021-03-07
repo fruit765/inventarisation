@@ -78,7 +78,7 @@ module.exports = class PresetSubCol {
          * @type {number}
          */
         this.matchValue = NaN
-        
+
         this.logicSqlToValue()
         this.init()
         this.logicToEval()
@@ -153,6 +153,20 @@ module.exports = class PresetSubCol {
             case "!=":
                 for (let val of flattenValue) {
                     if (value == val) {
+                        return false
+                    }
+                }
+                return true
+            case ">":
+                for (let val of flattenValue) {
+                    if (value <= val) {
+                        return false
+                    }
+                }
+                return true
+            case "<":
+                for (let val of flattenValue) {
+                    if (value >= val) {
                         return false
                     }
                 }
