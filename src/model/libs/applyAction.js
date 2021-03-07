@@ -6,12 +6,12 @@
 "use strict"
 
 const dayjs = require("dayjs")
-const Transaction = require("./transaction")
 const _ = require("lodash")
 const Event_confirm = require("../orm/event_confirm")
 const History = require("../orm/history")
 const { createException } = require("./command")
-const PackDiff = require("./namespace/packDiff")
+const { unpack } = require("./packDiff")
+const { startTransOpt } = require("./transaction")
 
 module.exports = class ApplyAction {
     /**
@@ -105,7 +105,7 @@ module.exports = class ApplyAction {
      * @param {*=} trxOpt
      */
     async commitHistory(hisId, trxOpt) {
-        return Transaction.startTransOpt(trxOpt, async (trx) => {
+        return startTransOpt(trxOpt, async (trx) => {
             const openEvents = await Event_confirm.query(trx).where("history_id", hisId).whereNotNull("date_completed")
             if (!openEvents.length) {
                 const curretDataTime = dayjs().toISOString()
@@ -113,7 +113,7 @@ module.exports = class ApplyAction {
                 /**@type {*} */
                 const hisRec = await History.query(trx).findById(hisId)
                 const id = hisRec[this.tableClass.tableName + "_id"]
-                const diff = await PackDiff.unpack(hisRec.diff, () => {
+                const diff = await unpack(hisRec.diff, () => {
                     return this.tableClass.query(trx).findById(id)
                 })
                 await this.applyAction({ ...diff, id: id }, hisRec.action_tag, trx)

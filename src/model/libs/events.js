@@ -9,15 +9,14 @@
 const Event_confirm = require("../orm/event_confirm")
 const Event_confirm_preset = require("../orm/event_confirm_preset")
 const History = require("../orm/history")
-const Transaction = require("./transaction")
-const PresetParse = require("./presetParse")
 const ApplyAction = require("./applyAction")
 const _ = require("lodash")
 const dayjs = require("dayjs")
-const { getTabIdFromHis, getTabNameFromHis } = require("./command")
+const { getTabIdFromHis, getTabNameFromHis } = require("./bindHisTabInfo")
 const Knex = require("knex")
 const dbConfig = require("../../../serverConfig").db
 const Status = require("../orm/status")
+const { startTransOpt } = require("./transaction")
 const knex = Knex(dbConfig)
 
 /**
@@ -129,7 +128,7 @@ module.exports = class Events {
      * @param {*} [trxOpt]
      */
     async confirm(fn, trxOpt) {
-        Transaction.startTransOpt(trxOpt, async trx => {
+        startTransOpt(trxOpt, async trx => {
             if (this.records.event.status !== "pending") {
                 return false
             }
@@ -239,7 +238,7 @@ module.exports = class Events {
      * @returns {Promise<any[]>}
      */
     static async genEventsById(hisId, trxOpt) {
-        return Transaction.startTransOpt(trxOpt, async (trx) => {
+        return startTransOpt(trxOpt, async (trx) => {
             const res = []
             /**@type {*[]} */
             const actualPresets = await this.getActualPresets()

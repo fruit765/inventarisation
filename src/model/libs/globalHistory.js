@@ -7,14 +7,13 @@
 const Knex = require("knex")
 const dbConfig = require("../../../serverConfig").db
 const History = require("../orm/history")
-const Transaction = require("./transaction")
 const ApplyAction = require("./applyAction")
-const Preset = require("./preset/preset")
-const PackDiff = require("./namespace/packDiff")
+const Preset = require("../class/preset/preset")
+const { pack } = require("./packDiff")
 const knex = Knex(dbConfig)
 const _ = require("lodash")
 const dayjs = require("dayjs")
-const { getTabIdFromHis } = require("./command")
+const { getTabIdFromHis } = require("./bindHisTabInfo")
 
 module.exports = class GlobalHistory {
     /**
@@ -37,14 +36,6 @@ module.exports = class GlobalHistory {
     }
 
     /**
-     * Проверяет сохраняется ли история у данной таблицы
-     * @param {string} tableName
-     */
-    static async hasHistory(tableName) {
-        return knex.schema.hasColumn(History.tableName, tableName)
-    }
-
-    /**
      * Сохраняет запись в историю
      * @param {{id:number, [key: string]: any}} data обязательно должен содержать id
      * @param {string} actionTag 
@@ -55,7 +46,7 @@ module.exports = class GlobalHistory {
     async saveHistoryOnly(data, actionTag, trx) {
         let dataCopy = actionTag === "delete" ? { id: data.id } : { ...data }
         const actualData = await this.tableClass.query().findById(data.id) ?? {}
-        const modData = PackDiff.pack(dataCopy, actualData)
+        const modData = pack(dataCopy, actualData)
         /**@type {*} */
         const historyInsertData = {
             actor_id: this.options.actorId,
@@ -78,7 +69,7 @@ module.exports = class GlobalHistory {
      * @returns {Promise<*>}
      */
     async saveAndApply(data, actionTag, trxOpt) {
-        return Transaction.startTransOpt(trxOpt, async (trx) => {
+        return startTransOpt(trxOpt, async (trx) => {
             const hisRec = await this.saveHistoryOnly(data, actionTag, trx)
             const objId = getTabIdFromHis(hisRec)
             const actualPresets = await Preset.getActualPresets()

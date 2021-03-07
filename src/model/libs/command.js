@@ -114,22 +114,6 @@ const getDevWithVirtualStatus = async (devId) => {
     return fp.values(devicesKeyId)
 }
 
-function getTabIdFromHis(hisRec) {
-    for (let key in hisRec) {
-        if (String(key).match(/_id$/gi) && key !== "actor_id" && hisRec[key] != null) {
-            return hisRec[key]
-        }
-    }
-}
-
-function getTabNameFromHis(hisRec) {
-    for (let key in hisRec) {
-        if (String(key).match(/_id$/gi) && key !== "actor_id" && hisRec[key] != null) {
-            return key.slice(0,-3)
-        }
-    }
-}
-
 function createException(errCode, message, dataPath) {
     const buildMessage = [{
         dataPath: "." + dataPath,
@@ -139,4 +123,4 @@ function createException(errCode, message, dataPath) {
     return err
 }
 
-module.exports = { createException, getTabNameFromHis, getTabIdFromHis, getDevWithVirtualStatus, validateDataBySchema, getTable, getCell, send, sendP, insertTable, updateTable, deleteTable, getDevRelatedTabValueAssociatedCatId, dateToIso }
+module.exports = { createException, getDevWithVirtualStatus, validateDataBySchema, getTable, getCell, send, sendP, insertTable, updateTable, deleteTable, getDevRelatedTabValueAssociatedCatId, dateToIso }
