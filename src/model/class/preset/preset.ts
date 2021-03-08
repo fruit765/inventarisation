@@ -19,7 +19,8 @@ export class Preset {
             await <Promise<any>>Event_confirm.query()
                 .insert(
                     {
-                        history_id: hisRec.id,
+                        //@ts-ignore
+                        history_id: <number>hisRec.id, //NOSONAR
                         event_confirm_preset_id: this.id,
                         status: "pending"
                     })
