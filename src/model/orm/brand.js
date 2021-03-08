@@ -8,6 +8,7 @@ const knex = Knex(dbConfig)
 Model.knex(knex)
 
 module.exports = class Brand extends Model {
+
     static get tableName() {
         return "brand"
     }

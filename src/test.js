@@ -168,10 +168,10 @@ const Device = require("./model/orm/device");
 //         //if (!valid) console.log(validate.errors)
 const Knex = require("knex")
 const dbConfig = require("../serverConfig").db;
+const Brand = require("./model/orm/brand");
 // const Event_confirm = require("./model/orm/event_confirm");
 // const dayjs = require("dayjs");
 
 const knex = Knex(dbConfig)
-let a
-knex.transaction(trx => {a=trx} ).then(console.log(a))
+Brand.query().insert({brand: "ddddd", "ddd":"ddd", d:{e:3}}).then(console.log)
 //console.log(dayjs("2011-09-07").toISOString())
