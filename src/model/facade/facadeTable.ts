@@ -9,7 +9,7 @@ import { startTransOpt } from '../libs/transaction';
 /**@classdesc Класс фасад, для работы с таблицами */
 export class FacadeTable {
     private tableClass: any
-    private tableName: string
+    protected tableName: string
     private actorId: number
     private isSaveHistory?: boolean
     private initAttr?: Promise<boolean>
@@ -70,13 +70,13 @@ export class FacadeTable {
     /**Изменяет данные и возвращает объект с неподтвержденными данными */
     async patchAndFetch(data: any, trxOpt?: Transaction<any, any>) {
         const id = await this.patch(data, trxOpt)
-        return getUnconfirm(this.tableName, id)
+        return (await this.getUnconfirm(id))[0]
     }
 
     /**Добовляет данные и возвращает объект с неподтвержденными данными */
     async insertAndFetch(data: any, trxOpt?: Transaction<any, any>) {
         const id = await this.insert(data, trxOpt)
-        return getUnconfirm(this.tableName, id)
+        return (await this.getUnconfirm(id))[0]
     }
 
     /**Удаляет данные по id */
@@ -85,5 +85,10 @@ export class FacadeTable {
             const x = await this.createTabAction({ id }, this.tableName, "delete", trx)
             return x.applyAction()
         })
+    }
+
+    /**Возвращает записи с неподтверденными данными */
+    async getUnconfirm(id?: number) {
+        return getUnconfirm(this.tableName, id)
     }
 }
