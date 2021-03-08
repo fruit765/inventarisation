@@ -2,7 +2,7 @@
 
 const express = require('express')
 const { sendP } = require('../model/libs/command')
-const Table = require('../model/facade/facadeTable')
+const Table = require('../model/facade/facadeTable').FacadeTable
 const Account_owner = require('../model/orm/account_owner')
 const createError = require('http-errors')
 const table = new Table(Account_owner)

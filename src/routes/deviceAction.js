@@ -1,5 +1,3 @@
-//@ts-check
-
 "use strict"
 
 const express = require('express')
@@ -8,13 +6,12 @@ const Device = require('../model/orm/device')
 const History = require('../model/orm/history')
 const Status = require('../model/orm/status')
 const router = express.Router()
-const fp = require("lodash/fp")
-const FacadeTableDev = require('../model/facade/facadeTableDev')
+const FacadeTableDev = require('../model/facade/facadeTableDev').FacadeTableDev
 
 router.route('/deviceAction')
     .all((req, res, next) => {
         req.myObj = new FacadeTableDev(Device, {
-            actorId: /**@type {*}*/ (req.user)?.id
+            actorId: req.user.id
         })
         next()
     })

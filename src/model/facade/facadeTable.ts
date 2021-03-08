@@ -14,11 +14,11 @@ export class FacadeTable {
     private isSaveHistory?: boolean
     private initAttr?: Promise<boolean>
 
-    constructor(tableClass: any, actorId: number, options: { isSaveHistory?: boolean }) {
+    constructor(tableClass: any, actorId: number, options?: { isSaveHistory?: boolean }) {
         this.tableClass = tableClass
         this.tableName = tableClass.tableName
         this.actorId = actorId
-        this.isSaveHistory = Boolean(options.isSaveHistory ?? true)
+        this.isSaveHistory = Boolean(options?.isSaveHistory ?? true)
         this.initAttr = undefined
         this.init()
     }
