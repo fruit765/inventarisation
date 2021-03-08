@@ -24,7 +24,7 @@ function getTabNameFromHis(hisRec: any) {
 
 /**Проверяет сохраняется ли история у данной таблицы*/
 async function hasHistory(tableName: string) {
-    return knex.schema.hasColumn(History.tableName, tableName)
+    return knex.schema.hasColumn(History.tableName, tableName+"_id")
 }
 
 export { getTabIdFromHis, getTabNameFromHis, hasHistory }

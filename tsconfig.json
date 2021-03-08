@@ -16,7 +16,7 @@
         "outDir": "dist",
         "allowSyntheticDefaultImports": true,
         "declaration": false,
-        "sourceMap": false,
-        //"esModuleInterop": true
+        "sourceMap": true,
+        "esModuleInterop": true,
     }
 }

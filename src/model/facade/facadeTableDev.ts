@@ -39,9 +39,9 @@ export class FacadeTableDev extends FacadeTable {
         const catName4 = String(category.category).slice(0, 4)
         const catName4Translit = cyrillicToTranslit.transform(catName4, "-")
         dataClone.status_id = dataClone.status_id ?? status_id
-        const validId = await new recValidate(data, this.tableName, "insert").validate()
-        dataClone.id = validId
-        dataClone.inv_number = dataClone.inv_number ?? catName4Translit + validId
+        const valid = await new recValidate(dataClone, this.tableName, "insert").validate()
+        dataClone.id = valid.getId()
+        dataClone.inv_number = dataClone.inv_number ?? catName4Translit + valid.getId()
         return super.insert(dataClone, trxOpt)
     }
 
@@ -83,7 +83,7 @@ export class FacadeTableDev extends FacadeTable {
 
     /**Проверка спецификации оборудования на схему в категории
     * @param spec мутирует этот объект*/
-    async specValidation(catId: number, spec: any) {
+    async specValidation(catId: number, spec: any = {}) {
         const catRow = <any>await Category.query().findById(catId)
         const schema = Object.assign(catRow.schema, { $async: true })
         const validate = ajv.compile(schema)
@@ -96,7 +96,7 @@ export class FacadeTableDev extends FacadeTable {
             for (let key in err.errors) {
                 err.errors[key].dataPath = ".specifications" + err.errors[key].dataPath
             }
-            throw this.handleErr.createError(400, err.errors)
+            throw this.handleErr.createError(400, {message:err.errors})
         })
         return spec
     }

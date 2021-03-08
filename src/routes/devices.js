@@ -8,9 +8,7 @@ const FacadeTableDev = require('../model/facade/facadeTableDev').FacadeTableDev
 
 router.route('/devices')
     .all((req, res, next) => {
-        req.myObj = new FacadeTableDev(Device, {
-            actorId: (req.user)?.id
-        })
+        req.myObj = new FacadeTableDev(Device, (req.user)?.id)
         next()
     })
     .get((req, res, next) => {

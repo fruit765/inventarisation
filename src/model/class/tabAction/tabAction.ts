@@ -17,6 +17,7 @@ export class TabAction implements interfaces.tabAction{
     private errHandler: CreateErr
 
     constructor(data: any, tableName: string, actionTag: string, trx: Transaction<any, any>) {
+        console.log(actionTag)
         this.tableName = tableName
         this.data = data
         this.actionTag = actionTag
@@ -61,6 +62,7 @@ export class TabAction implements interfaces.tabAction{
         const fillteredData: any = {}
         for (let key in data) {
             if (typeof data[key] === "object") {
+                //console.log(data[key])
                 fillteredData[key] = JSON.stringify(data[key])
             } else {
                 fillteredData[key] = data[key]
@@ -88,7 +90,7 @@ export class TabAction implements interfaces.tabAction{
         const rdyData = this.stringifyColJSON(this.data)
         const query = this.trx ? knex(this.tableName).transacting(this.trx) : knex(this.tableName)
         const insRes = await <Promise<any>>query.insert(rdyData)
-        return <number>insRes.id
+        return <number>insRes[0]
     }
 
     /**Удаляет поле из таблицы */
