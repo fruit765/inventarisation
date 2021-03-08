@@ -172,5 +172,6 @@ const dbConfig = require("../serverConfig").db;
 // const dayjs = require("dayjs");
 
 const knex = Knex(dbConfig)
-knex("brand").transacting(undefined).where("id", 1111).update({"brand": "ddddd"}).then(console.log)
+let a
+knex.transaction(trx => {a=trx} ).then(console.log(a))
 //console.log(dayjs("2011-09-07").toISOString())

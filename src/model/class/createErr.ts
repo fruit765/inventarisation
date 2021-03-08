@@ -18,11 +18,11 @@ export class CreateErr {
 
     /**Неверный id*/
     idWrong() {
-        return this.createException(400, "wrong id", "id") 
+        return this.createException(400, "wrong id", "id")
     }
 
     /**серверная ошибка */
-    internalServerError() {
-        return createError(500, "InternalServerError")
+    internalServerError(message: string = "InternalServerError") {
+        return createError(500, message)
     }
 }
