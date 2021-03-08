@@ -39,7 +39,8 @@ export class FacadeTable {
     protected async createTabAction(data: any, tableName: string, actionTag: string, trx: Transaction<any, any>) {
         await this.init()
         if (this.isSaveHistory) {
-            const validDataId = await new recValidate(data, tableName, actionTag).validate()
+            const validDataRaw = <any>await new recValidate(data, tableName, actionTag).validate()
+            const validDataId = validDataRaw.id
             const validData = {...data, id: validDataId}
             const newRecHistory = await new NewRecHistory(validData, tableName, actionTag, this.actorId, trx).create()
             const recHistory = newRecHistory.get()
