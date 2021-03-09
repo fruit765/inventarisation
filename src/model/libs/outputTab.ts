@@ -6,6 +6,9 @@ import knex from "../orm/knexConf"
 
 /**Получает только новые незакоммиченные данные из таблицы*/
 async function getUnconfirmOnly(tabName: string, id?: number) {
+    if (!hasHistory(tabName)) {
+        return []
+    }
     let eventMaxPriorSingle: any[] = []
     const hisColName = hasHistory(tabName + "_id") ? tabName + "_id" : null
     if (hisColName) {
