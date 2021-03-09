@@ -1,30 +1,16 @@
-//@ts-check
+import _ from "lodash"
+import { delUndefinedDeep } from "../../../libs/objectOp"
+import PresetSubCol from "./presetSubCol"
 
-"use strict"
+export default class PresetOneCol {
+    private new: any
+    private old: any
+    private newClass: PresetSubCol
+    private oldClass: PresetSubCol
 
-const _ = require("lodash")
-const { delUndefinedDeep } = require("../../../libs/objectOp")
-const PresetSubCol = require("./presetSubCol")
+    constructor(preset: {new?: any, old?: any}) {
 
-module.exports = class PresetOneCol {
-
-    /**
-     * @typedef {Object} presetOneCol
-     * @property {*} [new]
-     * @property {*} [old]
-     * @param {presetOneCol} preset 
-     */
-    constructor(preset) {
-
-        /**
-         * @type {*}
-         * @private
-         */
         this.new = {}
-        /**
-         * @type {*}
-         * @private
-         */
         this.old = {}
 
         const presetWithoutUnd = delUndefinedDeep(preset)
@@ -41,19 +27,13 @@ module.exports = class PresetOneCol {
             this.old = preset.old ?? { logic: "true" }
         }
 
-        /**@private*/
         this.newClass = new PresetSubCol(preset.new)
-        /**@private*/
         this.oldClass = new PresetSubCol(preset.old)
     }
 
-    /**
-     * Проверяет значение на соответствие пресету
-     * Первое значение в массиве относится к новым данным
-     * Второе к старым
-     * @param {Array<any>} data 
-     */
-    async match(data) {
+    /**Проверяет значение на соответствие пресету
+     * Первое значение в массиве относится к новым данным Второе к старым*/
+    async match(data: Array<any>) {
         const [newData, oldData] = data
         const res = await this.newClass.match(newData) && await this.oldClass.match(oldData)
         return res

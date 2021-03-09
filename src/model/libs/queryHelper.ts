@@ -9,7 +9,7 @@ import Post_dep_loc from "../orm/post_dep_loc"
 import Department from "../orm/department"
 
 /**Получаем класс таблицы по ее названию */
-export function getTabClassByName(name:string) {
+function getTabClassByName(name:string) {
     const nameClass: any = {
         "device": Device,
         "brand": Brand,
@@ -42,7 +42,7 @@ async function knexQuery(query: string) {
 
 
 /**Переводит массив sql селект запросов в массив значений*/
-export async function sqlsToValues(sql: string[] | string): Promise<Array<any>> {
+async function sqlsToValues(sql: string[] | string): Promise<Array<any>> {
     if (typeof sql === "string") {
         sql = [sql]
     }
@@ -52,3 +52,16 @@ export async function sqlsToValues(sql: string[] | string): Promise<Array<any>> 
     }
     return value
 }
+
+/**Проверяет есть ли колонка в таблице также возвращает false если нет самой таблицы*/
+async function hasCol(tableName: string, colName: string) {
+    return knex.schema.hasColumn(tableName, colName).catch(err => {
+        if (err.errno === 1146) {
+            return false
+        } else {
+            return Promise.reject(err)
+        }
+    })
+}
+
+export { hasCol, sqlsToValues, getTabClassByName }

@@ -5,7 +5,7 @@ import History from "../orm/history"
 const knex = Knex(dbConfig)
 
 /**Получаем ид связанной таблицы из записи истории*/
-function getTabIdFromHis(hisRec: any) {
+function getTabIdFromHis(hisRec: any): number | undefined {
     for (let key in hisRec) {
         if (String(key).match(/_id$/gi) && key !== "actor_id" && hisRec[key] != null) {
             return hisRec[key]

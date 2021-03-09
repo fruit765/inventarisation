@@ -1243,12 +1243,12 @@ paths:
             schema:
               type: object
               properties:
-                is:
+                id:
                   type: integer
                 post:
                   type: string
               required:
-                - is
+                - id
                 - post
       description: Изменение локаций
       tags:
@@ -1333,12 +1333,12 @@ paths:
             schema:
               type: object
               properties:
-                is:
+                id:
                   type: integer
                 location:
                   type: string
               required:
-                - is
+                - id
                 - location
       description: Изменение локаций
       tags:
@@ -1465,12 +1465,12 @@ paths:
             schema:
               type: object
               properties:
-                is:
+                id:
                   type: number
                 department:
                   type: string
               required:
-                - is
+                - id
                 - department
       description: Изменение имени отделов
       tags:
@@ -1556,12 +1556,12 @@ paths:
             schema:
               type: object
               properties:
-                is:
+                id:
                   type: number
                 employer:
                   type: string
               required:
-                - is
+                - id
                 - employer
       description: Изменение работодателей
       tags:

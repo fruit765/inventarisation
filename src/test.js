@@ -1,8 +1,5 @@
 // // // const History = require("./model/orm/history");
 
-
-const Device = require("./model/orm/device");
-
 // const Device = require("./model/orm/device");
 // const createError = require('http-errors')
 // // // History.query().then(x => {console.log(x.prototype)})
@@ -168,14 +165,11 @@ const Device = require("./model/orm/device");
 //         //if (!valid) console.log(validate.errors)
 const Knex = require("knex")
 const dbConfig = require("../serverConfig").db;
-const Brand = require("./model/orm/brand").default;
-// const Event_confirm = require("./model/orm/event_confirm");
-// const dayjs = require("dayjs");
-const knex = Knex(dbConfig)
-knex.transaction(async trx => {
-    Brand.setActorId(2)
-    await Brand.query(trx).insert({brand: "dd2dd222da22211"}).then(console.log)
-    await Brand.query(trx).insert({brand: "dd2dd222da11111"}).then(console.log)
-}).then(console.log)
 
-//console.log(dayjs("2011-09-07").toISOString())
+const knex = Knex(dbConfig)
+try{
+    knex.schema.hasColumn("devi1ce1", "id3").then(console.log).catch(x => console.log(x.errno))
+} catch(err){
+    console.log(err)
+}
+

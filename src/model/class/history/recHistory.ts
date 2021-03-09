@@ -34,7 +34,11 @@ export class RecHistory {
             throw this.handleErr.internalServerError()
         }
         this.tableName = tableName
-        this.tableId = getTabIdFromHis(hisRec)
+        const tableId = getTabIdFromHis(hisRec)
+        if (tableId == undefined) {
+            throw this.handleErr.internalServerError()
+        }
+        this.tableId = tableId
         this.actionTag = hisRec.action_tag
         this.trx = trxOpt
         this.actualData = {}
