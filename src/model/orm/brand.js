@@ -1,19 +1,14 @@
-'use strict'
-
-const Knex = require("knex")
-const dbConfig = require("../../../serverConfig").db
 const { Model } = require("objection")
-const knex = Knex(dbConfig)
+const SuperModel  = require("./superModel").default
 
-Model.knex(knex)
-
-module.exports = class Brand extends Model {
+module.exports = class Brand extends SuperModel {
 
     static get tableName() {
         return "brand"
     }
 
     static get relationMappings() {
+
         const Device = require("./device")
 
         return {

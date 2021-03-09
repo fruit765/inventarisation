@@ -1,11 +1,8 @@
 import { hasHistory } from "./bindHisTabInfo"
-import Knex from "knex"
-import { db as dbConfig } from "../../../serverConfig"
 import _ from "lodash"
 import { delUndefined } from "./objectOp"
 import Status from "../orm/status"
-
-const knex = Knex(dbConfig)
+import knex from "../orm/knexConf"
 
 /**Получает только новые незакоммиченные данные из таблицы*/
 async function getUnconfirmOnly(tabName: string, id?: number) {
@@ -57,22 +54,21 @@ async function getUnconfirm(tabName: string, id?: number) {
     const status = await Status.query()
     const statusIndex = _.keyBy(status, "id")
     const tableDataIndex = _.keyBy(tableData, "id")
-    for (let value of unconfirm) {
-        if (tableDataIndex[value.device_id]) {
-            tableDataIndex[value.device_id].status_id = value.status_id
-            if (priority < value.view_priority) {
-                Object.assign(tableDataIndex[value.device_id], value.diff)
+    const unconfirmIndex = _.keyBy(unconfirm, tabName + "_id")
+    for (let key in tableDataIndex) {
+        if (unconfirmIndex[key]) {
+            if (priority < unconfirmIndex[key].view_priority) {
+                Object.assign(tableDataIndex[key], unconfirmIndex[key].diff)
             }
+            tableDataIndex[key].status_id = unconfirmIndex[key].status_id
         }
+        if (tableDataIndex[key].status_id != null) {
+            tableDataIndex[key].status = statusIndex[tableDataIndex[key].status_id]?.status
+            tableDataIndex[key].status_rus = statusIndex[tableDataIndex[key].status_id]?.status_rus
+        }
+
     }
     const tableDataEdit = _.values(tableDataIndex)
-    for (let value of tableDataEdit) {
-        if (value.status_id != null) {
-            value.status = statusIndex[value.status_id]?.status
-            value.status_rus = statusIndex[value.status_id]?.status_rus
-        }
-    }
-
     return tableDataEdit
 }
 

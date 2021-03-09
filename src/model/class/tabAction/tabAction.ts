@@ -4,6 +4,7 @@ import { db as dbConfig } from "../../../../serverConfig"
 import { CreateErr } from "../createErr"
 import _ from "lodash"
 import { interfaces } from "../../../interfaces"
+import { delUndefinedDeep, stringifySubJSON } from "../../libs/objectOp"
 
 const knex = Knex(dbConfig)
 
@@ -17,7 +18,6 @@ export class TabAction implements interfaces.tabAction{
     private errHandler: CreateErr
 
     constructor(data: any, tableName: string, actionTag: string, trx: Transaction<any, any>) {
-        console.log(actionTag)
         this.tableName = tableName
         this.data = data
         this.actionTag = actionTag
@@ -57,25 +57,11 @@ export class TabAction implements interfaces.tabAction{
         return new CreateErr()
     }
 
-    /**Применяет JSON.stringify ко всем вложенным объектам*/
-    private stringifyColJSON(data: any) {
-        const fillteredData: any = {}
-        for (let key in data) {
-            if (typeof data[key] === "object") {
-                //console.log(data[key])
-                fillteredData[key] = JSON.stringify(data[key])
-            } else {
-                fillteredData[key] = data[key]
-            }
-        }
-        return fillteredData
-    }
-
     /**Обновляет поле в таблице */
     private async patch() {
         const query = this.trx ? knex(this.tableName).transacting(this.trx) : knex(this.tableName)
-        const rdyData = this.stringifyColJSON(this.data)
-        let patchData = _.omit(rdyData, "id")
+        const rdyData = stringifySubJSON(this.data)
+        let patchData =  delUndefinedDeep(_.omit(rdyData, "id"))
         if (!_.isEmpty(patchData)) {
             const resPatch = await <Promise<number>>query.where({ id: rdyData.id }).update(patchData)
             if (!resPatch) {
@@ -87,7 +73,7 @@ export class TabAction implements interfaces.tabAction{
 
     /**Добовляет поле в таблицу */
     private async insert() {
-        const rdyData = this.stringifyColJSON(this.data)
+        const rdyData = stringifySubJSON(this.data)
         const query = this.trx ? knex(this.tableName).transacting(this.trx) : knex(this.tableName)
         const insRes = await <Promise<any>>query.insert(rdyData)
         return <number>insRes[0]

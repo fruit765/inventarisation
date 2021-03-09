@@ -2,24 +2,22 @@
 
 const express = require('express')
 const { sendP } = require('../model/libs/command')
-const Account = require('../model/orm/account')
 const Table = require('../model/facade/facadeTable').FacadeTable
-const table = new Table(Account)
 const router = express.Router()
 
 router.route('/accounts')
     .all((req, res, next) => {
-        table.setActorId(req.user.id)
+        this.myObj = new Table("Account", req.user.id)
         next()
     })
     .get((req, res, next) => {
-        sendP(next)(res)(table.getAll())
+        sendP(next)(res)(this.myObj.getUnconfirm())
     })
     .post( (req, res, next) => {
-        sendP(next)(res)(table.insertAndFetch(req.body))
+        sendP(next)(res)(this.myObj.insertAndFetch(req.body))
     })
     .patch((req, res, next) => {
-        sendP(next)(res)(table.patchAndFetch(req.body))
+        sendP(next)(res)(this.myObj.patchAndFetch(req.body))
     })
 
 module.exports = router

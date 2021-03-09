@@ -13,6 +13,7 @@
 const _ = require("lodash")
 const Knex = require("knex")
 const dbConfig = require("../../../../../serverConfig").db
+const { sqlsToValues } = require("../../../libs/queryHelper")
 const knex = Knex(dbConfig)
 
 module.exports = class PresetSubCol {
@@ -78,7 +79,6 @@ module.exports = class PresetSubCol {
          * @type {number}
          */
         this.matchValue = NaN
-
         this.logicSqlToValue()
         this.init()
         this.logicToEval()
@@ -92,8 +92,7 @@ module.exports = class PresetSubCol {
         if (this.initAttr) {
             return this.initAttr
         } else {
-            await this.sqlToValue()
-            this.initAttr = Promise.resolve(true)
+            this.initAttr = this.sqlToValue().then(() => true)
             return this.initAttr
         }
     }
@@ -205,46 +204,21 @@ module.exports = class PresetSubCol {
      * Делает запросы переводя все sql значения в обычные value
      */
     async sqlToValue() {
-        for (let key in this.sql) {
-            this.value[Number(key) + this.maxValueNumber + 1] = await this.selectSqlStrToValue(this.sql[key])
-        }
-    }
-
-    /**
-     * Возвращает массив значений из первого столбца из запроса
-     * @param {*} sqlString 
-     * @private
-     */
-    async selectSqlStrToValue(sqlString) {
-        const query = sqlString.split(";")[0].trim().match(/^select.*$/)?.[0]
-        if (query) {
-            const dbRes = await this.knexQuery(query)
-            const firstKey = Object.keys(dbRes[0])[0]
-            const resArray = _.map(dbRes, firstKey)
-            return resArray
-        } else {
-            return []
-        }
-    }
-
-    /**
-     * Делает запрос в базу данных
-     * @param {string} query
-     * @private
-     */
-    async knexQuery(query) {
-        return knex.raw(query).then(x => x[0])
+        const sqlVal = await sqlsToValues(this.sql)
+        this.value = _.concat(this.value, sqlVal)
     }
 
     /**
      * Проверяет значение на соответствие пресету
      * @param {*} data 
      */
-    match(data) {
+    async match(data) {
+        await this.init()
         if (data === undefined) {
             return false
         }
         this.matchValue = data
-        return Boolean(eval(this.evalLogic))
+        const res = Boolean(eval(this.evalLogic))
+        return res
     }
 }

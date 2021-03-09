@@ -3,14 +3,13 @@
 const express = require('express')
 const { sendP } = require('../model/libs/command')
 const Table = require('../model/facade/facadeTable').FacadeTable
-const Account_owner = require('../model/orm/account_owner')
 const createError = require('http-errors')
-const table = new Table(Account_owner)
 const router = express.Router()
+const Account_owner = require("../model/orm/account_owner")
 
 router.route('/account_owners')
     .all((req, res, next) => {
-        table.setActorId(req.user.id)
+        this.myObj = new Table("Account", req.user.id)
         next()
     })
     .get((req, res, next) => {
@@ -30,13 +29,13 @@ router.route('/account_owners')
             throw createError(400, "dep_loc_id and user_id can't both contain values")
         }
 
-        sendP(next)(res)(table.insertAndFetch(req.body))
+        sendP(next)(res)(this.myObj.insertAndFetch(req.body))
     })
     .delete((req, res, next) => {
         if (Object.keys(req.body).length === 0) {
             throw table.createError400Pattern("object", "object must be not empty")
         }
-        sendP(next)(res)(table.delete(req.body))
+        sendP(next)(res)(this.myObj.delete(req.body.id))
     })
 
 module.exports = router

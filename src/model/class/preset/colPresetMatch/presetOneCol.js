@@ -3,6 +3,7 @@
 "use strict"
 
 const _ = require("lodash")
+const { delUndefinedDeep } = require("../../../libs/objectOp")
 const PresetSubCol = require("./presetSubCol")
 
 module.exports = class PresetOneCol {
@@ -26,38 +27,24 @@ module.exports = class PresetOneCol {
          */
         this.old = {}
 
-        if (!(preset.new && preset.old)) {
-            this.new = preset
+        const presetWithoutUnd = delUndefinedDeep(preset)
+        const isNewOldEmpty = !(preset.new && preset.old)
+        const isGlobalObjEmpty = _.isEmpty(presetWithoutUnd)
+        
+        if (isNewOldEmpty && isGlobalObjEmpty) {
+            this.new = { logic: "false" }
+        } else if(isNewOldEmpty) {
+            this.new = presetWithoutUnd
             this.old = { logic: "true" }
         } else {
             this.new = preset.new ?? { logic: "true" }
             this.old = preset.old ?? { logic: "true" }
         }
 
-        /**
-         * @type {(undefined | Promise<boolean>)}
-         * @private
-         */
-        this.initAttr = undefined
         /**@private*/
         this.newClass = new PresetSubCol(preset.new)
         /**@private*/
         this.oldClass = new PresetSubCol(preset.old)
-        this.init()
-    }
-
-    /**
-     * Запускает асинхронные процессы для подготовки класса,
-     * если они уже запущенны возвращает промис
-     */
-    async init() {
-        if (this.initAttr) {
-            return this.initAttr
-        } else {
-            const initRes = await this.newClass.init() && await this.oldClass.init()
-            this.initAttr = Promise.resolve(initRes)
-            return this.initAttr
-        }
     }
 
     /**
@@ -66,9 +53,9 @@ module.exports = class PresetOneCol {
      * Второе к старым
      * @param {Array<any>} data 
      */
-    match(data) {
+    async match(data) {
         const [newData, oldData] = data
-        const res = this.newClass.match(newData) && this.oldClass.match(oldData)
+        const res = await this.newClass.match(newData) && await this.oldClass.match(oldData)
         return res
     }
 }

@@ -6,7 +6,8 @@
   "author": "fruit765 <megafpykt@ya.ru>",
   "license": "MIT",
   "scripts": {
-    "checkjs": "npx tsc --allowJs --checkJs --noEmit --moduleResolution node --target ES6 src/*.js"
+    "checkjs": "npx tsc --allowJs --checkJs --noEmit --moduleResolution node --target ES6 src/*.js",
+    "start": "npx tsc && echo 'start' && node --enable-source-maps dist/src/app.js"
   },
   "dependencies": {
     "@apidevtools/swagger-parser": "^10.0.2",

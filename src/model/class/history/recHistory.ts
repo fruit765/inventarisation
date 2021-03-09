@@ -35,7 +35,7 @@ export class RecHistory {
         }
         this.tableName = tableName
         this.tableId = getTabIdFromHis(hisRec)
-        this.actionTag = hisRec.action_ta
+        this.actionTag = hisRec.action_tag
         this.trx = trxOpt
         this.actualData = {}
     }
@@ -65,7 +65,7 @@ export class RecHistory {
                 const curretDataTime = dayjs().toISOString()
                 await History.query(trx).where("id", this.id).whereNull("commit_date").patch(<any>{ commit_date: curretDataTime })
                 const id = this.hisRec[this.tableName + "_id"]
-                const diff = await unpack(this.diff, () => {
+                const diff = await unpack(this.hisRec.diff, () => {
                     return this.getActualDataCache()
                 })
                 await new TabAction({ ...diff, id: id }, this.tableName, this.actionTag, trx).applyAction()
@@ -79,10 +79,10 @@ export class RecHistory {
 
     /**Генерирует события для данной истории */
     async genEvents() {
-        const getPresets = new GetPresets
+        const getPresets = new GetPresets()
         const actualPresets = await getPresets.getActualPresets()
         for (let element of actualPresets) {
-            await element.genEventsByHisRec(this.hisRec, await this.getActualDataCache())
+            await element.genEventsByHisRec(this.hisRec, await this.getActualDataCache(), this.trx)
         }
     }
 }

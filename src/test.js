@@ -168,10 +168,14 @@ const Device = require("./model/orm/device");
 //         //if (!valid) console.log(validate.errors)
 const Knex = require("knex")
 const dbConfig = require("../serverConfig").db;
-const Brand = require("./model/orm/brand");
+const Brand = require("./model/orm/brand").default;
 // const Event_confirm = require("./model/orm/event_confirm");
 // const dayjs = require("dayjs");
-
 const knex = Knex(dbConfig)
-Brand.query().insert({brand: "ddddd", "ddd":"ddd", d:{e:3}}).then(console.log)
+knex.transaction(async trx => {
+    Brand.setActorId(2)
+    await Brand.query(trx).insert({brand: "dd2dd222da22211"}).then(console.log)
+    await Brand.query(trx).insert({brand: "dd2dd222da11111"}).then(console.log)
+}).then(console.log)
+
 //console.log(dayjs("2011-09-07").toISOString())

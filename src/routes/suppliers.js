@@ -1,33 +1,30 @@
 "use strict"
 
 const express = require('express')
-const {
-    getTable,
-    insertTable,
-    updateTable,
-    send,
-    deleteTable,
-    getDevRelatedTabValueAssociatedCatId
-} = require('../model/libs/command')
-const Supplier = require('../model/orm/supplier')
+const { sendP } = require('../model/libs/command')
 const router = express.Router()
+const Table = require('../model/facade/facadeTabRelCat').default
 
 router.route('/suppliers')
-    .get((req, res, next) => {
+    .all((req, res, next) => {
+        this.myObj = new Table("Supplier", req.user.id)
+        next()
+    })
+    .get(async (req, res, next) => {
         const response = req.query.catId ?
-            getDevRelatedTabValueAssociatedCatId(Supplier)(req.query.catId) :
-            getTable(Supplier)
+            this.myObj.getByCatId(req.query.catId) :
+            this.myObj.get()
 
-        send(next)(res)(response)
+        sendP(next)(res)(response)
     })
     .post((req, res, next) => {
-        send(next)(res)(insertTable(Supplier)(req.body))
+        sendP(next)(res)(this.myObj.insertAndFetch(req.body))
     })
     .patch((req, res, next) => {
-        send(next)(res)(updateTable(Supplier)(req.body))
+        sendP(next)(res)(this.myObj.patchAndFetch(req.body))
     })
     .delete((req, res, next) => {
-        send(next)(res)(deleteTable(Supplier)(req.body.id))
+        sendP(next)(res)(this.myObj.delete(req.body.id))
     })
 
 module.exports = router

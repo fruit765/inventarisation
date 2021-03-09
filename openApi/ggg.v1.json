@@ -1,14 +1,25 @@
 {
-  "title": "ggg",
   "type": "object",
   "properties": {
-    "a": {
-      "type": "object",
-      "properties": {
-        "t": {
-          "type": "string"
-        }
-      }
+    "size": {
+      "title": "Объем",
+      "type": "number"
+    },
+    "interface": {
+      "type": "string",
+      "title": "Интерфейс",
+      "enum": [
+        "M.2",
+        "SATA"
+      ]
+    },
+    "type": {
+      "type": "string",
+      "title": "Тип",
+      "enum": [
+        "SSD",
+        "HDD"
+      ]
     }
   }
 }

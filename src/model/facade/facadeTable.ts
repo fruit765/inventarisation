@@ -3,20 +3,27 @@ import { NewRecHistory } from '../class/history/newRecHistory';
 import { recValidate } from '../class/recValidate';
 import { TabAction } from '../class/tabAction/tabAction';
 import { hasHistory } from '../libs/bindHisTabInfo';
+import { delUndefined } from '../libs/objectOp';
 import { getUnconfirm } from '../libs/outputTab';
 import { startTransOpt } from '../libs/transaction';
+import knex from '../orm/knexConf';
+import { CreateErr } from './../class/createErr';
 
 /**@classdesc Класс фасад, для работы с таблицами */
 export class FacadeTable {
-    private tableClass: any
     protected tableName: string
     private actorId: number
     private isSaveHistory?: boolean
     private initAttr?: Promise<boolean>
+    protected handleErr: CreateErr
 
-    constructor(tableClass: any, actorId: number, options?: { isSaveHistory?: boolean }) {
-        this.tableClass = tableClass
-        this.tableName = tableClass.tableName
+    constructor(tableName: string, actorId: number, options?: { isSaveHistory?: boolean }) {
+        this.handleErr = new CreateErr()
+        if (typeof tableName !== "string") {
+            throw this.handleErr.internalServerError("tableName is not a string")
+        }
+    
+        this.tableName = tableName.toLowerCase()
         this.actorId = actorId
         this.isSaveHistory = Boolean(options?.isSaveHistory ?? true)
         this.initAttr = undefined
@@ -36,35 +43,32 @@ export class FacadeTable {
     }
 
     /**Создает класс записи в таблицу, перед этим проводит необходимые действия */
-    protected async createTabAction(data: any, tableName: string, actionTag: string, trx: Transaction<any, any>) {
+    protected async applyAction(data: any, tableName: string, actionTag: string, trx: Transaction<any, any>) {
         await this.init()
         if (this.isSaveHistory) {
-            const validDataRaw = <any>await new recValidate(data, tableName, actionTag).validate()
-            const validDataId = validDataRaw.id
+            const validDataId = (<any>await new recValidate(data, tableName, actionTag).validate()).id
             const validData = {...data, id: validDataId}
             const newRecHistory = await new NewRecHistory(validData, tableName, actionTag, this.actorId, trx).create()
             const recHistory = newRecHistory.get()
             await recHistory.genEvents()
             await recHistory.tryCommit()
-            return new TabAction(validData, tableName, actionTag, trx)
+            return validDataId
         } else {
-            return new TabAction(data, tableName, actionTag, trx)
+            return new TabAction(data, tableName, actionTag, trx).applyAction()
         }
     }
 
     /**Добовляет данные в таблицу возвражает id записи */
     async insert(data: any, trxOpt?: Transaction<any, any>) {
         return startTransOpt(trxOpt, async trx => {
-            const x = await this.createTabAction(data, this.tableName, "insert", trx)
-            return x.applyAction()
+            return this.applyAction(data, this.tableName, "insert", trx)
         })
     }
 
     /**Обновляет данные в таблице возвражает id записи */
     async patch(data: any, trxOpt?: Transaction<any, any>) {
         return startTransOpt(trxOpt, async trx => {
-            const x = await this.createTabAction(data, this.tableName, "patch", trx)
-            return x.applyAction()
+            return await this.applyAction(data, this.tableName, "patch", trx)
         })
     }
 
@@ -83,13 +87,17 @@ export class FacadeTable {
     /**Удаляет данные по id */
     async delete(id: number, trxOpt?: Transaction<any, any>) {
         return startTransOpt(trxOpt, async trx => {
-            const x = await this.createTabAction({ id }, this.tableName, "delete", trx)
-            return x.applyAction()
+            return await this.applyAction({ id }, this.tableName, "delete", trx)
         })
     }
 
     /**Возвращает записи с неподтверденными данными */
     async getUnconfirm(id?: number) {
         return getUnconfirm(this.tableName, id)
+    }
+
+    /**Просто получить таблицу */
+    async get(id?: number) {
+        return knex(this.tableName).where(delUndefined({id}))
     }
 }

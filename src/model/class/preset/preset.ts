@@ -1,22 +1,23 @@
+import { Transaction } from "knex"
 import Event_confirm from "../../orm/event_confirm"
 import PresetAllCol from "./colPresetMatch/presetAllCol"
 
 /**@classdesc класс отвечающий за один пресет */
 export class Preset {
     private id: number
-    private presetAllCol: PresetAllCol
+    private presetAllCol?: PresetAllCol
+    private presetRec: any
 
     constructor(presetRec: any) {
+        this.presetRec = presetRec
         this.id = presetRec.id
-        this.presetAllCol = new PresetAllCol(presetRec.preset)
-        this.presetAllCol.init()
     }
 
     /** Проверяет запись в истории на соответствии пресету, если соответствует генерирует событие*/
-    async genEventsByHisRec(hisRec: any, actualData: any) {
-        await this.presetAllCol.init()
-        if (this.presetAllCol.match([hisRec.diff, actualData])) {
-            await <Promise<any>>Event_confirm.query()
+    async genEventsByHisRec(hisRec: any, actualData: any, trx: Transaction<any, any>) {
+        this.presetAllCol = this.presetAllCol ?? new PresetAllCol(this.presetRec.preset)
+        if (await this.presetAllCol.match([hisRec.diff, actualData])) {
+            await <Promise<any>>Event_confirm.query(trx)
                 .insert(
                     {
                         //@ts-ignore
@@ -28,4 +29,5 @@ export class Preset {
                 .ignore()
         }
     }
+
 }

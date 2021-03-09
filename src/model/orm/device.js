@@ -1,14 +1,7 @@
-'use strict'
-
-const Knex = require("knex")
-const dbConfig = require("../../../serverConfig").db
 const { Model } = require("objection")
+const SuperModel  = require("./superModel").default
 
-const knex = Knex(dbConfig)
-
-Model.knex(knex)
-
-module.exports = class Device extends Model {
+module.exports = class Device extends SuperModel {
     static get tableName() {
         return "device"
     }
@@ -20,8 +13,6 @@ module.exports = class Device extends Model {
         const Status = require("./status")
         const Location = require("./location")
         const User = require("./user")
-        const History = require("./history")
-        const Act = require("./act")
 
         return {
             brand: {
@@ -77,15 +68,6 @@ module.exports = class Device extends Model {
                     to: "user.id"
                 }
             },
-
-            // history: {
-            //     relation: Model.HasManyRelation,
-            //     modelClass: History,
-            //     join: {
-            //         from: "device.id",
-            //         to: "history.device_id"
-            //     }
-            // },
 
             parent: {
                 relation: Model.BelongsToOneRelation,

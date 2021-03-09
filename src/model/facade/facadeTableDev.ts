@@ -1,6 +1,5 @@
 import { Transaction } from "knex"
 import _ from "lodash"
-import { CreateErr } from "../class/createErr"
 import Category from "../orm/category"
 import Responsibility from "../orm/responsibility"
 import Ajv from "ajv"
@@ -8,18 +7,12 @@ import Status from "../orm/status"
 import CyrillicToTranslit from "cyrillic-to-translit-js"
 import { recValidate } from "../class/recValidate"
 import { FacadeTable } from "./facadeTable"
-import Device from "../orm/device"
+import knex from "../orm/knexConf"
 
 const ajv = new Ajv({ errorDataPath: 'property', coerceTypes: true, removeAdditional: "all" })
 const cyrillicToTranslit = new CyrillicToTranslit()
 
 export class FacadeTableDev extends FacadeTable {
-    private handleErr: CreateErr
-
-    constructor(tableClass: any, actorId: number, options: { isSaveHistory?: boolean }) {
-        super(tableClass, actorId, options)
-        this.handleErr = new CreateErr()
-    }
 
     /**
      * Добовляет данные в таблицу возвражает id записи
@@ -51,7 +44,7 @@ export class FacadeTableDev extends FacadeTable {
      */
     async patch(data: any, trxOpt?: Transaction<any, any>) {
         const dataClone = _.cloneDeep(data)
-        const categoryId = data.category_id ?? (await Device.query().findById(data.id)).category_id
+        const categoryId = data.category_id ?? (await <Promise<any>>knex(this.tableName).where("id", data.id).first()).category_id
         await this.specValidation(categoryId, dataClone.specifications)
         return super.patch(dataClone, trxOpt)
     }
@@ -63,8 +56,8 @@ export class FacadeTableDev extends FacadeTable {
         if (unconfirmStatus !== "stock") {
             throw this.handleErr.idWrong()
         }
-        const status_id = await Status.query().where("status", "given").first()
-        return this.patchAndFetch({ id: devId, user_id: userId, status_id: status_id })
+        const status = await Status.query().where("status", "given").first()
+        return this.patchAndFetch({ id: devId, user_id: userId, status_id: status.id })
     }
 
     /**Отвязывает оборудование от пользователя*/
@@ -77,8 +70,8 @@ export class FacadeTableDev extends FacadeTable {
         if (!await this.isUserWarehouseResponsible(userId)) {
             throw this.handleErr.userIdWrong()
         }
-        const status_id = await Status.query().where("status", "stock").first()
-        return this.patchAndFetch({ id: devId, user_id: userId, status_id: status_id })
+        const status = await Status.query().where("status", "stock").first()
+        return this.patchAndFetch({ id: devId, user_id: userId, status_id: status.id })
     }
 
     /**Проверка спецификации оборудования на схему в категории
