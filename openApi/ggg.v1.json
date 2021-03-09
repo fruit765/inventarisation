@@ -1,24 +1,12 @@
 {
   "type": "object",
   "properties": {
-    "size": {
-      "title": "Объем",
-      "type": "number"
-    },
-    "interface": {
+    "power": {
       "type": "string",
-      "title": "Интерфейс",
+      "title": "Мощьность",
       "enum": [
-        "M.2",
-        "SATA"
-      ]
-    },
-    "type": {
-      "type": "string",
-      "title": "Тип",
-      "enum": [
-        "SSD",
-        "HDD"
+        "500 Вт",
+        "1кВт"
       ]
     }
   }

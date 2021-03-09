@@ -1,17 +1,18 @@
-// import Brand from "../orm/brand"
-// import Device from "../orm/device"
-
+import Brand from "../orm/brand"
+import Device from "../orm/device"
 import knex from "../orm/knexConf"
 import _ from "lodash"
+import Employer from "../orm/employer"
 
-// /**Получаем класс таблицы по ее названию */
-// export function getTabClassByName(name:string) {
-//     const nameClass: any = {
-//         "device": Device,
-//         "brand": Brand
-//     }
-//     return nameClass[name.toLowerCase()]
-// }
+/**Получаем класс таблицы по ее названию */
+export function getTabClassByName(name:string) {
+    const nameClass: any = {
+        "device": Device,
+        "brand": Brand,
+        "employer": Employer
+    }
+    return nameClass[name.toLowerCase()]
+}
 
 /**Возвращает массив значений из первого столбца из запроса */
 async function selectSqlStrToValue(sqlString: any) {

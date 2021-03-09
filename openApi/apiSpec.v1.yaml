@@ -1227,7 +1227,8 @@ paths:
   /employers:
     get:
       summary: Получить список работодателей
-      tags: []
+      tags:
+        - departments
       responses:
         '200':
           description: OK
@@ -1243,8 +1244,76 @@ paths:
                       type: integer
                     employer:
                       type: string
+                  required:
+                    - id
+                    - employer
       operationId: get-employers
       description: Получить список работодателей
+    post:
+      summary: Добавление работодателей
+      operationId: post-employers
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  employer:
+                    type: string
+                required:
+                  - id
+                  - employer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                employer:
+                  type: string
+              required:
+                - employer
+      tags:
+        - departments
+      description: Добовление работодателей
+    patch:
+      summary: Изменение работодателей
+      operationId: patch-employers
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  employer:
+                    type: string
+                required:
+                  - id
+                  - employer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                is:
+                  type: string
+                employer:
+                  type: string
+              required:
+                - is
+                - employer
+      description: Изменение работодателей
+      tags:
+        - departments
   /acts:
     get:
       summary: Получение актов
@@ -1654,3 +1723,4 @@ tags:
   - name: accounts
   - name: acts
   - name: events
+  - name: departments
