@@ -12,6 +12,10 @@ const post_dep_loc_united = require('./routes/post_dep_loc_united')
 const dep_loc_united = require('./routes/dep_loc_united')
 const deviceAction = require('./routes/deviceAction')
 const employers = require('./routes/employers')
+const locations = require('./routes/locations')
+const posts = require('./routes/posts')
+const dep_loc = require('./routes/dep_loc')
+const post_dep_loc = require('./routes/post_dep_loc')
 
 const accounts = require('./routes/accounts')
 const account_types = require('./routes/account_types')
@@ -43,16 +47,21 @@ module.exports = function (app) {
     app.use(categories)
     app.use(users)
     app.use(command)
+    app.use(deviceAction)
+
+    app.use(posts)
+    app.use(employers)
+    app.use(locations)
     app.use(post_dep_loc_united)
     app.use(dep_loc_united)
-    app.use(deviceAction)
+    app.use(dep_loc)
+    app.use(post_dep_loc)
 
     app.use(accounts)
     app.use(account_types)
     app.use(accounts_owner)
 
     app.use(events)
-    app.use(employers)
 
     app.get("/test", async (req, res, next) => {
         const a = History.query()

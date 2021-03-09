@@ -5,9 +5,9 @@ const { sendP } = require('../model/libs/command')
 const router = express.Router()
 const Table = require('../model/facade/facadeTable').FacadeTable
 
-router.route('/employers')
+router.route('/posts')
     .all((req, res, next) => {
-        this.myObj = new Table("employer", req.user.id)
+        this.myObj = new Table("post", req.user.id)
         next()
     })
     .get(async (req, res, next) => {

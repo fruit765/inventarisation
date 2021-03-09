@@ -1163,13 +1163,105 @@ paths:
                   items:
                     type: integer
     parameters: []
-  /locations:
+  /posts:
     get:
-      summary: Получение списка локаций
-      tags: []
+      summary: Получить должностей
+      tags:
+        - departments
       responses:
         '200':
           description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    post:
+                      type: string
+                  required:
+                    - id
+                    - post
+      operationId: get-posts
+      description: Получить список должностей
+    post:
+      summary: Добавление должностей
+      operationId: post-posts
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  post:
+                    type: string
+                required:
+                  - id
+                  - post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                post:
+                  type: string
+              required:
+                - post
+      tags:
+        - departments
+      description: Добовление должностей
+    patch:
+      summary: Изменение должностей
+      operationId: patch-posts
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  post:
+                    type: string
+                required:
+                  - id
+                  - post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                is:
+                  type: integer
+                post:
+                  type: string
+              required:
+                - is
+                - post
+      description: Изменение локаций
+      tags:
+        - departments
+  /locations:
+    get:
+      summary: Получить список локаций
+      tags:
+        - departments
+      responses:
+        '200':
+          description: OK
+          headers: {}
           content:
             application/json:
               schema:
@@ -1181,12 +1273,81 @@ paths:
                       type: integer
                     location:
                       type: string
+                  required:
+                    - id
+                    - location
       operationId: get-locations
-      description: Получение списка локаций
+      description: Получить список работодателей
+    post:
+      summary: Добавление работодателей
+      operationId: post-locations
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  location:
+                    type: string
+                required:
+                  - id
+                  - location
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                location:
+                  type: string
+              required:
+                - location
+      tags:
+        - departments
+      description: Добовление локаций
+    patch:
+      summary: Изменение локаций
+      operationId: patch-locations
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  location:
+                    type: string
+                required:
+                  - id
+                  - location
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                is:
+                  type: integer
+                location:
+                  type: string
+              required:
+                - is
+                - location
+      description: Изменение локаций
+      tags:
+        - departments
   /post_dep_loc_united:
     get:
       summary: Получает список должностей
-      tags: []
+      tags:
+        - departments
       responses:
         '200':
           description: OK
@@ -1223,6 +1384,97 @@ paths:
               - all
           in: query
           name: status
+    parameters: []
+  /departments:
+    get:
+      summary: Получение имени отделов
+      tags:
+        - departments
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    department:
+                      type: string
+                  required:
+                    - id
+                    - department
+      operationId: get-departments
+      description: Получение имени отделов
+    post:
+      summary: Добавление имени отделов
+      operationId: post-departments
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  department:
+                    type: string
+                required:
+                  - id
+                  - department
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                department:
+                  type: string
+              required:
+                - department
+      tags:
+        - departments
+      description: Добовление имени отделов
+    patch:
+      summary: Изменение имени отделов
+      operationId: patch-departments
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  department:
+                    type: string
+                required:
+                  - id
+                  - department
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                is:
+                  type: number
+                department:
+                  type: string
+              required:
+                - is
+                - department
+      description: Изменение имени отделов
+      tags:
+        - departments
     parameters: []
   /employers:
     get:
@@ -1305,7 +1557,7 @@ paths:
               type: object
               properties:
                 is:
-                  type: string
+                  type: number
                 employer:
                   type: string
               required:
@@ -1314,6 +1566,7 @@ paths:
       description: Изменение работодателей
       tags:
         - departments
+    parameters: []
   /acts:
     get:
       summary: Получение актов
@@ -1617,7 +1870,8 @@ paths:
   /dep_loc_united:
     get:
       summary: Поличить список отделов
-      tags: []
+      tags:
+        - departments
       responses:
         '200':
           description: OK
@@ -1712,6 +1966,225 @@ paths:
               examples: {}
       operationId: get-events
       description: Пролучить события
+  /post_dep_loc:
+    get:
+      summary: Получить конкретную должность
+      tags:
+        - departments
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    dep_loc_id:
+                      type: integer
+                    post_id:
+                      type: integer
+                    free:
+                      type: integer
+                  required:
+                    - id
+                    - dep_loc_id
+                    - post_id
+                    - free
+      operationId: get-post_dep_loc
+      description: Получить конкретную должность
+    post:
+      summary: Добавление конкретную должность
+      operationId: post-post_dep_loc
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  dep_loc_id:
+                    type: integer
+                  post_id:
+                    type: integer
+                  free:
+                    type: integer
+                required:
+                  - id
+                  - dep_loc_id
+                  - post_id
+                  - free
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                dep_loc_id:
+                  type: integer
+                post_id:
+                  type: integer
+                free:
+                  type: integer
+              required:
+                - dep_loc_id
+                - post_id
+      tags:
+        - departments
+      description: Добовление конкретную должность
+    patch:
+      summary: Изменение конкретную должность
+      operationId: patch-post_dep_loc
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  free:
+                    type: integer
+                  post_id:
+                    type: integer
+                  dep_loc_id:
+                    type: integer
+                required:
+                  - id
+                  - free
+                  - post_id
+                  - dep_loc_id
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                dep_loc_id:
+                  type: integer
+                post_id:
+                  type: integer
+                id:
+                  type: integer
+                free:
+                  type: integer
+              required:
+                - id
+      description: Изменение конкретную должность
+      tags:
+        - departments
+  /dep_loc:
+    get:
+      summary: Получить отдел
+      tags:
+        - departments
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    department_id:
+                      type: integer
+                    location_id:
+                      type: integer
+                  required:
+                    - id
+                    - department_id
+                    - location_id
+      operationId: get-dep_loc
+      description: Получить отдел
+    post:
+      summary: Добавление отдела
+      operationId: post-dep_loc
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  department_id:
+                    type: integer
+                  location_id:
+                    type: integer
+                required:
+                  - id
+                  - department_id
+                  - location_id
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                department_id:
+                  type: integer
+                location_id:
+                  type: integer
+              required:
+                - department_id
+                - location_id
+      tags:
+        - departments
+      description: Добовление отдела
+    patch:
+      summary: Изменение отдела
+      operationId: patch-dep_loc
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  department_id:
+                    type: integer
+                  location_id:
+                    type: integer
+                required:
+                  - id
+                  - department_id
+                  - location_id
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                depatrment_id:
+                  type: integer
+                location_id:
+                  type: integer
+              required:
+                - id
+      description: Изменение отдела
+      tags:
+        - departments
 components:
   schemas: {}
   securitySchemes: {}

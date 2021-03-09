@@ -1,15 +1,23 @@
 import Brand from "../orm/brand"
 import Device from "../orm/device"
 import knex from "../orm/knexConf"
+import Post from "../orm/post"
 import _ from "lodash"
 import Employer from "../orm/employer"
+import Dep_loc from "../orm/dep_loc"
+import Post_dep_loc from "../orm/post_dep_loc"
+import Department from "../orm/department"
 
 /**Получаем класс таблицы по ее названию */
 export function getTabClassByName(name:string) {
     const nameClass: any = {
         "device": Device,
         "brand": Brand,
-        "employer": Employer
+        "employer": Employer,
+        "post": Post,
+        "dep_loc": Dep_loc,
+        "post_dep_loc": Post_dep_loc,
+        "department": Department
     }
     return nameClass[name.toLowerCase()]
 }
