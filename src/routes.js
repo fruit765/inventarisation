@@ -11,6 +11,7 @@ const command = require('./routes/command')
 const post_dep_loc_united = require('./routes/post_dep_loc_united')
 const dep_loc_united = require('./routes/dep_loc_united')
 const deviceAction = require('./routes/deviceAction')
+const employers = require('./routes/employers')
 
 const accounts = require('./routes/accounts')
 const account_types = require('./routes/account_types')
@@ -51,6 +52,7 @@ module.exports = function (app) {
     app.use(accounts_owner)
 
     app.use(events)
+    app.use(employers)
 
     app.get("/test", async (req, res, next) => {
         const a = History.query()

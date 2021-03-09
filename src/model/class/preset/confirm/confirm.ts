@@ -1,5 +1,5 @@
-export default class confirm {
-    constructor(confirm) {
-        
-    }
-}
+// export default class confirm {
+//     constructor(confirm) {
+
+//     }
+// }
