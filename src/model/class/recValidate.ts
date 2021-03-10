@@ -1,7 +1,7 @@
 import { Model } from 'objection';
 import TabAction from './tabAction';
 
-export class recValidate {
+export default class RecValidate {
     private tableName: string
     private data: any
     private actionTag: string

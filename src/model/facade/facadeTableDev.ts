@@ -5,7 +5,7 @@ import Responsibility from "../orm/responsibility"
 import Ajv from "ajv"
 import Status from "../orm/status"
 import CyrillicToTranslit from "cyrillic-to-translit-js"
-import { recValidate } from "../class/recValidate"
+import RecValidate from "../class/recValidate"
 import { FacadeTable } from "./facadeTable"
 import knex from "../orm/knexConf"
 
@@ -32,7 +32,7 @@ export class FacadeTableDev extends FacadeTable {
         const catName4 = String(category.category).slice(0, 4)
         const catName4Translit = cyrillicToTranslit.transform(catName4, "-")
         dataClone.status_id = dataClone.status_id ?? status_id
-        const valid = await new recValidate(dataClone, this.tableName, "insert").validate()
+        const valid = await new RecValidate(dataClone, this.tableName, "insert").validate()
         dataClone.id = valid.getId()
         dataClone.inv_number = dataClone.inv_number ?? category.inv_prefix ?? catName4Translit + valid.getId()
         return super.insert(dataClone, trxOpt)

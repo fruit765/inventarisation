@@ -1,6 +1,6 @@
 import { Transaction } from 'knex'
 import { NewRecHistory } from '../class/history/newRecHistory'
-import { recValidate } from '../class/recValidate'
+import RecValidate from '../class/recValidate'
 import TabAction from '../class/tabAction'
 import { hasHistory } from '../libs/bindHisTabInfo'
 import { delUndefined } from '../libs/objectOp'
@@ -46,7 +46,7 @@ export class FacadeTable {
     protected async applyAction(data: any, tableName: string, actionTag: string, trx: Transaction<any, any>) {
         await this.init()
         if (this.isSaveHistory) {
-            const validDataId = (<any>await new recValidate(data, tableName, actionTag).validate()).id
+            const validDataId = (<any>await new RecValidate(data, tableName, actionTag).validate()).id
             const validData = {...data, id: validDataId}
             const newRecHistory = await new NewRecHistory(validData, tableName, actionTag, this.actorId, trx).create()
             const recHistory = newRecHistory.get()
