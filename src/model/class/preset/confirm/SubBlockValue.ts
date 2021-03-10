@@ -2,7 +2,7 @@ import _ from "lodash"
 // import { getTabIdFromHis, getTabNameFromHis } from "../../../libs/bindHisTabInfo"
 import { sqlsToValues } from "../../../libs/queryHelper"
 import TempRep from "../tempRep"
-// import { CreateErr } from '../../createErr';
+// import CreateErr from '../../createErr';
 
 export default class SubBlockValue {
     private sql: string[]

@@ -1,5 +1,5 @@
 import { Model } from 'objection';
-import { TabAction } from './tabAction/tabAction';
+import TabAction from './tabAction';
 
 export class recValidate {
     private tableName: string

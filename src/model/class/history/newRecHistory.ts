@@ -1,10 +1,10 @@
-import { CreateErr } from './../createErr';
-import { Transaction } from 'knex';
+import CreateErr from './../createErr'
+import { Transaction } from 'knex'
 import Knex from "knex"
 import { db as dbConfig } from "../../../../serverConfig"
 import { pack } from "../../libs/packDiff"
-import History from '../../orm/history';
-import { RecHistory } from './recHistory';
+import History from '../../orm/history'
+import { RecHistory } from './recHistory'
 
 const knex = Knex(dbConfig)
 

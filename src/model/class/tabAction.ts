@@ -1,15 +1,14 @@
 import { Transaction } from "knex"
 import Knex from "knex"
-import { db as dbConfig } from "../../../../serverConfig"
-import { CreateErr } from "../createErr"
+import { db as dbConfig } from "../../../serverConfig"
+import CreateErr from "./createErr"
 import _ from "lodash"
-import { interfaces } from "../../../interfaces"
-import { delUndefinedDeep, stringifySubJSON } from "../../libs/objectOp"
+import { delUndefinedDeep, stringifySubJSON } from "../libs/objectOp"
 
 const knex = Knex(dbConfig)
 
 /**@classdesc Класс внесения изменений в DB */
-export class TabAction implements interfaces.tabAction{
+export default class TabAction {
 
     private tableName: string
     private data: any
@@ -22,57 +21,28 @@ export class TabAction implements interfaces.tabAction{
         this.data = data
         this.actionTag = actionTag
         this.trx = trx
-        this.errHandler = this.setErrorHandler()
+        this.errHandler = new CreateErr()
         if (this.data.id == undefined && actionTag !== "insert") {
-            throw new CreateErr().idEmpty()
+            throw this.errHandler.idEmpty()
         }
     }
 
-    getTableName(): string {
-        return this.tableName
-    }
-
-    getData(): any {
-        return this.data
-    }
-
-    getActionTag (): string {
-        return this.actionTag
-    }
-
-    getTrx(): Transaction<any, any> {
-        return this.trx
-    }
-
-    setData(data: any): void {
-        this.data = data
-    }
-
-    setTrx(trx: Transaction<any, any>): void {
-        this.trx = trx
-    }
-
-    /**Устанавливает класс обработчик ошибок */
-    private setErrorHandler() {
-        return new CreateErr()
-    }
-
     /**Обновляет поле в таблице */
-    private async patch() {
+    private async patch(): Promise<number> {
         const query = this.trx ? knex(this.tableName).transacting(this.trx) : knex(this.tableName)
         const rdyData = stringifySubJSON(this.data)
-        let patchData =  delUndefinedDeep(_.omit(rdyData, "id"))
+        let patchData = delUndefinedDeep(_.omit(rdyData, "id"))
         if (!_.isEmpty(patchData)) {
             const resPatch = await <Promise<number>>query.where({ id: rdyData.id }).update(patchData)
             if (!resPatch) {
-                throw new CreateErr().idWrong()
+                throw this.errHandler.idWrong()
             }
         }
         return <number>rdyData.id
     }
 
     /**Добовляет поле в таблицу */
-    private async insert() {
+    private async insert(): Promise<number> {
         const rdyData = stringifySubJSON(this.data)
         const query = this.trx ? knex(this.tableName).transacting(this.trx) : knex(this.tableName)
         const insRes = await <Promise<any>>query.insert(rdyData)
@@ -80,11 +50,11 @@ export class TabAction implements interfaces.tabAction{
     }
 
     /**Удаляет поле из таблицы */
-    private async delete() {
+    private async delete(): Promise<number> {
         const query = this.trx ? knex(this.tableName).transacting(this.trx) : knex(this.tableName)
         const resDel = await <Promise<number>>query.where({ id: this.data.id }).del()
         if (!resDel) {
-            throw new CreateErr().idWrong()
+            throw this.errHandler.idWrong()
         }
         return <number>this.data.id
     }

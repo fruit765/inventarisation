@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { getTabIdFromHis, getTabNameFromHis } from '../../libs/bindHisTabInfo'
 import { hasCol, sqlsToValues } from '../../libs/queryHelper'
-import { CreateErr } from './../createErr'
+import CreateErr from './../createErr'
 
 export default class TempRep {
     private hisRec: any

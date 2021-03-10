@@ -1,16 +1,16 @@
-import { CreateErr } from './../createErr';
+import CreateErr  from './../createErr'
 import { getTabIdFromHis, getTabNameFromHis } from "../../libs/bindHisTabInfo"
-import { Transaction } from 'knex';
-import { startTransOpt } from '../../libs/transaction';
-import Event_confirm from '../../orm/event_confirm';
-import History from '../../orm/history';
-import dayjs from 'dayjs';
+import { Transaction } from 'knex'
+import { startTransOpt } from '../../libs/transaction'
+import Event_confirm from '../../orm/event_confirm'
+import History from '../../orm/history'
+import dayjs from 'dayjs'
 import { unpack } from '../../libs/packDiff'
 import Knex from "knex"
 import { db as dbConfig } from "../../../../serverConfig"
-import { TabAction } from '../tabAction/tabAction';
-import _ from 'lodash';
-import { GetPresets } from '../preset/getPresets';
+import TabAction from '../tabAction'
+import _ from 'lodash'
+import { GetPresets } from '../preset/getPresets'
 
 const knex = Knex(dbConfig)
 

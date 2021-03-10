@@ -1,5 +1,5 @@
 import createError from 'http-errors'
-export class CreateErr {
+export default class CreateErr {
 
     /**Создает ошибку */
     createError(...args: any[]) {
