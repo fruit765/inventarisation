@@ -57,6 +57,7 @@ module.exports = function (app) {
     app.use(dep_loc_united)
     app.use(dep_loc)
     app.use(post_dep_loc)
+    app.use(departments)
 
     app.use(accounts)
     app.use(account_types)
