@@ -16,6 +16,7 @@ const locations = require('./routes/locations')
 const posts = require('./routes/posts')
 const dep_loc = require('./routes/dep_loc')
 const post_dep_loc = require('./routes/post_dep_loc')
+const departments = require('./routes/departments')
 
 const accounts = require('./routes/accounts')
 const account_types = require('./routes/account_types')
