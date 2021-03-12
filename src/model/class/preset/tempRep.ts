@@ -4,10 +4,10 @@ import { hasCol, sqlsToValues } from '../../libs/queryHelper'
 import CreateErr from './../createErr'
 
 export default class TempRep {
-    private hisRec: any
-    private tableId: number
-    private table: string
-    private handleErr: CreateErr
+    private readonly hisRec: any
+    private readonly tableId: number
+    private readonly table: string
+    private readonly handleErr: CreateErr
 
     constructor(hisRec: any) {
         this.handleErr = new CreateErr()

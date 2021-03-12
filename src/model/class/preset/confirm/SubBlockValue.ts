@@ -1,34 +1,20 @@
 import _ from "lodash"
-// import { getTabIdFromHis, getTabNameFromHis } from "../../../libs/bindHisTabInfo"
-import { sqlsToValues } from "../../../libs/queryHelper"
+import {sqlsToValues} from "../../../libs/queryHelper"
 import TempRep from "../tempRep"
-// import CreateErr from '../../createErr';
 
 export default class SubBlockValue {
-    private sql: string[]
-    private value: any[]
-    // private hisRec: any
-    // private tableId: number
-    // private table: string
-    //private handleErr: CreateErr
+    private readonly sql: string[]
+    private value: (string | number)[]
     private initAttr?: Promise<boolean>
     private tempRep: TempRep
 
     constructor(valueBlock: any, tempRep: TempRep) {
         this.tempRep = tempRep
-        //this.handleErr = new CreateErr()
-        this.value = this.castValToFlatArr(valueBlock.value)
-        this.sql = this.castValToFlatArr(valueBlock.sql)
-        // this.hisRec = hisRec
-        // const tableId = getTabIdFromHis(hisRec)
-        // const table = getTabNameFromHis(hisRec)
-        // if (!tableId || !table) {
-        //     throw this.handleErr.internalServerError()
-        // }
-        // this.tableId = tableId
-        // this.table = table
+        this.value = this.warpToArray(valueBlock.value)
+        this.sql = this.warpToArray(valueBlock.sql)
     }
 
+    /**Совершает все шаги для генерации массива значений id в values*/
     private async init() {
         if (this.initAttr) {
             return this.initAttr
@@ -37,22 +23,21 @@ export default class SubBlockValue {
                 await this.subsValue(this.sql)
                 await this.subsValue(this.value)
                 await this.sqlToValue()
-                this.value = this.arryStrToNum(this.value)
+                this.value = this.toNumArray(this.value)
                 return true
             }
             this.initAttr = fn()
         }
     }
 
-    /**Преобразует в массиве любые значения на строки 
-     * перед этим разглаживает массив*/
-    private arryStrToNum(values: any[]) {
+    /**Преобразует все строковые значения в массиве в числа */
+    private toNumArray(values: (string|number)[]): number[] {
         return _.map(_.flattenDeep(values), Number)
     }
 
     /**подготавливает значения, если значение примитивное заменяет на массив с этим значением
      * если нет пытается разгладит объект*/
-    private castValToFlatArr(val: any): any[] {
+    private warpToArray(val: any): any[] {
         if (val == undefined) {
             return []
         } else if (typeof val !== "object") {
@@ -62,7 +47,7 @@ export default class SubBlockValue {
         }
     }
 
-    /**Изменяет массив если в нем найдуться строки со значениями для замены, заменит их на значения */
+    /**Ищет в строках массивов шаблоны и меняет их на значения*/
     private async subsValue(val: any[]) {
         for (let key in val) {
             if (_.isString(val)) {
@@ -72,7 +57,7 @@ export default class SubBlockValue {
     }
 
 
-    /**Делает запросы переводя все sql значения в обычные value*/
+    /**Преобразует sql строки в значения*/
     private async sqlToValue() {
         const sqlVal = await sqlsToValues(this.sql)
         this.value = _.concat(this.value, sqlVal)
@@ -88,7 +73,7 @@ export default class SubBlockValue {
     /**Получает массив или значение если его можно считать подтверждением выдает true */
     async isNeedConfirm(val: any) {
         await this.init()
-        const value = this.castValToFlatArr(val)
+        const value = this.warpToArray(val)
         for (let key in value) {
             if (this.value.includes(value[key])) {
                 return false
@@ -97,7 +82,7 @@ export default class SubBlockValue {
         return true
     }
 
-    /**Получает массив или значение если его можно считать 
+    /**Получает массив или значение если его можно считать
      * подтверждением выдает пустой массив иначе массив значений кто должен подтвердить */
     async getNeedConfirm(val: any) {
         if (await this.isNeedConfirm(val)) {
