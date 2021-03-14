@@ -1,6 +1,6 @@
 import dayjs from "dayjs"
 import Event_confirm_preset from "../../orm/event_confirm_preset"
-import { Preset } from "./preset"
+import Preset from "./Preset"
 
 /**@classdesc Класс отвечающий за получение экземпляров присетов */
 export class GetPresets {

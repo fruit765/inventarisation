@@ -1,9 +1,9 @@
 import { Transaction } from "knex"
-import Event_confirm from "../../orm/event_confirm"
-import PresetAllCol from "./colPresetMatch/presetAllCol"
+import Event_confirm from "../../orm/event_confirm";
+import PresetAllCol from './colPresetMatch/presetAllCol';
 
-/**@classdesc класс отвечающий за один пресет */
-export class Preset {
+/**@classdesc класс отечающий за один пресет */
+export default class Preset {
     private id: number
     private presetAllCol?: PresetAllCol
     private presetRec: any
@@ -29,5 +29,4 @@ export class Preset {
                 .ignore()
         }
     }
-
 }
