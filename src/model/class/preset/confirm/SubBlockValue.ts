@@ -1,37 +1,35 @@
 import _ from "lodash"
-import {sqlsToValues} from "../../../libs/queryHelper"
+import { initAttr, startInit } from "../../../libs/initHelper"
+import { sqlsToValues } from "../../../libs/queryHelper"
 import TempRep from "../tempRep"
 
 export default class SubBlockValue {
     private readonly sql: string[]
     private value: (string | number)[]
-    private initAttr?: Promise<boolean>
-    private tempRep: TempRep
+    private initAttr?: initAttr
+    private readonly tempRep: TempRep
 
-    constructor(valueBlock: any, tempRep: TempRep) {
+    constructor(valueBlock: {
+        sql: string | string[],
+        value: string | number | string[] | number[]
+    }, tempRep: TempRep) {
         this.tempRep = tempRep
         this.value = this.warpToArray(valueBlock.value)
         this.sql = this.warpToArray(valueBlock.sql)
     }
 
     /**Совершает все шаги для генерации массива значений id в values*/
-    private async init() {
-        if (this.initAttr) {
-            return this.initAttr
-        } else {
-            const fn = async () => {
-                await this.subsValue(this.sql)
-                await this.subsValue(this.value)
-                await this.sqlToValue()
-                this.value = this.toNumArray(this.value)
-                return true
-            }
-            this.initAttr = fn()
-        }
+    private init() {
+        return startInit(this.initAttr, async () => {
+            await this.subsValue(this.sql)
+            await this.subsValue(this.value)
+            await this.sqlToValue()
+            this.value = this.toNumArray(this.value)
+        })
     }
 
     /**Преобразует все строковые значения в массиве в числа */
-    private toNumArray(values: (string|number)[]): number[] {
+    private toNumArray(values: (string | number)[]): number[] {
         return _.map(_.flattenDeep(values), Number)
     }
 
@@ -71,7 +69,7 @@ export default class SubBlockValue {
     }
 
     /**Получает массив или значение если его можно считать подтверждением выдает true */
-    async isNeedConfirm(val: any) {
+    async isNeedConfirm(val: number | number[]) {
         await this.init()
         const value = this.warpToArray(val)
         for (let key in value) {
@@ -84,7 +82,7 @@ export default class SubBlockValue {
 
     /**Получает массив или значение если его можно считать
      * подтверждением выдает пустой массив иначе массив значений кто должен подтвердить */
-    async getNeedConfirm(val: any) {
+    async getNeedConfirm(val: number | number[]) {
         if (await this.isNeedConfirm(val)) {
             return this.value
         } else {

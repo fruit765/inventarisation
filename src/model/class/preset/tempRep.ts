@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import { tableRec } from '../../../type/type'
 import { getTabIdFromHis, getTabNameFromHis } from '../../libs/bindHisTabInfo'
 import { hasCol, sqlsToValues } from '../../libs/queryHelper'
 import CreateErr from './../createErr'
@@ -9,7 +10,7 @@ export default class TempRep {
     private readonly table: string
     private readonly handleErr: CreateErr
 
-    constructor(hisRec: any) {
+    constructor(hisRec: tableRec.history) {
         this.handleErr = new CreateErr()
         this.hisRec = hisRec
         const tableId = getTabIdFromHis(hisRec)
@@ -21,6 +22,7 @@ export default class TempRep {
         this.table = table
     }
 
+    /**Заменяет все шаблоны в строке на значения */
     async resolveStr(val: string) {
         const presetVal = val.match(/(?<=\${).+(?=})/gi) ?? []
         for (let value of presetVal) {
@@ -48,7 +50,7 @@ export default class TempRep {
     }
 
     /**Возвращает значение по шаблону */
-    async getVal(path: string) {
+    private async getVal(path: string) {
         if (path === "table") {
             return [this.table]
         } else if (path === "table_id") {
