@@ -6,6 +6,7 @@ import History from "../../orm/history"
 import RecEvent from './RecEvent' 
 
 export default class GetEvents {
+
     async getEventsAll() {
         let eventClasses = []
         const allEvents: tableRec.event[] = <any>await Event_confirm.query()
@@ -16,8 +17,8 @@ export default class GetEvents {
         for (let value of allEvents) {
             eventClasses.push(new RecEvent(
                 value, 
-                allHistoryIndex[value.event_confirm_preset_id], 
-                allPresetIndex[value.history_id]))
+                allHistoryIndex[String(value.history_id)], 
+                allPresetIndex[String(value.event_confirm_preset_id)]))
         }
         return eventClasses
     }

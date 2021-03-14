@@ -2,7 +2,7 @@ import { tableRec } from "../../../type/type"
 import { getTabIdFromHis } from "../../libs/bindHisTabInfo"
 import { initAttr, startInit } from "../../libs/initHelper";
 import CreateErr from './../createErr';
-import ConfirmCheck from "../preset/confirm/ConfirmCheck";
+//import ConfirmCheck from "../preset/confirm/ConfirmCheck";
 
 export default class RecEvent {
 
@@ -11,7 +11,7 @@ export default class RecEvent {
     private eventRec: tableRec.event
     private hisRec: tableRec.history
     private presetRec: tableRec.preset
-    private confirmCheck: ConfirmCheck
+    //private confirmCheck: ConfirmCheck
     private other: {
         table_id: number
         confirm_need: Record<any, any>
@@ -29,7 +29,7 @@ export default class RecEvent {
         this.eventRec = eventRec
         this.hisRec = hisRec
         this.presetRec = presetRec
-        this.confirmCheck = new ConfirmCheck(this.presetRec.confirm, hisRec)
+        //this.confirmCheck = new ConfirmCheck(presetRec.confirm, hisRec)
 
         const tableId = getTabIdFromHis(hisRec)
 
@@ -68,7 +68,7 @@ export default class RecEvent {
 
     async get() {
         await this.init()
-        return {
+        const res = {
             history_id: this.eventRec.history_id,
             event_confirm_preset_id: this.eventRec.event_confirm_preset_id,
             status: this.eventRec.status,
@@ -85,5 +85,6 @@ export default class RecEvent {
             confirm_reject: this.other.confirm_reject,
             //additional: { device_user_id: eventHistory.diff.user_id },
         }
+        return res
     }
 }

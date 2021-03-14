@@ -1,6 +1,6 @@
 // import BlockGroup from "./blockGroup"
 
-// export default class BlockConf {
+// export default class ConfirmBlock {
 //     private block: any
 //     private blockRaw: any
 //     private blockGroup: BlockGroup
