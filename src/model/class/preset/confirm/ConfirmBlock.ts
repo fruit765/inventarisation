@@ -1,44 +1,20 @@
-// import BlockGroup from "./blockGroup"
+import SubBlockGroup from './SubBlockGroup'
+import SubBlockValue from './SubBlockValue';
+import SubBlockType from './SubBlockType';
 
-// export default class ConfirmBlock {
-//     private block: any
-//     private blockRaw: any
-//     private blockGroup: BlockGroup
+export default class ConfirmBlock {
 
-//     constructor(confirmBlock: any) {
-//         this.blockRaw = confirmBlock
-//         this.blockGroup = new BlockGroup(confirmBlock.group)
-//         this.blockValue = 
-//         this.initBlock()
-//     }
+    private subBlockGroup: SubBlockGroup
+    private SubBlockValue: SubBlockValue
+    private SubBlockType: SubBlockType
 
-//     initBlock() {
-//         this.block = this.blockRaw
-//         this.block.group = this.blockGroup.get()
-//     }
+    constructor(element, hisRec) {
+        this.subBlockGroup = new SubBlockGroup()
+        this.subBlockValue = new SubBlockValue()
+        this.subBlockType = new SubBlockType()
+    }
 
-//     /**Это поле отклонено?*/
-//     isReject(confirm: any) {
-//         return confirm.action === "reject"
-//     }
+    getNeedConfirm(confirm) {
 
-//     /**это поле подтверждено? */
-//     private isConfirm(confirm: any) {
-//         const isNoReject = confirm.action !== "reject"
-//         const isNoUndef = confirm.id != undefined
-//         const incVal = this.block.value.includes(confirm.id)
-//         if (isNoReject && isNoUndef && incVal) {
-//             return true
-//         }
-//         return false
-//     }
-
-//     /**Если подтверждение требуется возвратит блок подтверждения */
-//     getNeedConfirm(confirm: any) {
-//         if (this.isConfirm(confirm) || this.isReject(confirm)) {
-//             return undefined
-//         } else {
-//             return this.block
-//         }
-//     }
-// }
+    }
+}

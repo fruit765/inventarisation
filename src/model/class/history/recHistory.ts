@@ -10,7 +10,7 @@ import Knex from "knex"
 import { db as dbConfig } from "../../../../serverConfig"
 import TabAction from '../tabAction'
 import _ from 'lodash'
-import { GetPresets } from '../preset/getPresets'
+import { GetPresets } from '../preset/GetPresets'
 
 const knex = Knex(dbConfig)
 
