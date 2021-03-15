@@ -1,8 +1,10 @@
 import { tableRec } from "../../../type/type"
 import { getTabIdFromHis } from "../../libs/bindHisTabInfo"
-import { initAttr, startInit } from "../../libs/initHelper";
-import CreateErr from './../createErr';
-//import ConfirmCheck from "../preset/confirm/ConfirmCheck";
+import { initAttr, startInit } from "../../libs/initHelper" 
+import { uniqObjToBoolObj } from "../../libs/objectOp"
+import CreateErr from './../createErr' 
+import ConfirmCheck from './../preset/confirm/ConfirmCheck' 
+import Preset from './../preset/Preset';
 
 export default class RecEvent {
 
@@ -11,7 +13,8 @@ export default class RecEvent {
     private eventRec: tableRec.event
     private hisRec: tableRec.history
     private presetRec: tableRec.preset
-    //private confirmCheck: ConfirmCheck
+    private confirmCheck: ConfirmCheck
+
     private other: {
         table_id: number
         confirm_need: Record<any, any>
@@ -29,7 +32,7 @@ export default class RecEvent {
         this.eventRec = eventRec
         this.hisRec = hisRec
         this.presetRec = presetRec
-        //this.confirmCheck = new ConfirmCheck(presetRec.confirm, hisRec)
+        this.confirmCheck = new Preset(presetRec).getConfirmCheck(hisRec)
 
         const tableId = getTabIdFromHis(hisRec)
 
@@ -48,22 +51,21 @@ export default class RecEvent {
 
     init() {
         return startInit(this.initAttr, async () => {
-            // this.other.confirm_need = await this.confirmCheck.getNeedConfirm(this.eventRec)
-            // this.other.confirm_reject = await this.confirmCheck.getReject(this.eventRec)
-            // this.other.confirm_accept = await this.confirmCheck.getAccept(this.eventRec)
-            // this.other.personal_ids = await this.confirmCheck.getPersonal(this.eventRec)
+            this.other.confirm_need = await this.confirmCheck.getNeedConfirm(this.eventRec.confirm)
+            this.other.confirm_need?.forEach((element: any) => {
+                element.user_id = uniqObjToBoolObj(element.user_id)
+            })
+            this.other.confirm_accept = await this.confirmCheck.getAccept(this.eventRec.confirm)
+            this.other.confirm_accept?.forEach((element: any) => {
+                element.user_id = uniqObjToBoolObj(element.user_id)
+            })
+            this.other.confirm_reject = await this.confirmCheck.getReject(this.eventRec.confirm)
+            this.other.confirm_reject?.forEach((element: any) => {
+                element.user_id = uniqObjToBoolObj(element.user_id)
+            })
+            this.other.personal_ids = await this.confirmCheck.getPersonal(this.eventRec.confirm)
+            this.other.personal_ids = uniqObjToBoolObj(this.other.personal_ids)
         })
-    }
-
-    /**{"a":2,"b":3, "1":5} => {2: true, 3: true, 5:true}*/
-    private uniqObjToBoolObj(obj: { [key: string]: number }): { [key: number]: boolean } {
-        const boolObj: any = {}
-        for (let key in obj) {
-            if (obj[key]) {
-                boolObj[obj[key]] = true
-            }
-        }
-        return boolObj
     }
 
     async get() {
@@ -79,7 +81,7 @@ export default class RecEvent {
             name: this.presetRec.name,
             name_rus: this.presetRec.name_rus,
             table_id: this.other.table_id,
-            personal_ids: this.uniqObjToBoolObj(this.other.personal_ids),
+            personal_ids: this.other.personal_ids,
             confirm_need: this.other.confirm_need,
             confirm: this.other.confirm_accept,
             confirm_reject: this.other.confirm_reject,

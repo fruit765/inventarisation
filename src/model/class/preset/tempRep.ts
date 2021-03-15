@@ -2,7 +2,7 @@ import _ from 'lodash'
 import { tableRec } from '../../../type/type'
 import { getTabIdFromHis, getTabNameFromHis } from '../../libs/bindHisTabInfo'
 import { hasCol, sqlsToValues } from '../../libs/queryHelper'
-import CreateErr from './../createErr'
+import CreateErr from '../createErr'
 
 export default class TempRep {
     private readonly hisRec: any
@@ -27,9 +27,10 @@ export default class TempRep {
         const presetVal = val.match(/(?<=\${).+(?=})/gi) ?? []
         for (let value of presetVal) {
             const resolve = await this.getVal(value)
-            val = val.replace(new RegExp("${" + value + "}", "gi"), resolve[0])
+            val = val.replace(new RegExp("\\${" + value + "}", "gi"), resolve[0])
         }
-        return val
+
+        return  val
     }
 
     /**Возвращает значение полученное из diff
@@ -39,7 +40,7 @@ export default class TempRep {
         if (value === undefined) {
             const subPath = path.match(/(?<=diff.).+/gi)
             if (subPath?.[0] && await hasCol(this.table, subPath?.[0])) {
-                const sql = `select ${this.table}.${subPath} from ${this.table}`
+                const sql = `select ${this.table}.${subPath} from ${this.table} where id = ${this.tableId}`
                 return sqlsToValues(sql)
             } else {
                 return []

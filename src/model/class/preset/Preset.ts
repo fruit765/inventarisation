@@ -1,6 +1,9 @@
 import { Transaction } from "knex"
+import { tableRec } from "../../../type/type";
 import Event_confirm from "../../orm/event_confirm";
 import PresetAllCol from './colPresetMatch/presetAllCol';
+import ConfirmCheck from './confirm/ConfirmCheck';
+import TempRep from './TempRep';
 
 /**@classdesc класс отечающий за один пресет */
 export default class Preset {
@@ -28,5 +31,9 @@ export default class Preset {
                 .onConflict()
                 .ignore()
         }
+    }
+
+    getConfirmCheck (hisRec: tableRec.history) {
+        return new ConfirmCheck(this.presetRec.confirm, new TempRep(hisRec))
     }
 }

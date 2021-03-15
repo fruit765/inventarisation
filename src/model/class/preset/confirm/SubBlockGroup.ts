@@ -1,6 +1,6 @@
 import { startInit, initAttr } from '../../../libs/initHelper'
 import { sqlsToValues } from '../../../libs/queryHelper'
-import TempRep from './../tempRep'
+import TempRep from '../TempRep'
 
 type groupRec = {
     sql?: string

@@ -21,6 +21,17 @@ function delUndefinedDeep(x: any) {
     return y
 }
 
+/**{"a":2,"b":3, "1":5} => {2: true, 3: true, 5:true}*/
+function uniqObjToBoolObj(obj: { [key: string]: number }): { [key: number]: boolean } {
+    const boolObj: any = {}
+    for (let key in obj) {
+        if (obj[key]) {
+            boolObj[obj[key]] = true
+        }
+    }
+    return boolObj
+}
+
 /**Применяет JSON.stringify ко всем вложенным объектам*/
 function stringifySubJSON(data: any) {
     const fillteredData: any = {}
@@ -34,4 +45,4 @@ function stringifySubJSON(data: any) {
     return fillteredData
 }
 
-export { delUndefined, stringifySubJSON, delUndefinedDeep }
+export { delUndefined, stringifySubJSON, delUndefinedDeep, uniqObjToBoolObj }

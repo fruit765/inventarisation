@@ -1,7 +1,7 @@
 import _ from "lodash"
 import { initAttr, startInit } from "../../../libs/initHelper"
 import { sqlsToValues } from "../../../libs/queryHelper"
-import TempRep from "../tempRep"
+import TempRep from "../TempRep"
 
 export default class SubBlockValue {
     private readonly sql: string[]
@@ -48,8 +48,8 @@ export default class SubBlockValue {
     /**Ищет в строках массивов шаблоны и меняет их на значения*/
     private async subsValue(val: any[]) {
         for (let key in val) {
-            if (_.isString(val)) {
-                val[key] = await this.tempRep.resolveStr(val[key])
+            if (_.isString(val[key])) {
+                val[Number(key)] = await this.tempRep.resolveStr(val[key])
             }
         }
     }
@@ -69,24 +69,24 @@ export default class SubBlockValue {
     }
 
     /**Получает массив или значение если его можно считать подтверждением выдает true */
-    async isNeedConfirm(val: number | number[]) {
+    async isConfirm(val: number | number[]) {
         await this.init()
         const value = this.warpToArray(val)
         for (let key in value) {
             if (this.value.includes(value[key])) {
-                return false
+                return true
             }
         }
-        return true
+        return false
     }
 
-    /**Получает массив или значение если его можно считать
-     * подтверждением выдает пустой массив иначе массив значений кто должен подтвердить */
-    async getNeedConfirm(val: number | number[]) {
-        if (await this.isNeedConfirm(val)) {
-            return this.value
-        } else {
-            return this.getConfirm()
-        }
-    }
+    // /**Получает массив или значение если его можно считать
+    //  * подтверждением выдает пустой массив иначе массив значений кто должен подтвердить */
+    // async getNeedConfirm(val: number | number[]) {
+    //     if (await this.isConfirm(val)) {
+    //         return this.value
+    //     } else {
+    //         return this.getConfirm()
+    //     }
+    // }
 }

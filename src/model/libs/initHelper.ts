@@ -7,7 +7,7 @@ async function startInit(initAttr: initAttr, fn: () => void | Promise<void>) {
         return initAttr?.init
     } else {
         initAttr = {}
-        return _.set(initAttr, "init", Promise.resolve(fn()))
+        return initAttr.init = (async () => await fn())()
     }
 }
 

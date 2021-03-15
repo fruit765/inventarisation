@@ -36,3 +36,10 @@ export namespace tableRec  {
         status_id: null | string
     }
 }
+
+export namespace classInterface {
+    export interface typeStrategy {
+        isConfirm: (type: any) => Promise<boolean>
+        isReject: (type: any) => Promise<boolean>
+    }
+}
