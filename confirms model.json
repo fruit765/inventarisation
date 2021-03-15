@@ -40,9 +40,11 @@
         "confirms": {
             "0": {
                 "id": 1,
-                "type": "simple",
                 "date": "2021-02-18 00:15:26",
-                "action": "reject"
+                "type": {
+                    "action": "accept",
+                    "type": "simple"
+                }
             },
             "1": {
                 "id": 2,
