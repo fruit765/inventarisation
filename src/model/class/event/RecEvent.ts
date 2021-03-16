@@ -14,6 +14,7 @@ export default class RecEvent {
     private hisRec: tableRec.history
     private presetRec: tableRec.preset
     private confirmCheck: ConfirmCheck
+    private addition: Addition
 
     private other: {
         table_id: number
@@ -21,6 +22,7 @@ export default class RecEvent {
         confirm_accept: Record<any, any>
         confirm_reject: Record<any, any>
         personal_ids: Record<any, any>
+        additional: Record<any, any>
     }
 
     constructor(
@@ -32,7 +34,9 @@ export default class RecEvent {
         this.eventRec = eventRec
         this.hisRec = hisRec
         this.presetRec = presetRec
-        this.confirmCheck = new Preset(presetRec).getConfirmCheck(hisRec)
+        const preset = new Preset(presetRec)
+        this.confirmCheck = preset.getConfirmCheck(hisRec)
+        this.addition = preset.getAddition(hisRec)
 
         const tableId = getTabIdFromHis(hisRec)
 
@@ -42,10 +46,11 @@ export default class RecEvent {
 
         this.other = {
             table_id: tableId,
-            confirm_need: {},
-            confirm_accept: {},
-            confirm_reject: {},
-            personal_ids: {}
+            confirm_need: [],
+            confirm_accept: [],
+            confirm_reject: [],
+            personal_ids: [],
+            additional: []
         }
     }
 
@@ -65,6 +70,7 @@ export default class RecEvent {
             })
             this.other.personal_ids = await this.confirmCheck.getPersonal(this.eventRec.confirm)
             this.other.personal_ids = uniqObjToBoolObj(this.other.personal_ids)
+            this.other.additional = await this.addition.get()
         })
     }
 
@@ -85,7 +91,7 @@ export default class RecEvent {
             confirm_need: this.other.confirm_need,
             confirm: this.other.confirm_accept,
             confirm_reject: this.other.confirm_reject,
-            //additional: { device_user_id: eventHistory.diff.user_id },
+            additional: this.other.additional,
         }
         return res
     }
