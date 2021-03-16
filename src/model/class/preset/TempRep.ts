@@ -1,11 +1,11 @@
 import _ from 'lodash'
-import { tableRec } from '../../../type/type'
+import { tableRec, classInterface } from '../../../type/type'
 import { getTabIdFromHis, getTabNameFromHis } from '../../libs/bindHisTabInfo'
 import { hasCol, sqlsToValues } from '../../libs/queryHelper'
 import CreateErr from '../createErr'
 
-export default class TempRep {
-    private readonly hisRec: any
+export default class TempRep implements classInterface.templateReplace {
+    private readonly hisRec: tableRec.history
     private readonly tableId: number
     private readonly table: string
     private readonly handleErr: CreateErr
@@ -23,19 +23,19 @@ export default class TempRep {
     }
 
     /**Заменяет все шаблоны в строке на значения */
-    async resolveStr(val: string) {
-        const presetVal = val.match(/(?<=\${).+(?=})/gi) ?? []
+    async replaceStr(str: string) {
+        const presetVal = str.match(/(?<=\${).+(?=})/gi) ?? []
         for (let value of presetVal) {
             const resolve = await this.getVal(value)
-            val = val.replace(new RegExp("\\${" + value + "}", "gi"), resolve[0])
+            str = str.replace(new RegExp("\\${" + value + "}", "gi"), resolve[0])
         }
 
-        return  val
+        return str
     }
 
     /**Возвращает значение полученное из diff
      * Если значения не будет попробуйет получить его из изменяемой таблицы*/
-    private async getDiffVal(path: string): Promise<any[]> {
+    private async getDiffVal(path: string) {
         let value = _.get(this.hisRec, path)
         if (value === undefined) {
             const subPath = path.match(/(?<=diff.).+/gi)
@@ -59,7 +59,8 @@ export default class TempRep {
         } else if (path.match(/(?<=diff.).+/gi)) {
             return this.getDiffVal(path)
         } else {
-            return [this.hisRec[path]]
+            const hisRec = <any>this.hisRec
+            return [hisRec[path]]
         }
     }
 }

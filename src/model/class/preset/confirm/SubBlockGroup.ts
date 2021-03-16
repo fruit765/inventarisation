@@ -1,3 +1,4 @@
+import { classInterface } from '../../../../type/type'
 import { startInit, initAttr } from '../../../libs/initHelper'
 import { sqlsToValues } from '../../../libs/queryHelper'
 import TempRep from '../TempRep'
@@ -10,10 +11,10 @@ type groupRec = {
 export default class SubBlockGroup {
     private value?: string
     private sql?: string
-    private tempRep: TempRep
+    private tempRep: classInterface.templateReplace
     private initAttr?: initAttr
 
-    constructor(groupRec: groupRec, tempRep: TempRep) {
+    constructor(groupRec: groupRec, tempRep: classInterface.templateReplace) {
         this.tempRep = tempRep
         if (typeof groupRec === "string") {
             this.value = groupRec
@@ -32,10 +33,10 @@ export default class SubBlockGroup {
                 this.value = undefined
                 return
             } else if (this.value != undefined) {
-                this.value = await this.tempRep.resolveStr(this.value)
+                this.value = await this.tempRep.replaceStr(this.value)
                 return
             } else if (this.sql != undefined) {
-                this.sql = await this.tempRep.resolveStr(this.sql)
+                this.sql = await this.tempRep.replaceStr(this.sql)
                 this.value = (await sqlsToValues(this.sql))[0]
             }
         })

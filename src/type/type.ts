@@ -46,4 +46,16 @@ export namespace classInterface {
     export interface additionModule {
         get: () => Promise<any>
     }
+
+    export interface templateReplace {
+        replaceStr: (str: string) => Promise<string>
+    }
+
+    export interface valueBlock {
+        get: () => Promise<any>
+    }
+
+    export interface stringBlock {
+        get: () => Promise<any>
+    }
 }

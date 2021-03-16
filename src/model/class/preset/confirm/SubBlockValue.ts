@@ -49,7 +49,7 @@ export default class SubBlockValue {
     private async subsValue(val: any[]) {
         for (let key in val) {
             if (_.isString(val[key])) {
-                val[Number(key)] = await this.tempRep.resolveStr(val[key])
+                val[Number(key)] = await this.tempRep.replaceStr(val[key])
             }
         }
     }
