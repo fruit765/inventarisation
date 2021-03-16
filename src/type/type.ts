@@ -42,4 +42,8 @@ export namespace classInterface {
         isConfirm: (type: any) => Promise<boolean>
         isReject: (type: any) => Promise<boolean>
     }
+
+    export interface additionModule {
+        get: () => Promise<any>
+    }
 }
