@@ -10,8 +10,8 @@ export default class Addition {
         this.additionBlock = []
         for (let key in addition) {
             for (let blockNum in addition[key]) {
-                if (key === "stdModelue") {
-                    const blockClass = new StdAdditionsBlock(addition[key][blockNum])
+                if (key === "stdModule") {
+                    const blockClass = new StdAdditionsBlock(addition[key][blockNum], tempRep)
                     this.additionBlock.push(blockClass)
                 }
             }
