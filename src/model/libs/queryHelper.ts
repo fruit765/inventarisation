@@ -7,6 +7,7 @@ import Employer from "../orm/employer"
 import Dep_loc from "../orm/dep_loc"
 import Post_dep_loc from "../orm/post_dep_loc"
 import Department from "../orm/department"
+import Account_type from "../orm/account_type"
 
 /**Получаем класс таблицы по ее названию */
 function getTabClassByName(name:string) {
@@ -17,7 +18,8 @@ function getTabClassByName(name:string) {
         "post": Post,
         "dep_loc": Dep_loc,
         "post_dep_loc": Post_dep_loc,
-        "department": Department
+        "department": Department,
+        "account_type": Account_type,
     }
     return nameClass[name.toLowerCase()]
 }

@@ -7,7 +7,7 @@ const knex = Knex(dbConfig)
 
 Model.knex(knex)
 
-module.exports = class Account_name extends Model {
+module.exports = class Account_type extends Model {
     static get tableName() {
         return "account_type"
     }

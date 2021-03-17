@@ -7,7 +7,7 @@ const router = express.Router()
 
 router.route('/account_types')
     .all((req, res, next) =>{
-        this.myObj = new Table("Account", req.user.id)
+        this.myObj = new Table("Account_type", req.user.id)
         next()
     })
     .get((req, res, next) => {
