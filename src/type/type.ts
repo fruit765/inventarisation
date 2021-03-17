@@ -37,10 +37,20 @@ export namespace tableRec  {
     }
 }
 
+export namespace otherType {
+    export interface eventKey {
+        history_id: number,
+        event_confirm_preset_id: number
+    }
+}
+
 export namespace classInterface {
     export interface typeStrategy {
         isConfirm: (type: any) => Promise<boolean>
         isReject: (type: any) => Promise<boolean>
+        genReject: () => Promise<Record<string,any>>
+        genAccept: (sendObject: any) => Promise<Record<string,any>>
+        getName: () => string
     }
 
     export interface additionModule {

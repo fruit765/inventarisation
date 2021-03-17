@@ -34,16 +34,12 @@ export default class ConfirmBlock {
         }
     }
 
-    async getReject(confirm: any | null) {
-        
-    }
-
     async isConfirm(confirm: any) {
         if (confirm == null) {
             return false
         }
         const isConfType = await this.subBlockType.isConfirm(confirm?.type)
-        //const isConfVal = await this.subBlockValue.isConfirm(confirm?.id)
+        //const isConfVal = await this.subBlockValue.isContain(confirm?.id)
         return isConfType //&& isConfVal
     }
 
@@ -52,7 +48,30 @@ export default class ConfirmBlock {
             return false
         }
         const isRejType = await this.subBlockType.isReject(confirm?.type)
-        //const isConfVal = await this.subBlockValue.isConfirm(confirm?.id)
+        //const isConfVal = await this.subBlockValue.isContain(confirm?.id)
         return isRejType //&& isConfVal
     }
+
+    async getReject(confirm: any | null) {
+        
+    }
+
+    async genReject(confirm: Record<any, any> | null, userId: number) {
+        const isContain = await this.subBlockValue.isContain(confirm?.id)
+        const isConfirm = await this.subBlockType.isConfirm(confirm?.type)
+        const isReject = await this.subBlockType.isReject(confirm?.type)
+        if (isContain && !isConfirm && !isReject) {
+            return this.subBlockType.genReject()
+        }
+    }
+
+    async genAccept(confirm: Record<any, any> | null, userId: number, type: string, sendObject: any) {
+        const isContain = await this.subBlockValue.isContain(confirm?.id)
+        const isConfirm = await this.subBlockType.isConfirm(confirm?.type)
+        const isReject = await this.subBlockType.isReject(confirm?.type)
+        if (isContain && !isConfirm && !isReject && this.subBlockType.getName() === type) {
+            return this.subBlockType.genAccept(sendObject)
+        }
+    }
+
 }

@@ -1,7 +1,7 @@
 
 import { classInterface } from '../../../../type/type';
 import CreateErr from './../../createErr';
-import SimpleTypeStrategy from './typeStrategy/SimpleTypeStrategy';
+import SubBlockTypeSimple from './SubBlockTypeSimple';
 export default class SubBlockType implements classInterface.typeStrategy {
 
     private handleErr: CreateErr
@@ -11,7 +11,7 @@ export default class SubBlockType implements classInterface.typeStrategy {
         this.handleErr = new CreateErr()
         switch (typeInPreset) { //NOSONAR
             case "simple":
-                this.typeStrategy = new SimpleTypeStrategy()
+                this.typeStrategy = new SubBlockTypeSimple()
                 break
             default:
                 throw this.handleErr.internalServerError("wrong confirm type")
@@ -24,5 +24,17 @@ export default class SubBlockType implements classInterface.typeStrategy {
 
     async isReject(type: any) {
         return this.typeStrategy.isReject(type)
+    }
+
+    async genReject() {
+        return this.typeStrategy.genReject()
+    }
+
+    async genAccept(sendObject: any) {
+        return this.typeStrategy.genAccept(sendObject)
+    }
+
+    getName() {
+        return this.typeStrategy.getName()
     }
 }

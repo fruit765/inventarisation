@@ -1,10 +1,14 @@
+import _ from "lodash";
+import CreateErr from "../class/createErr";
 import GetEvents from "../class/event/GetEvents";
 export default class FacadeEvent {
 
+    private readonly handleErr: CreateErr
     private getEvent: GetEvents
 
     constructor() {
         this.getEvent = new GetEvents()
+        this.handleErr = new CreateErr()
     }
 
     async getEventAll() {
@@ -19,5 +23,36 @@ export default class FacadeEvent {
 
     getEventPersonal(userId: number) {
         
+    }
+
+    private strToId(strId: string) {
+        let eventIdArray: number[]
+        try {
+            eventIdArray = JSON.parse(strId)
+            if (!(_.isArray(eventIdArray) && eventIdArray[0] != null && eventIdArray[1] != null)) {
+                throw ""
+            }
+        } catch (err) {
+            throw this.handleErr.eventIdWrong()
+        }
+
+        return  {
+            history_id: eventIdArray[0],
+            event_confirm_preset_id: eventIdArray[1]
+        }
+    }
+
+    async simpleAccept(userId: number, compositeId: string) {
+        const eventId = this.strToId(compositeId)
+        const event = await this.getEvent.getById(eventId)
+        await event.simpleAccept(userId)
+        return event.get()
+    }
+ 
+    async reject(userId: number, compositeId: string) {
+        const eventId = this.strToId(compositeId)
+        const event = await this.getEvent.getById(eventId)
+        await event.reject(userId)
+        return event.get()
     }
 }

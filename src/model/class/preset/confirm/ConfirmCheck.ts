@@ -23,7 +23,7 @@ export default class ConfirmCheck {
         return _.compact(NeedConfirmNull)
     }
 
-    async getReject(confirm: Record<any,any> | null) {
+    async getReject(confirm: Record<any, any> | null) {
         const rejectNull = await Promise.all(_.map(this.confirmBlocks, (value, key) => {
             return value.getReject(confirm?.confirms?.[String(key)])
         }))
@@ -54,5 +54,17 @@ export default class ConfirmCheck {
         }
 
         return _.flattenDeep(res)
+    }
+
+    async genReject(confirm: Record<any, any> | null, userId: number) {
+        return Promise.all(this.confirmBlocks.map((value, key) => {
+            return value.genReject(confirm?.[String(key)], userId)
+        }))
+    }
+
+    async genAccept(confirm: Record<any, any> | null, userId: number, type: string, sendObject: any) {
+        return Promise.all(this.confirmBlocks.map((value, key) => {
+            return value.genAccept(confirm?.[String(key)], userId, type, sendObject)
+        }))
     }
 }

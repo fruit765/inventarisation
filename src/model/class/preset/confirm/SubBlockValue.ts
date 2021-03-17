@@ -69,7 +69,10 @@ export default class SubBlockValue {
     }
 
     /**Получает массив или значение если его можно считать подтверждением выдает true */
-    async isConfirm(val: number | number[]) {
+    async isContain(val: number | number[] | undefined) {
+        if (val == undefined) {
+            return false
+        }
         await this.init()
         const value = this.warpToArray(val)
         for (let key in value) {

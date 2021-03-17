@@ -2,7 +2,7 @@ import { Transaction } from "knex"
 import { tableRec } from "../../../type/type";
 import Event_confirm from "../../orm/event_confirm";
 import Addition from "./additional/Addition";
-import PresetAllCol from './colPresetMatch/presetAllCol';
+import PresetAllCol from './preset/presetAllCol';
 import ConfirmCheck from './confirm/ConfirmCheck';
 import TempRep from './TempRep';
 

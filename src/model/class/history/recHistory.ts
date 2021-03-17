@@ -20,7 +20,6 @@ export class RecHistory {
     private tableName: string
     private tableId: number
     private actionTag: string
-    private diff: any
     private handleErr: CreateErr
     private trx: Transaction<any, any> | undefined
     private actualData: any

@@ -31,6 +31,11 @@ export default class CreateErr {
         return this.createException(400, "wrong user_id", "user_id")
     }
 
+    /**Неверный event композитный id*/
+    eventIdWrong() {
+        return this.createException(400, "wrong event id", "event_id")
+    }
+
     /**серверная ошибка */
     internalServerError(message: string = "InternalServerError") {
         return createError(500, message)
