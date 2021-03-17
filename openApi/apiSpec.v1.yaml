@@ -2185,6 +2185,36 @@ paths:
       description: Изменение отдела
       tags:
         - departments
+  /eventAction:
+    post:
+      summary: ''
+      operationId: post-eventAction
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: action
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+              required:
+                - id
 components:
   schemas: {}
   securitySchemes: {}
