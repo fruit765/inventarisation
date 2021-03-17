@@ -65,6 +65,7 @@ export default class BaseValueBlock implements classInterface.valueBlock {
     /**Получить значения*/
     async get() {
         await this.init()
-        return this.value
+        const res = this.value
+        return res
     }
 }

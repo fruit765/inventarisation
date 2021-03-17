@@ -18,12 +18,12 @@ export default class SubBlockGroup {
         this.tempRep = tempRep
         if (typeof groupRec === "string") {
             this.value = groupRec
-        } else if (groupRec.value != undefined) {
-            this.value = typeof groupRec.value === "string" ?
-                groupRec.value :
-                groupRec.value[0]
-        } else if (groupRec.sql != undefined) {
-            this.sql = groupRec.sql
+        } else if (groupRec?.value != undefined) {
+            this.value = typeof groupRec?.value === "string" ?
+                groupRec?.value :
+                groupRec?.value[0]
+        } else if (groupRec?.sql != undefined) {
+            this.sql = groupRec?.sql
         }
     }
 
@@ -45,6 +45,7 @@ export default class SubBlockGroup {
     /**Возвращает имя группы*/
     async get() {
         await this.init()
-        return this.value ?? "NoName"
+        const res = this.value ?? "NoName"
+        return res
     }
 }

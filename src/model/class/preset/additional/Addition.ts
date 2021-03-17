@@ -19,8 +19,8 @@ export default class Addition {
     }
 
     async get() {
-        return Promise.all(this.additionBlock.map(async value => {
-            await value.get()
+        return Promise.all(this.additionBlock.map(value => {
+            return value.get()
         }))
     }
 }

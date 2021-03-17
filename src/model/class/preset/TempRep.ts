@@ -36,17 +36,21 @@ export default class TempRep implements classInterface.templateReplace {
     /**Возвращает значение полученное из diff
      * Если значения не будет попробуйет получить его из изменяемой таблицы*/
     private async getDiffVal(path: string) {
-        let value = _.get(this.hisRec, path)
+        let value = _.get(this.hisRec, "diff."+path)
         if (value === undefined) {
-            const subPath = path.match(/(?<=diff.).+/gi)
-            if (subPath?.[0] && await hasCol(this.table, subPath?.[0])) {
-                const sql = `select ${this.table}.${subPath} from ${this.table} where id = ${this.tableId}`
-                return sqlsToValues(sql)
-            } else {
-                return []
-            }
+            return this.getTableVal(path)
         } else {
             return _.flattenDeep([value])
+        }
+    }
+
+    /**Возвращает значение по шаблону из таблицы к которой относится запись в истории*/
+    private async getTableVal(path: string) {
+        if (path?.[0] && await hasCol(this.table, path?.[0])) {
+            const sql = `select ${this.table}.${path} from ${this.table} where id = ${this.tableId}`
+            return sqlsToValues(sql)
+        } else {
+            return []
         }
     }
 
@@ -57,7 +61,11 @@ export default class TempRep implements classInterface.templateReplace {
         } else if (path === "table_id") {
             return [this.tableId]
         } else if (path.match(/(?<=diff.).+/gi)) {
-            return this.getDiffVal(path)
+            const subPath = <any>path.match(/(?<=diff.).+/gi)
+            return this.getDiffVal(subPath)
+        } else if (path.match(/(?<=table.).+/gi)) {
+            const subPath = <any>path.match(/(?<=table.).+/gi)
+            return this.getTableVal(subPath)
         } else {
             const hisRec = <any>this.hisRec
             return [hisRec[path]]

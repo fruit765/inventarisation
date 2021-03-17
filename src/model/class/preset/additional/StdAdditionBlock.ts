@@ -13,9 +13,10 @@ export default class StdAdditionsBlock implements classInterface.additionModule 
     }
 
     async get() {
-        return {
+        const res = {
             value: await this.valueClass.get(), 
             name: await this.nameClass.get()
         }
+        return res
     }
 }

@@ -1,4 +1,4 @@
-import { tableRec } from "../../../type/type"
+import { classInterface, tableRec } from "../../../type/type"
 import { getTabIdFromHis } from "../../libs/bindHisTabInfo"
 import { initAttr, startInit } from "../../libs/initHelper" 
 import { uniqObjToBoolObj } from "../../libs/objectOp"
@@ -14,7 +14,7 @@ export default class RecEvent {
     private hisRec: tableRec.history
     private presetRec: tableRec.preset
     private confirmCheck: ConfirmCheck
-    private addition: Addition
+    private addition: classInterface.additionModule
 
     private other: {
         table_id: number
