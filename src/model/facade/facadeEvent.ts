@@ -1,5 +1,4 @@
 import GetEvents from "../class/event/GetEvents";
-
 export default class FacadeEvent {
 
     private getEvent: GetEvents
@@ -14,11 +13,11 @@ export default class FacadeEvent {
         for (let eventClass of allEventsClasses) {
             const event = await eventClass.get()
             allEvents.push(event)
-        }
+        }  
         return allEvents
     }
 
-    getEventPersonal() {
+    getEventPersonal(userId: number) {
         
     }
 }

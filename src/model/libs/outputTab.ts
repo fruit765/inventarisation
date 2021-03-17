@@ -29,7 +29,7 @@ async function getUnconfirmOnly(tabName: string, id?: number) {
             .queryBuilder()
             .from(function (this: any) {
                 const t1 = myEvents
-                    .select("device_id", "view_priority", "status_id", "diff")
+                    .select(hisColName, "view_priority", "status_id", "diff")
                     .as("t1")
                 Object.assign(this, t1)
             })
