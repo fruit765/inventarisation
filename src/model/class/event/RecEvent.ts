@@ -97,7 +97,8 @@ export default class RecEvent {
     }
 
     async simpleAccept(userId: number) {
-        await this.confirmCheck.genAccept(this.eventRec.confirm, userId, "simple", {action: "accept"})
+        const a =await this.confirmCheck.genAccept(this.eventRec.confirm, userId, "simple", {action: "accept"})
+        console.log(a)
     }
  
     async reject(userId: number) {

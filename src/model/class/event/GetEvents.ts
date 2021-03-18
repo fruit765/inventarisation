@@ -30,8 +30,8 @@ export default class GetEvents {
 
     async getById(eventKey: otherType.eventKey) {
         const history: tableRec.history = <any>await History.query().findById(eventKey.history_id)
-        const preset: tableRec.preset = <any>await History.query().findById(eventKey.event_confirm_preset_id)
-        const event: tableRec.event = <any>await Event_confirm_preset.query().first().where(eventKey)
+        const preset: tableRec.preset = <any>await Event_confirm_preset.query().findById(eventKey.event_confirm_preset_id)
+        const event: tableRec.event = <any>await Event_confirm.query().first().where(eventKey)
         return new RecEvent(event, history, preset)
     }
 

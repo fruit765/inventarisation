@@ -36,7 +36,7 @@ function uniqObjToBoolObj(obj: { [key: string]: number }): { [key: number]: bool
 function stringifySubJSON(data: any) {
     const fillteredData: any = {}
     for (let key in data) {
-        if (typeof data[key] === "object") {
+        if (_.isObject(data[key])) {
             fillteredData[key] = JSON.stringify(data[key])
         } else {
             fillteredData[key] = data[key]

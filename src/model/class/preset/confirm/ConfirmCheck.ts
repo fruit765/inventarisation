@@ -63,8 +63,15 @@ export default class ConfirmCheck {
     }
 
     async genAccept(confirm: Record<any, any> | null, userId: number, type: string, sendObject: any) {
-        return Promise.all(this.confirmBlocks.map((value, key) => {
-            return value.genAccept(confirm?.[String(key)], userId, type, sendObject)
-        }))
+        const result: Record<string, any> = {}
+        for (let key in this.confirmBlocks) {
+            const value = this.confirmBlocks[key]
+            const x = await value.genAccept(confirm?.confirms?.[key], userId, type, sendObject)
+            if (x != undefined) {
+                result[key] = x
+            }
+        }
+        const resultUnion = _.merge({},confirm, {confirms: result})
+        return resultUnion
     }
 }

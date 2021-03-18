@@ -5,17 +5,17 @@ const { sendP } = require('../model/libs/command')
 const router = express.Router()
 const FacadeEvent = require('../model/facade/facadeEvent').default
 
-router.route('/deviceAction')
+router.route('/eventAction')
     .all((req, res, next) => {
         req.myObj = new FacadeEvent()
         next()
     })
     .post(async (req, res, next) => {
         if (req.query.action === "simpleAccept") {
-            const response = await req.myObj.simpleAccept(req.user.id, req.body.id)
+            const response = req.myObj.simpleAccept(req.user.id, req.body.id)
             sendP(next)(res)(response)
         } else if (req.query.action === "reject") {
-            const response = await req.myObj.reject(req.user.id, req.body.id)
+            const response = req.myObj.reject(req.user.id, req.body.id)
             sendP(next)(res)(response)
         }
     })

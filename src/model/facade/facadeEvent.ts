@@ -46,7 +46,8 @@ export default class FacadeEvent {
         const eventId = this.strToId(compositeId)
         const event = await this.getEvent.getById(eventId)
         await event.simpleAccept(userId)
-        return event.get()
+        const res = await event.get()
+        return res
     }
  
     async reject(userId: number, compositeId: string) {

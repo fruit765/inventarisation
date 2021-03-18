@@ -66,7 +66,7 @@ export default class ConfirmBlock {
     }
 
     async genAccept(confirm: Record<any, any> | null, userId: number, type: string, sendObject: any) {
-        const isContain = await this.subBlockValue.isContain(confirm?.id)
+        const isContain = await this.subBlockValue.isContain(userId)
         const isConfirm = await this.subBlockType.isConfirm(confirm?.type)
         const isReject = await this.subBlockType.isReject(confirm?.type)
         if (isContain && !isConfirm && !isReject && this.subBlockType.getName() === type) {

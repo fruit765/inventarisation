@@ -1,13 +1,17 @@
 
-import { classInterface } from '../../../../type/type';
-import CreateErr from './../../createErr';
-import SubBlockTypeSimple from './SubBlockTypeSimple';
+import dayjs from 'dayjs'
+import { classInterface } from '../../../../type/type'
+import CreateErr from './../../createErr'
+import SubBlockTypeSimple from './SubBlockTypeSimple'
+
 export default class SubBlockType implements classInterface.typeStrategy {
 
     private handleErr: CreateErr
     private typeStrategy: classInterface.typeStrategy
+    private type: string
 
-    constructor(typeInPreset: string, typeDesc: any) {
+    constructor(typeInPreset: string, typeDesc: Record<any,any>) {
+        this.type = typeInPreset
         this.handleErr = new CreateErr()
         switch (typeInPreset) { //NOSONAR
             case "simple":
@@ -18,11 +22,17 @@ export default class SubBlockType implements classInterface.typeStrategy {
         }
     }
 
-    async isConfirm(type: any) {
+    async genBase() {
+        return {
+            date: dayjs().toISOString()
+        }
+    }
+
+    async isConfirm(type: Record<any,any>) {
         return this.typeStrategy.isConfirm(type)
     }
 
-    async isReject(type: any) {
+    async isReject(type: Record<any,any>) {
         return this.typeStrategy.isReject(type)
     }
 
@@ -35,6 +45,6 @@ export default class SubBlockType implements classInterface.typeStrategy {
     }
 
     getName() {
-        return this.typeStrategy.getName()
+        return this.type
     }
 }

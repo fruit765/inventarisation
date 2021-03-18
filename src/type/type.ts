@@ -50,7 +50,6 @@ export namespace classInterface {
         isReject: (type: any) => Promise<boolean>
         genReject: () => Promise<Record<string,any>>
         genAccept: (sendObject: any) => Promise<Record<string,any>>
-        getName: () => string
     }
 
     export interface additionModule {

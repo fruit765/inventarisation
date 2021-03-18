@@ -1,12 +1,12 @@
-import { classInterface } from "../../../../type/type";
+import { classInterface } from "../../../../type/type"
 
 export default class SubBlockTypeSimple implements classInterface.typeStrategy {
 
-    async isConfirm(type: any) {
+    async isConfirm(type: Record<any,any>) {
         return type?.action === "accept" && type?.type === "simple"
     }
 
-    async isReject(type: any) {
+    async isReject(type: Record<any,any>) {
         return type?.action === "reject" && type?.type === "simple"
     }
 
@@ -22,9 +22,5 @@ export default class SubBlockTypeSimple implements classInterface.typeStrategy {
             action: "accept",
             type: "simple"
         }
-    }
-
-    getName() {
-        return "simple"
     }
 }
