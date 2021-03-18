@@ -44,7 +44,6 @@ export class FacadeTable {
 
     /**Создает класс записи в таблицу, перед этим проводит необходимые действия */
     protected async applyAction(data: any, tableName: string, actionTag: string, trx: Transaction<any, any>) {
-        
         await this.init()
         if (this.isSaveHistory) {
             const validDataId = (<any>await new RecValidate(data, tableName, actionTag).validate()).id

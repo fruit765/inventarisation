@@ -1,19 +1,23 @@
 "use strict"
 
 const express = require('express')
-const { insertTable, updateTable, send, sendP } = require('../model/libs/command')
-const User = require('../model/orm/user')
+const { sendP } = require('../model/libs/command')
 const router = express.Router()
+const FacadeTable = require('../model/facade/facadeTable').FacadeTable
 
 router.route('/users')
-    .get(async (req, res, next) => {
-        sendP(next)(res)(User.query())
+    .all((req, res, next) => {
+        req.myObj = new FacadeTable("User", (req.user)?.id)
+        next()
     })
-    .post( (req, res, next) => {
-        sendP(next)(res)(User.query().insertAndFetch(req.body))
+    .get((req, res, next) => {
+        sendP(next)(res)(req.myObj.getUnconfirm())
+    })
+    .post((req, res, next) => {
+        sendP(next)(res)(req.myObj.insertAndFetch(req.body))
     })
     .patch((req, res, next) => {
-        send(next)(res)(updateTable(User)(req.body))
+        sendP(next)(res)(req.myObj.patchAndFetch(req.body))
     })
 
 module.exports = router
