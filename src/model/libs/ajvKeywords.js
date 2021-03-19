@@ -2,6 +2,8 @@
 "use strict"
 
 const dayjs = require("dayjs")
+const utc = require('dayjs/plugin/utc')
+dayjs.extend(utc)
 
 const keywords = [
     ["x-json",
@@ -53,7 +55,7 @@ const keywords = [
              */
                 (keywordValue, data, jssch, gpth, objData, keyData) => {
                     if (keywordValue && data != null) {
-                        objData[keyData] = dayjs(data).toISOString()
+                        objData[keyData] = dayjs(data).utc(true).toISOString()
                     }
                     return true
                 }
