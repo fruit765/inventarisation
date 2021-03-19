@@ -4,7 +4,7 @@ import { classInterface } from '../../../../type/type'
 import CreateErr from './../../createErr'
 import SubBlockTypeSimple from './SubBlockTypeSimple'
 
-export default class SubBlockType implements classInterface.typeStrategy {
+export default class SubBlockType {
 
     private handleErr: CreateErr
     private typeStrategy: classInterface.typeStrategy
@@ -22,9 +22,10 @@ export default class SubBlockType implements classInterface.typeStrategy {
         }
     }
 
-    async genBase() {
+    async genBase(userId: number) {
         return {
-            date: dayjs().toISOString()
+            date: dayjs().toISOString(),
+            id: userId
         }
     }
 
@@ -36,12 +37,16 @@ export default class SubBlockType implements classInterface.typeStrategy {
         return this.typeStrategy.isReject(type)
     }
 
-    async genReject() {
-        return this.typeStrategy.genReject()
+    async genReject(userId: number) {
+        const base = this.genBase(userId)
+        const reject = this.typeStrategy.genReject()
+        return Object.assign(base, reject)
     }
 
-    async genAccept(sendObject: any) {
-        return this.typeStrategy.genAccept(sendObject)
+    async genAccept(userId: number, sendObject: any) {
+        const base = this.genBase(userId)
+        const accept = this.typeStrategy.genAccept(sendObject)
+        return Object.assign(base, accept)
     }
 
     getName() {

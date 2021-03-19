@@ -850,6 +850,7 @@ paths:
                 appointment_data:
                   type: string
                   format: date
+                  x-date-to-iso: true
                 contact:
                   type: object
                   properties:
@@ -917,6 +918,7 @@ paths:
                 appointment_date:
                   type: string
                   format: date
+                  x-date-to-iso: true
                 contact:
                   type: object
                   properties:

@@ -61,7 +61,7 @@ export default class ConfirmBlock {
         const isConfirm = await this.subBlockType.isConfirm(confirm?.type)
         const isReject = await this.subBlockType.isReject(confirm?.type)
         if (isContain && !isConfirm && !isReject) {
-            return this.subBlockType.genReject()
+            return this.subBlockType.genReject(userId)
         }
     }
 
@@ -70,7 +70,7 @@ export default class ConfirmBlock {
         const isConfirm = await this.subBlockType.isConfirm(confirm?.type)
         const isReject = await this.subBlockType.isReject(confirm?.type)
         if (isContain && !isConfirm && !isReject && this.subBlockType.getName() === type) {
-            return this.subBlockType.genAccept(sendObject)
+            return this.subBlockType.genAccept(userId, sendObject)
         }
     }
 
