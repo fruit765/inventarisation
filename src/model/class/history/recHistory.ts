@@ -14,6 +14,11 @@ import { GetPresets } from '../preset/GetPresets'
 
 const knex = Knex(dbConfig)
 
+/**
+ * Класс существующей записи в истории
+ * @class
+ */
+
 export class RecHistory {
     private hisRec: any
     private id: number
@@ -43,13 +48,13 @@ export class RecHistory {
         this.actualData = {}
     }
 
-    /**Обновляет информацию о текущей строке таблицы с которой связанна история */
+    /**Записывает в this текущую информацию с таблици свзанной с этой записью в истории*/
     private async refreshActualData() {
         const query = this.trx ? knex(this.tableName).transacting(this.trx) : knex(this.tableName)
         this.actualData = await <Promise<any>>query.where("id", this.tableId).first()
     }
 
-    /**Получаем текщию информацию о текущей строке таблицы с которой связанна история */
+    /**Если актуальные данные записанны в this возвращает их если нет то делает запрос в БД*/
     private async getActualDataCache() {
         if (_.isEmpty(this.actualData)) {
             await this.refreshActualData()
@@ -57,7 +62,7 @@ export class RecHistory {
         return this.actualData
     }
 
-    /**Коммитит историю если все связанные события закрыты*/
+    /**Записывает данные в историю если все события связанные с этой записью подтверждены, либо их нет*/
     async tryCommit(): Promise<boolean> {
         if (this.hisRec.curretDataTime != null) {
             return false
@@ -80,7 +85,7 @@ export class RecHistory {
         })
     }
 
-    /**Генерирует события для данной истории */
+    /**Генерирует события для данной записи в истории*/
     async genEvents() {
         const getPresets = new GetPresets()
         const actualPresets = await getPresets.getActualPresets()
