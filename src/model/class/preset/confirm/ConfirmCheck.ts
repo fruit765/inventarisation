@@ -23,11 +23,15 @@ export default class ConfirmCheck {
         return _.compact(NeedConfirmNull)
     }
 
-    async getReject(confirm: Record<any, any> | null) {
-        const rejectNull = await Promise.all(_.map(this.confirmBlocks, (value, key) => {
+    private async getRejectNull(confirm: Record<any, any> | null) {
+        return await Promise.all(_.map(this.confirmBlocks, (value, key) => {
             return value.getReject(confirm?.confirms?.[String(key)])
         }))
-        return _.compact(rejectNull)
+    }
+
+    async getReject(confirm: Record<any, any> | null) {
+        const acceptNull = await this.getRejectNull(confirm)
+        return _.compact(acceptNull)
     }
 
     private async getAcceptNull(confirm: Record<any, any> | null) {
@@ -57,9 +61,16 @@ export default class ConfirmCheck {
     }
 
     async genReject(confirm: Record<any, any> | null, userId: number) {
-        return Promise.all(this.confirmBlocks.map((value, key) => {
-            return value.genReject(confirm?.[String(key)], userId)
-        }))
+        const result: Record<string, any> = {}
+        for (let key in this.confirmBlocks) {
+            const value = this.confirmBlocks[key]
+            const x = await value.genReject(confirm?.confirms?.[key], userId)
+            if (x != undefined) {
+                result[key] = x
+            }
+        }
+        const resultUnion = _.merge({},confirm, {confirms: result})
+        return resultUnion
     }
 
     async genAccept(confirm: Record<any, any> | null, userId: number, type: string, sendObject: any) {
@@ -73,5 +84,24 @@ export default class ConfirmCheck {
         }
         const resultUnion = _.merge({},confirm, {confirms: result})
         return resultUnion
+    }
+
+    async isReject(confirm: Record<any, any> | null) {
+        for (let key in this.confirmBlocks) {
+            const value = await this.confirmBlocks[key].isReject(confirm?.confirms?.[key])
+            if (value) {
+                return true
+            }
+        }
+        return false
+    }
+
+    async isConfirm(confirm: Record<any, any> | null) {
+        const result = []
+        for (let key in this.confirmBlocks) {
+            const value = await this.confirmBlocks[key].isConfirm(confirm?.confirms?.[key])
+            result.push(value)
+        }
+        return !result.includes(false)
     }
 }

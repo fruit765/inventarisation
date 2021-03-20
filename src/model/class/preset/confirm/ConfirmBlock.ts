@@ -34,6 +34,15 @@ export default class ConfirmBlock {
         }
     }
 
+    async getReject(confirm: any | null) {
+        if (await this.isReject(confirm)) {
+            return {
+                group: await this.subBlockGroup.get(),
+                user_id:  _.flattenDeep([confirm.id])
+            }
+        }
+    }
+
     async isConfirm(confirm: any) {
         if (confirm == null) {
             return false
@@ -43,17 +52,13 @@ export default class ConfirmBlock {
         return isConfType //&& isConfVal
     }
 
-    private async isReject(confirm: any) {
+    async isReject(confirm: any) {
         if (confirm == null) {
             return false
         }
         const isRejType = await this.subBlockType.isReject(confirm?.type)
         //const isConfVal = await this.subBlockValue.isContain(confirm?.id)
         return isRejType //&& isConfVal
-    }
-
-    async getReject(confirm: any | null) {
-        
     }
 
     async genReject(confirm: Record<any, any> | null, userId: number) {

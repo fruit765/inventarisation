@@ -10,7 +10,7 @@ export default class SubBlockType {
     private typeStrategy: classInterface.typeStrategy
     private type: string
 
-    constructor(typeInPreset: string, typeDesc: Record<any,any>) {
+    constructor(typeInPreset: string, typeDesc: Record<any, any>) {
         this.type = typeInPreset
         this.handleErr = new CreateErr()
         switch (typeInPreset) { //NOSONAR
@@ -29,24 +29,30 @@ export default class SubBlockType {
         }
     }
 
-    async isConfirm(type: Record<any,any>) {
+    async isConfirm(type: Record<any, any>) {
         return this.typeStrategy.isConfirm(type)
     }
 
     async isReject(type: Record<any,any>) {
-        return this.typeStrategy.isReject(type)
+        return type?.action === "reject"
     }
 
     async genReject(userId: number) {
-        const base = this.genBase(userId)
-        const reject = this.typeStrategy.genReject()
-        return Object.assign(base, reject)
+        const reject = {
+            action: "reject",
+            type: this.type
+        }
+        const base = await this.genBase(userId)
+        return Object.assign(base, { type: reject })
+
     }
 
     async genAccept(userId: number, sendObject: any) {
-        const base = this.genBase(userId)
-        const accept = this.typeStrategy.genAccept(sendObject)
-        return Object.assign(base, accept)
+        const accept = await this.typeStrategy.genAccept(sendObject)
+        if (accept) {
+            const base = await this.genBase(userId)
+            return Object.assign(base, { type: accept })
+        }
     }
 
     getName() {

@@ -18,7 +18,7 @@ export default class BaseValueBlock implements classInterface.valueBlock {
         value: { value: any | any[], sql: string | string[] },
         tempRec: classInterface.templateReplace) {
         this.tempRep = tempRec
-        this.sql = this.warpToArray(value.sql)
+        this.sql = <any>this.warpToArray(value.sql)
         this.value = this.warpToArray(value.value)
     }
 
@@ -43,7 +43,7 @@ export default class BaseValueBlock implements classInterface.valueBlock {
     }
 
     /**подготавливает значения, если значение примитивное заменяет на массив с этим значением*/
-    private warpToArray(val: any): Record<any, any> {
+    private warpToArray(val: any): any[] {
         if (typeof val !== "object") {
             return [val]
         } else {

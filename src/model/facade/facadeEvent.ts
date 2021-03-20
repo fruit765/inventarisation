@@ -21,10 +21,6 @@ export default class FacadeEvent {
         return allEvents
     }
 
-    getEventPersonal(userId: number) {
-        
-    }
-
     private strToId(strId: string) {
         let eventIdArray: number[]
         try {

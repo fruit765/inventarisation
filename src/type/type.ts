@@ -47,8 +47,6 @@ export namespace otherType {
 export namespace classInterface {
     export interface typeStrategy {
         isConfirm: (type: any) => Promise<boolean>
-        isReject: (type: any) => Promise<boolean>
-        genReject: () => Promise<Record<string,any>>
         genAccept: (sendObject: any) => Promise<Record<string,any>>
     }
 

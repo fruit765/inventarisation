@@ -1,10 +1,12 @@
 import { classInterface, tableRec } from "../../../type/type"
 import { getTabIdFromHis } from "../../libs/bindHisTabInfo"
-import { initAttr, startInit } from "../../libs/initHelper" 
+import { initAttr, startInit } from "../../libs/initHelper"
 import { uniqObjToBoolObj } from "../../libs/objectOp"
-import CreateErr from './../createErr' 
-import ConfirmCheck from './../preset/confirm/ConfirmCheck' 
+import Event_confirm from "../../orm/event_confirm"
+import CreateErr from './../createErr'
+import ConfirmCheck from './../preset/confirm/ConfirmCheck'
 import Preset from './../preset/Preset';
+import dayjs from 'dayjs';
 
 export default class RecEvent {
 
@@ -97,11 +99,28 @@ export default class RecEvent {
     }
 
     async simpleAccept(userId: number) {
-        const a =await this.confirmCheck.genAccept(this.eventRec.confirm, userId, "simple", {action: "accept"})
-        console.log(a)
+        const simpleAccept = await this.confirmCheck.genAccept(this.eventRec.confirm, userId, "simple", { action: "accept" })
+        const insertData: any = { confirm: simpleAccept }
+        if (await this.confirmCheck.isConfirm(simpleAccept)) {
+            insertData.status = "complete"
+            insertData.date_completed = dayjs().toISOString()
+        }
+        await Event_confirm.query().where({
+            history_id: this.eventRec.history_id,
+            event_confirm_preset_id: this.eventRec.event_confirm_preset_id
+        }).patch(insertData)
     }
- 
+
     async reject(userId: number) {
-        await this.confirmCheck.genReject(this.eventRec.confirm, userId)
+        const reject = await this.confirmCheck.genReject(this.eventRec.confirm, userId)
+        const insertData: any = { confirm: reject }
+        if (await this.confirmCheck.isConfirm(reject)) {
+            insertData.status = "reject"
+            insertData.date_completed = dayjs().toISOString()
+        }
+        await Event_confirm.query().where({
+            history_id: this.eventRec.history_id,
+            event_confirm_preset_id: this.eventRec.event_confirm_preset_id
+        }).patch(insertData)
     }
 }
