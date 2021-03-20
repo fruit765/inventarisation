@@ -64,7 +64,7 @@ export class RecHistory {
 
     /**Записывает данные в историю если все события связанные с этой записью подтверждены, либо их нет*/
     async tryCommit(): Promise<boolean> {
-        if (this.hisRec.curretDataTime != null) {
+        if (this.hisRec.commit_date != null) {
             return false
         }
         return startTransOpt(this.trx, async trx => {
@@ -77,7 +77,7 @@ export class RecHistory {
                     return this.getActualDataCache()
                 })
                 await new TabAction({ ...diff, id: id }, this.tableName, this.actionTag, trx).applyAction()
-                this.hisRec.curretDataTime = curretDataTime
+                this.hisRec.commit_date = curretDataTime
                 return true
             } else {
                 return false
