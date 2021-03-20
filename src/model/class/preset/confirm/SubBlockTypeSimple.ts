@@ -6,17 +6,6 @@ export default class SubBlockTypeSimple implements classInterface.typeStrategy {
         return type?.action === "accept" && type?.type === "simple"
     }
 
-    async isReject(type: Record<any,any>) {
-        return type?.action === "reject" && type?.type === "simple"
-    }
-
-    async genReject() {
-        return {
-            action: "reject",
-            type: "simple"
-        }
-    }
-
     async genAccept() {
         return {
             action: "accept",
