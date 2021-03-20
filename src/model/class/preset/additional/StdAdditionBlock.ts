@@ -2,6 +2,10 @@ import { classInterface } from '../../../../type/type';
 import BaseValueBlock from '../BaseValueBlock';
 import SubBlockGroup from '../confirm/SubBlockGroup';
 
+/**
+ * Класс отвечает за стандартный модуль "stdModule" в поле additional пресета
+ * @class
+ */
 export default class StdAdditionsBlock implements classInterface.additionModule {
 
     private valueClass: classInterface.valueBlock
@@ -12,6 +16,7 @@ export default class StdAdditionsBlock implements classInterface.additionModule 
         this.nameClass = new SubBlockGroup(additionBlock.name, tempRep)
     }
 
+    /**Возвращает значения полученные после парсинга в "stdModule" */
     async get() {
         const res = {
             value: await this.valueClass.get(), 

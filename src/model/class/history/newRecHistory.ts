@@ -8,7 +8,10 @@ import { RecHistory } from './recHistory'
 
 const knex = Knex(dbConfig)
 
-/**@classdesc Класс ответственный за запись в истории */
+/**
+ * Класс новой записи в истории.
+ * @class
+ */
 export class NewRecHistory {
     private data: any
     private tableName: string
@@ -35,7 +38,7 @@ export class NewRecHistory {
         this.actionTag = actionTag
     }
 
-    /**Создает запись в истоии */
+    /**Записывает в базу данные из этого класса, создает запись в истории*/
     async create() {
         const actualData = await <Promise<any>>knex(this.tableName).where("id", this.tableId).first() ?? {}
         const modData = pack(this.data, actualData)
@@ -52,7 +55,7 @@ export class NewRecHistory {
         return this
     }
 
-    /**Возвращает экземпляр записи истории */
+    /**Возвращает экземпляр созданной записи в истории*/
     get() {
         return new RecHistory(this.inserted, this.trx)
     }

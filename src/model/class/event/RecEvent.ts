@@ -8,6 +8,10 @@ import ConfirmCheck from './../preset/confirm/ConfirmCheck'
 import Preset from './../preset/Preset';
 import dayjs from 'dayjs';
 
+/**
+ * Класс события, предстваляет сущность события
+ * @class
+ */
 export default class RecEvent {
 
     private readonly handleErr: CreateErr
@@ -56,6 +60,7 @@ export default class RecEvent {
         }
     }
 
+    /**Инициализация, запускает асинзронные функции для генерации необходимых для работы значений */
     init() {
         return startInit(this.initAttr, async () => {
             this.other.confirm_need = await this.confirmCheck.getNeedConfirm(this.eventRec.confirm)
@@ -76,6 +81,7 @@ export default class RecEvent {
         })
     }
 
+    /**Получить запись события, возвращает объект необходимый для отоброжения на фронтэнде */
     async get() {
         await this.init()
         const res = {
@@ -98,6 +104,7 @@ export default class RecEvent {
         return res
     }
 
+    /**Простое подтверждение, устанавливает подтверждение от данного пользователя*/
     async simpleAccept(userId: number) {
         const simpleAccept = await this.confirmCheck.genAccept(this.eventRec.confirm, userId, "simple", { action: "accept" })
         const insertData: any = { confirm: simpleAccept }
@@ -111,6 +118,7 @@ export default class RecEvent {
         }).patch(insertData)
     }
 
+    /**Отклоняет событие*/
     async reject(userId: number) {
         const reject = await this.confirmCheck.genReject(this.eventRec.confirm, userId)
         const insertData: any = { confirm: reject }
