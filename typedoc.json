@@ -1,0 +1,9 @@
+{
+    "inputFiles": [
+        "./src/model/facade/facadeEvent.ts"
+    ],
+    "mode": "library",
+    "out": "docs/ts",
+    "excludeNotExported": true,
+    "excludePrivate": true
+}

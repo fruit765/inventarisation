@@ -15,7 +15,10 @@ const Knex = require("knex")
 const dbConfig = require("../../../../../serverConfig").db
 const { sqlsToValues } = require("../../../libs/queryHelper")
 const knex = Knex(dbConfig)
-
+/**
+ * Класс
+ * @class 
+ */
 module.exports = class PresetSubCol {
     /**
      * @typedef {Object} presetSubCol
