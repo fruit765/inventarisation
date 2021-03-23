@@ -33,7 +33,7 @@ export default class FacadeEvent {
         }
 
         return {
-            history_id: eventIdArray[0],
+            history_id: eventIdArray[0], 
             event_confirm_preset_id: eventIdArray[1]
         }
     }
