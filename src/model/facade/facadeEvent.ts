@@ -17,14 +17,14 @@ export default class FacadeEvent {
         for (let eventClass of allEventsClasses) {
             const event = await eventClass.get()
             allEvents.push(event)
-        }  
+        }
         return allEvents
     }
 
     private strToId(strId: string) {
         let eventIdArray: number[]
         try {
-            eventIdArray = JSON.parse(strId)
+            eventIdArray = String(strId).split(",").map(x => Number(x))
             if (!(_.isArray(eventIdArray) && eventIdArray[0] != null && eventIdArray[1] != null)) {
                 throw ""
             }
@@ -32,7 +32,7 @@ export default class FacadeEvent {
             throw this.handleErr.eventIdWrong()
         }
 
-        return  {
+        return {
             history_id: eventIdArray[0],
             event_confirm_preset_id: eventIdArray[1]
         }
@@ -45,7 +45,7 @@ export default class FacadeEvent {
         const res = await event.get()
         return res
     }
- 
+
     async reject(userId: number, compositeId: string) {
         const eventId = this.strToId(compositeId)
         const event = await this.getEvent.getById(eventId)

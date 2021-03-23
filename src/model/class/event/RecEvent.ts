@@ -7,6 +7,7 @@ import CreateErr from './../createErr'
 import ConfirmCheck from './../preset/confirm/ConfirmCheck'
 import Preset from './../preset/Preset';
 import dayjs from 'dayjs';
+import { RecHistory } from "../history/recHistory"
 
 /**
  * Класс события, предстваляет сущность события
@@ -21,6 +22,7 @@ export default class RecEvent {
     private presetRec: tableRec.preset
     private confirmCheck: ConfirmCheck
     private addition: classInterface.additionModule
+    private recHistory: RecHistory
 
     private other: {
         table_id: number
@@ -39,6 +41,7 @@ export default class RecEvent {
         this.handleErr = new CreateErr()
         this.eventRec = eventRec
         this.hisRec = hisRec
+        this.recHistory = new RecHistory(hisRec)
         this.presetRec = presetRec
         const preset = new Preset(presetRec)
         this.confirmCheck = preset.getConfirmCheck(hisRec)
@@ -116,6 +119,7 @@ export default class RecEvent {
             history_id: this.eventRec.history_id,
             event_confirm_preset_id: this.eventRec.event_confirm_preset_id
         }).patch(insertData)
+        await this.recHistory.tryCommit()
     }
 
     /**Отклоняет событие*/
@@ -130,5 +134,6 @@ export default class RecEvent {
             history_id: this.eventRec.history_id,
             event_confirm_preset_id: this.eventRec.event_confirm_preset_id
         }).patch(insertData)
+        await this.recHistory.tryCommit()
     }
 }
