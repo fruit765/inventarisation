@@ -20,10 +20,6 @@ router.post('/subDevices', async (req, res, next) => {
     sendP(next)(res)(response)
 })
 
-router.get('/employers', async (req, res, next) => {
-    sendP(next)(res)(Employer.query())
-})
-
 
 
 module.exports = router
