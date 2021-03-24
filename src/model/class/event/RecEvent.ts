@@ -8,6 +8,7 @@ import ConfirmCheck from './../preset/confirm/ConfirmCheck'
 import Preset from './../preset/Preset';
 import dayjs from 'dayjs';
 import { RecHistory } from "../history/recHistory"
+import { startTransOpt } from "../../libs/transaction"
 
 /**
  * Класс события, предстваляет сущность события
@@ -22,7 +23,6 @@ export default class RecEvent {
     private presetRec: tableRec.preset
     private confirmCheck: ConfirmCheck
     private addition: classInterface.additionModule
-    private recHistory: RecHistory
 
     private other: {
         table_id: number
@@ -41,7 +41,6 @@ export default class RecEvent {
         this.handleErr = new CreateErr()
         this.eventRec = eventRec
         this.hisRec = hisRec
-        this.recHistory = new RecHistory(hisRec)
         this.presetRec = presetRec
         const preset = new Preset(presetRec)
         this.confirmCheck = preset.getConfirmCheck(hisRec)
@@ -115,11 +114,14 @@ export default class RecEvent {
             insertData.status = "complete"
             insertData.date_completed = dayjs().toISOString()
         }
-        await Event_confirm.query().where({
-            history_id: this.eventRec.history_id,
-            event_confirm_preset_id: this.eventRec.event_confirm_preset_id
-        }).patch(insertData)
-        await this.recHistory.tryCommit()
+        startTransOpt(undefined, async trx => {
+            await Event_confirm.query(trx).where({
+                history_id: this.eventRec.history_id,
+                event_confirm_preset_id: this.eventRec.event_confirm_preset_id
+            }).patch(insertData)
+            await new RecHistory(this.hisRec, trx).tryCommit()
+        })
+        Object.assign(this.eventRec, insertData)
     }
 
     /**Отклоняет событие*/
@@ -130,10 +132,11 @@ export default class RecEvent {
             insertData.status = "reject"
             insertData.date_completed = dayjs().toISOString()
         }
+
         await Event_confirm.query().where({
             history_id: this.eventRec.history_id,
             event_confirm_preset_id: this.eventRec.event_confirm_preset_id
         }).patch(insertData)
-        await this.recHistory.tryCommit()
+        Object.assign(this.eventRec, insertData)
     }
 }
