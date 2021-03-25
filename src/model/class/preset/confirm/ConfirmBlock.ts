@@ -85,9 +85,10 @@ export default class ConfirmBlock {
      * разрешают это действия (не заполнены другим подтверждением или отклонением)
     */
     async genReject(confirm: Record<any, any> | null, userId: number) {
-        const isContain = await this.subBlockValue.isContain(confirm?.id)
+        const isContain = await this.subBlockValue.isContain(userId)
         const isConfirm = await this.subBlockType.isConfirm(confirm?.type)
         const isReject = await this.subBlockType.isReject(confirm?.type)
+        console.log(isContain, isConfirm, isReject, confirm, userId, await this.subBlockValue.getConfirm())
         if (isContain && !isConfirm && !isReject) {
             return this.subBlockType.genReject(userId)
         }

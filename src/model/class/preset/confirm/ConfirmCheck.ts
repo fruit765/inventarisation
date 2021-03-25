@@ -22,6 +22,10 @@ export default class ConfirmCheck {
      * в виде разреженного массива
      */
     private async getNeedConfirmNull(confirm: Record<any, any> | null) {
+        if(await this.isReject(confirm)) {
+            return []
+        }
+
         return await Promise.all(_.map(this.confirmBlocks, (value, key) => {
             return value.getNeedConfirm(confirm?.confirms?.[String(key)])
         }))
@@ -91,15 +95,12 @@ export default class ConfirmCheck {
      * если нет вернет первоночальную запись
      */
     async genReject(confirm: Record<any, any> | null, userId: number) {
-        const result: Record<string, any> = {}
-        for (let key in this.confirmBlocks) {
-            const value = this.confirmBlocks[key]
-            const x = await value.genReject(confirm?.confirms?.[key], userId)
-            if (x != undefined) {
-                result[key] = x
-            }
-        }
-        const resultUnion = _.merge({}, confirm, { confirms: result })
+
+        const result = await Promise.all(this.confirmBlocks.map((value, key) => {
+            return value.genReject(confirm?.confirms?.[key], userId)
+        }))
+
+        const resultUnion = _.merge({}, confirm, { confirms: _.pickBy(result, Boolean) })
         return resultUnion
     }
 
