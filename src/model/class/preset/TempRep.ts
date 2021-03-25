@@ -24,7 +24,10 @@ export default class TempRep implements classInterface.templateReplace {
 
     /**Заменяет все шаблоны в строке на значения */
     async replaceStr(str: string) {
-        const presetVal = str.match(/(?<=\${).+(?=})/gi) ?? []
+        const presetVal = str.match(/(?<=\${).+?(?=})/gi) ?? []
+        if (str.match(/\${.+?}/gi)?.[0] === str.trim()) {
+            return (await this.getVal(presetVal[0]))?.[0]
+        }
         for (let value of presetVal) {
             const resolve = await this.getVal(value)
             str = str.replace(new RegExp("\\${" + value + "}", "gi"), resolve[0])

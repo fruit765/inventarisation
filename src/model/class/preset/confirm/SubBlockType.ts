@@ -13,7 +13,6 @@ export default class SubBlockType {
     constructor(typeInPreset: string, typeDesc: Record<any, any>) {
         this.type = typeInPreset
         this.handleErr = new CreateErr()
-        console.log(typeInPreset)
         switch (typeInPreset) { //NOSONAR
             case "simple":
                 this.typeStrategy = new SubBlockTypeSimple(typeDesc)

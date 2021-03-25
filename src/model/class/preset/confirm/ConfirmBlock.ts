@@ -39,10 +39,11 @@ export default class ConfirmBlock {
      */
     async getAccept(confirm: any | null) {
         if (await this.isConfirm(confirm)) {
-            return {
+            const res = {
                 group: await this.subBlockGroup.get(),
-                user_id:  _.flattenDeep([confirm.id])
+                user_id:  _.flattenDeep([confirm?.id])
             }
+            return res
         }
     }
 
@@ -54,7 +55,7 @@ export default class ConfirmBlock {
         if (await this.isReject(confirm)) {
             return {
                 group: await this.subBlockGroup.get(),
-                user_id:  _.flattenDeep([confirm.id])
+                user_id:  _.flattenDeep([confirm?.id])
             }
         }
     }

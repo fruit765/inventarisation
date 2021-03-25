@@ -109,7 +109,7 @@ export default class RecEvent {
     /**Простое подтверждение, устанавливает подтверждение от данного пользователя*/
     async simpleAccept(userId: number) {
         const simpleAccept = await this.confirmCheck.genAccept(this.eventRec.confirm, userId, "simple", { action: "accept" })
-        const insertData: any = { confirm: simpleAccept }
+        const insertData: any = { confirm: JSON.stringify(simpleAccept) }
         if (await this.confirmCheck.isConfirm(simpleAccept)) {
             insertData.status = "complete"
             insertData.date_completed = dayjs().toISOString()
@@ -121,13 +121,13 @@ export default class RecEvent {
             }).patch(insertData)
             await new RecHistory(this.hisRec, trx).tryCommit()
         })
-        Object.assign(this.eventRec, insertData)
+        Object.assign(this.eventRec, insertData, { confirm: simpleAccept })
     }
 
     /**Отклоняет событие*/
     async reject(userId: number) {
         const reject = await this.confirmCheck.genReject(this.eventRec.confirm, userId)
-        const insertData: any = { confirm: reject }
+        const insertData: any = { confirm: JSON.stringify(reject) }
         if (await this.confirmCheck.isConfirm(reject)) {
             insertData.status = "reject"
             insertData.date_completed = dayjs().toISOString()
@@ -137,6 +137,6 @@ export default class RecEvent {
             history_id: this.eventRec.history_id,
             event_confirm_preset_id: this.eventRec.event_confirm_preset_id
         }).patch(insertData)
-        Object.assign(this.eventRec, insertData)
+        Object.assign(this.eventRec, insertData, { confirm: reject })
     }
 }
