@@ -867,10 +867,10 @@ paths:
                   type: string
                 is_archive:
                   type: integer
-                appointment_data:
+                appointment_date:
                   type: string
-                  format: date
                   x-date-to-iso: true
+                  format: date
                 contact:
                   type: object
                   properties:
