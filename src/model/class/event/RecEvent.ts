@@ -9,6 +9,7 @@ import Preset from './../preset/Preset';
 import dayjs from 'dayjs';
 import { RecHistory } from "../history/recHistory"
 import { startTransOpt } from "../../libs/transaction"
+import knex from "../../orm/knexConf"
 
 /**
  * Класс события, предстваляет сущность события
@@ -115,10 +116,10 @@ export default class RecEvent {
             insertData.date_completed = dayjs().toISOString()
         }
         startTransOpt(undefined, async trx => {
-            await Event_confirm.query(trx).where({
+            await knex("event_confirm").transacting(trx).where({
                 history_id: this.eventRec.history_id,
                 event_confirm_preset_id: this.eventRec.event_confirm_preset_id
-            }).patch(insertData)
+            }).update(insertData)
             await new RecHistory(this.hisRec, trx).tryCommit()
         })
         Object.assign(this.eventRec, insertData, { confirm: simpleAccept })
@@ -128,15 +129,16 @@ export default class RecEvent {
     async reject(userId: number) {
         const reject = await this.confirmCheck.genReject(this.eventRec.confirm, userId)
         const insertData: any = { confirm: JSON.stringify(reject) }
-        if (await this.confirmCheck.isConfirm(reject)) {
+        if (await this.confirmCheck.isReject(reject)) {
             insertData.status = "reject"
             insertData.date_completed = dayjs().toISOString()
         }
 
-        await Event_confirm.query().where({
+        await knex("event_confirm").where({
             history_id: this.eventRec.history_id,
             event_confirm_preset_id: this.eventRec.event_confirm_preset_id
-        }).patch(insertData)
+        }).update(insertData)
+
         Object.assign(this.eventRec, insertData, { confirm: reject })
     }
 }

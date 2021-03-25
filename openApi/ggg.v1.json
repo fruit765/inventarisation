@@ -1,13 +1,22 @@
 {
   "type": "object",
   "properties": {
-    "power": {
+    "diagonal": {
+      "type": "number",
+      "title": "Диагональ экрана"
+    },
+    "volumedisk": {
       "type": "string",
-      "title": "Мощьность",
-      "enum": [
-        "500 Вт",
-        "1кВт"
-      ]
+      "title": "Объем накопителя"
+    },
+    "processor": {
+      "type": "string"
+      ,
+      "title": "Процессор"
+    },
+    "volumeram": {
+      "type": "string",
+      "title": "Объем RAM"
     }
   }
 }
