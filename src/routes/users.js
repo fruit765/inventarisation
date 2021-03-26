@@ -27,7 +27,7 @@ router.route('/users')
         if(req.body.password) {
             await Password.query().findById(result.id).patch({password: req.body.password})
         }
-        sendP(next)(res)(res)
+        sendP(next)(res)(result)
     })
 
 module.exports = router
