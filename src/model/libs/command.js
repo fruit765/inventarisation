@@ -11,7 +11,7 @@ const Act = require("../orm/act")
 const createError = require('http-errors')
 
 const send = next => res => fluture => fork(valueError(next))((x) => res.json(x))(fluture)
-const sendP = next => res => pomise => pomise.then((x) => res.json(x)).catch(valueError(next))
+const sendP = next => res => pomise => Promise.resolve(pomise).then((x) => res.json(x)).catch(valueError(next))
 
 const dateToIso = dateString => luxon.DateTime.fromISO(dateString, { zone: "UTC" }).toUTC().toISO()
 
