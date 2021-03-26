@@ -21,6 +21,11 @@ export default class FacadeEvent {
         return allEvents
     }
 
+    async getEventUser(userId: number) {
+        const res = await this.getEventAll()
+        
+    }
+
     private strToId(strId: string) {
         let eventIdArray: number[]
         try {

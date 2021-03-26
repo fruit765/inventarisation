@@ -905,6 +905,9 @@ paths:
                 - post_dep_loc_id
                 - location_id
                 - full_name
+                - password
+                - login
+                - role_id
     patch:
       summary: Редактировать пользователя
       operationId: patch-users
