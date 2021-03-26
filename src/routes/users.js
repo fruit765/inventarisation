@@ -25,10 +25,9 @@ router.route('/users')
     })
     .patch(async (req, res, next) => {
         const result = await req.myObj.patchAndFetch(_.omit(req.body, "password"))
-        if(!req.body.password) {
-            req.body.password = undefined
+        if(req.body.password) {
+            Password.query().findById(result.id).patch({password: req.body.password})
         }
-        Password.query().insert(_.pickBy({id: result.id, password: req.body.password}, Boolean))
         sendP(next)(res)(res)
     })
 
