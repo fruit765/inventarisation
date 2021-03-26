@@ -17,6 +17,7 @@ const posts = require('./routes/posts')
 const dep_loc = require('./routes/dep_loc')
 const post_dep_loc = require('./routes/post_dep_loc')
 const departments = require('./routes/departments')
+const role = require('./routes/role')
 
 const accounts = require('./routes/accounts')
 const account_types = require('./routes/account_types')
@@ -29,10 +30,6 @@ const Location = require("./model/orm/location")
 const History = require("./model/orm/history")
 
 module.exports = function (app) {
-
-    app.post("/credentials", (req, res, next) => {
-        send(next)(res)(insertCredentials(req.body))
-    })
 
     app.get("/statuses", (req, res, next) => {
         send(next)(res)(getTable(Status))
@@ -50,6 +47,7 @@ module.exports = function (app) {
     app.use(users)
     app.use(command)
     app.use(deviceAction)
+    app.use(role)
 
     app.use(posts)
     app.use(employers)

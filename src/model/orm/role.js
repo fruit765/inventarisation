@@ -16,7 +16,7 @@ module.exports = class Role extends Model {
         const User = require("./user")
 
         return {
-            credentials: {
+            user: {
                 relation: Model.HasManyRelation,
                 modelClass: User,
                 join: {

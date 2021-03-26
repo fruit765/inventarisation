@@ -16,19 +16,19 @@ router.route('/users')
         sendP(next)(res)(req.myObj.getUnconfirm())
     })
     .post(async (req, res, next) => {
-        const res = await req.myObj.insertAndFetch(_.omit(req.body, "password"))
-        if(req.body.password) {
+        const result = await req.myObj.insertAndFetch(_.omit(req.body, "password"))
+        if(!req.body.password) {
             req.body.password = null
         }
-        Password.query().insert({id: res.id, password: req.body.password})
-        sendP(next)(res)(res)
+        Password.query().insert({id: result.id, password: req.body.password})
+        sendP(next)(res)(result)
     })
-    .patch((req, res, next) => {
-        const res = await req.myObj.patchAndFetch(_.omit(req.body, "password"))
-        if(req.body.password) {
+    .patch(async (req, res, next) => {
+        const result = await req.myObj.patchAndFetch(_.omit(req.body, "password"))
+        if(!req.body.password) {
             req.body.password = undefined
         }
-        Password.query().insert(_.pickBy({id: res.id, password: req.body.password}, Boolean))
+        Password.query().insert(_.pickBy({id: result.id, password: req.body.password}, Boolean))
         sendP(next)(res)(res)
     })
 

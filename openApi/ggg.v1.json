@@ -1,22 +1,13 @@
 {
   "type": "object",
   "properties": {
-    "diagonal": {
-      "type": "number",
-      "title": "Диагональ экрана"
-    },
-    "volumedisk": {
-      "type": "string",
-      "title": "Объем накопителя"
-    },
-    "processor": {
+    "ram": {
+      "title": "Объем оперативной памяти",
       "type": "string"
-      ,
-      "title": "Процессор"
     },
-    "volumeram": {
+    "rom": {
       "type": "string",
-      "title": "Объем RAM"
+      "title": "Объем встроенной памяти"
     }
   }
 }

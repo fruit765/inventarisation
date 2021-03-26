@@ -977,54 +977,6 @@ paths:
                   type: integer
               required:
                 - id
-  /credentials:
-    post:
-      summary: Добавление учетных данных
-      operationId: post-credentials
-      responses:
-        '200':
-          description: Возвращает информацию по созданному пользователю
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                  login:
-                    type: string
-                  password:
-                    type: string
-                  role_id:
-                    type: integer
-                required:
-                  - id
-                  - login
-                  - password
-                  - role_id
-      description: Добавление учетных данных и привязка к ним роли
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                id:
-                  type: integer
-                login:
-                  type: string
-                password:
-                  type: string
-                role_id:
-                  type: integer
-              required:
-                - id
-                - login
-                - password
-                - role_id
-        description: ''
-      tags:
-        - authorization
   /accounts:
     get:
       summary: Изменить аккаунт
@@ -2235,7 +2187,7 @@ paths:
         - departments
   /eventAction:
     post:
-      summary: ''
+      summary: Операции с событиями
       operationId: post-eventAction
       responses:
         '200':
@@ -2263,6 +2215,31 @@ paths:
                   type: string
               required:
                 - id
+      description: Операции с событиями
+      tags:
+        - events
+  /roles:
+    get:
+      summary: Получить список ролей
+      tags:
+        - users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    role:
+                      type: string
+      operationId: get-roles
+      description: Получить список ролей
+    parameters: []
 components:
   schemas: {}
   securitySchemes: {}
