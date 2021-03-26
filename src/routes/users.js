@@ -16,6 +16,9 @@ router.route('/users')
         sendP(next)(res)(req.myObj.getUnconfirm())
     })
     .post(async (req, res, next) => {
+        if(!req.body.role_id) {
+            req.body.role_id = (await Role.query().where("role","user").first()).id
+        }
         const result = await req.myObj.insertAndFetch(_.omit(req.body, "password"))
         if(req.body.password) {
             await Password.query().insert({id: result.id, password: req.body.password})
