@@ -1,6 +1,6 @@
 "use strict"
 
-const Credentials = require("../orm/credentials")
+const Credentials = require("../orm/password")
 
 const insertCredentials = insertTable(Credentials)
 

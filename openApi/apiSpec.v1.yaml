@@ -808,6 +808,13 @@ paths:
                     type: string
                     format: date
                   contact: {}
+                  password:
+                    type: string
+                  login:
+                    type: string
+                    format: email
+                  role_id:
+                    type: integer
                 required:
                   - id
                   - post_dep_loc_id
@@ -843,6 +850,12 @@ paths:
                   contact: {}
                   id:
                     type: integer
+                  role_id:
+                    type: integer
+                  password:
+                    type: string
+                  login:
+                    type: string
                 required:
                   - post_dep_loc_id
                   - location_id
@@ -881,6 +894,13 @@ paths:
                     email:
                       type: string
                       format: email
+                password:
+                  type: string
+                login:
+                  type: string
+                  format: email
+                role_id:
+                  type: integer
               required:
                 - post_dep_loc_id
                 - location_id
@@ -949,6 +969,12 @@ paths:
                     email:
                       type: string
                       format: email
+                password:
+                  type: string
+                login:
+                  type: string
+                role_id:
+                  type: integer
               required:
                 - id
   /credentials:

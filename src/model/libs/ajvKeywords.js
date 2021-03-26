@@ -16,12 +16,12 @@ const keywords = [
              * Операции с JSON
              * stringify - переводит объект в json
              * parse - переводчит json в объект
-             * @param {string} keywordValue 
-             * @param {*} data 
-             * @param {*} jssch 
-             * @param {*} gpth 
-             * @param {*} objData 
-             * @param {string} keyData 
+             * @param {string} keywordValue
+             * @param {*} data
+             * @param {*} jssch
+             * @param {*} gpth
+             * @param {*} objData
+             * @param {string} keyData
              */
                 (keywordValue, data, jssch, gpth, objData, keyData) => {
                     if (keywordValue === "stringify") {

@@ -15,30 +15,30 @@ module.exports = class User extends Model {
     static get relationMappings() {
         const Employer = require("./employer")
         const Post_dep_loc = require("./post_dep_loc")
-        const Credentials = require("./credentials")
+        const Password = require("./password")
         const Device = require("./device")
-        const History = require("./history")
         const Account_owner = require("./account_owner")
         const Location = require("./location")
+        const Role = require("./role")
 
         return {
-            credentials: {
+            password: {
                 relation: Model.HasOneRelation,
-                modelClass: Credentials,
+                modelClass: Password,
                 join: {
                     from: "user.id",
-                    to: "credentials.id"
+                    to: "password.id"
                 }
             },
 
-            // history: {
-            //     relation: Model.HasManyRelation,
-            //     modelClass: History,
-            //     join: {
-            //         from: "user.id",
-            //         to: "history.user_id"
-            //     }
-            // },
+            role: {
+                relation: Model.BelongsToOneRelation,
+                modelClass: Role,
+                join: {
+                    from: "user.role_id",
+                    to: "role.id"
+                }
+            },
 
             account_owner: {
                 relation: Model.HasManyRelation,

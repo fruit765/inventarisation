@@ -1,32 +1,34 @@
 "use strict"
 
-const Credentials = require("../orm/credentials")
+const Password = require("../orm/password")
+const User = require("../orm/user")
 const LocalStrategy = require("passport-local").Strategy
 
-const { packError, handleCustomError } = require("./exceptionHandling")
+const { handleCustomError } = require("./exceptionHandling")
 
-const getAuthUserDataById = id =>
-    Credentials
+function getAuthUserDataById(id) {
+    return User
         .query()
         .findById(id)
         .joinRelated("role")
-        .select("credentials.id", "login", "role","role_id")
-        .catch(packError("getAuthUserDataById"))
-
-const checkLoginPassword = login => password =>
-    Credentials
-        .query()
-        .first()
-        .where("login", login)
-        .then(async x => x && await x.verifyPassword(password) ? x : false)
-        .catch(packError("checkLoginPassword"))
-
-const serializeUser = function (user, done) {
-    done(null, user.id)
+        .select("user.*", "role")
 }
 
-const deserializeUser = function (id, done) {
-    getAuthUserDataById(id)
+function checkLoginPassword(login, password) {
+    return Password
+        .query()
+        .first()
+        .joinRelated("user")
+        .where("login", login)
+        .then(async x => x && await x.verifyPassword(password) ? x : false)
+}
+
+function serializeUser(user, done) {
+    return done(null, user.id)
+}
+
+function deserializeUser(id, done) {
+    return getAuthUserDataById(id)
         .then(x => x ? x : false)
         .then(x => done(null, x))
         .catch(handleCustomError("deserializeUser")(done))
@@ -35,7 +37,7 @@ const deserializeUser = function (id, done) {
 const localStrategy = new LocalStrategy(
     { usernameField: 'login' },
     async (login, password, done) =>
-        checkLoginPassword(login)(password)
+        checkLoginPassword(login, password)
             .then(async x => x ?
                 done(null, await getAuthUserDataById(x.id)) :
                 done(null, false)

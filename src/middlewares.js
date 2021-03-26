@@ -12,7 +12,6 @@ const { serializeUser, deserializeUser, localStrategy } = require("./model/libs/
 const createError = require("http-errors")
 const { authorizationRequest } = require("./model/libs/authorization")
 const openApiValidator = require("./model/libs/express-openapi-validator")
-const { dateToIso } = require("./model/libs/command")
 const ajvKeywords = require("./model/libs/ajvKeywords")
 
 const knex = Knex(dbConfig)

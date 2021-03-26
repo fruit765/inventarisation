@@ -13,15 +13,15 @@ module.exports = class Role extends Model {
     }
 
     static get relationMappings() {
-        const Credentials = require("./credentials")
+        const User = require("./user")
 
         return {
             credentials: {
                 relation: Model.HasManyRelation,
-                modelClass: Credentials,
+                modelClass: User,
                 join: {
                     from: "role.id",
-                    to: "credentials.role_id"
+                    to: "user.role_id"
                 }
             }
         }
