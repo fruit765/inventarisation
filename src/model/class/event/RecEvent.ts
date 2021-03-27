@@ -10,6 +10,7 @@ import dayjs from 'dayjs';
 import { RecHistory } from "../history/recHistory"
 import { startTransOpt } from "../../libs/transaction"
 import knex from "../../orm/knexConf"
+import _ from "lodash"
 
 /**
  * Класс события, предстваляет сущность события
@@ -63,6 +64,13 @@ export default class RecEvent {
         }
     }
 
+    /**Проверяет является ли событие должностным, имеет ли данный пользователь отношение к этому событию */
+    async isOfficial(userId: number) {
+        await this.init()
+        const allConfirm = _.concat(this.other.confirm_need, this.other.confirm_accept, this.other.confirm_reject)
+        return Boolean(_.find(allConfirm, {"user_id":{[String(userId)]:true}}))
+    }
+
     /**Инициализация, запускает асинзронные функции для генерации необходимых для работы значений */
     init() {
         return startInit(this.initAttr, async () => {
@@ -83,6 +91,7 @@ export default class RecEvent {
             this.other.additional = await this.addition.get()
         })
     }
+
 
     /**Получить запись события, возвращает объект необходимый для отоброжения на фронтэнде */
     async get() {

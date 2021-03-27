@@ -16,6 +16,11 @@ export default class CreateErr {
         return err
     }
 
+    /**Поле должно быть уникальным */
+    mustBeUniq(dataPath: string) {
+        return this.createException(400, "this value must be unique", dataPath)
+    }
+
     /**Ошибка пустого id */
     idEmpty() {
         return this.createException(400, "id must be not empty", "id")

@@ -28,6 +28,18 @@ export default class GetEvents {
         return eventClasses
     }
 
+    /**Возвращает события пользователя */
+    async getEventUser(userId: number) {
+        const result = []
+        const eventsAll = await this.getEventsAll()
+        for(let value of eventsAll) {
+            if(await value.isOfficial(userId)) {
+                result.push(value)
+            }
+        }
+        return result
+    }
+
     /**Возвращает события по ключу */
     async getById(eventKey: otherType.eventKey) {
         const history: tableRec.history = <any>await History.query().findById(eventKey.history_id)

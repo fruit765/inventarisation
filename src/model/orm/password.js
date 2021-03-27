@@ -9,6 +9,7 @@ const knex = Knex(dbConfig)
 Model.knex(knex)
 
 module.exports = class Password extends PasswordExt(Model) {
+
     static get tableName() {
         return "password"
     }

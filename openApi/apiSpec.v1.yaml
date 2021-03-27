@@ -896,6 +896,7 @@ paths:
                       format: email
                 password:
                   type: string
+                  minLength: 8
                 login:
                   type: string
                   format: email
@@ -974,6 +975,7 @@ paths:
                       format: email
                 password:
                   type: string
+                  minLength: 8
                 login:
                   type: string
                 role_id:
@@ -1969,6 +1971,12 @@ paths:
               examples: {}
       operationId: get-events
       description: Пролучить события
+      parameters:
+        - schema:
+            type: boolean
+          in: query
+          name: all
+          description: 'true'
   /post_dep_loc:
     get:
       summary: Получить конкретную должность

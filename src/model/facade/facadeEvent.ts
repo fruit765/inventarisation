@@ -1,6 +1,11 @@
 import _ from "lodash";
 import CreateErr from "../class/createErr";
 import GetEvents from "../class/event/GetEvents";
+
+/**
+ * Класс фасад для событий
+ * @class
+ */
 export default class FacadeEvent {
 
     private readonly handleErr: CreateErr
@@ -11,6 +16,7 @@ export default class FacadeEvent {
         this.handleErr = new CreateErr()
     }
 
+    /**Получить данные всех событий */
     async getEventAll() {
         const allEvents = []
         const allEventsClasses = await this.getEvent.getEventsAll()
@@ -21,11 +27,22 @@ export default class FacadeEvent {
         return allEvents
     }
 
-    async getEventUser(userId: number) {
-        const res = await this.getEventAll()
-        
+    /**Получить данные только событий пользователя*/
+    async getEventUser(userId: number) { 
+        const events = []
+        const eventsClasses = await this.getEvent.getEventUser(userId)
+        for (let eventClass of eventsClasses) {
+            const event = await eventClass.get()
+            events.push(event)
+        }
+        return events
     }
 
+    /**
+     * Получает из строки композитный ключ
+     * @param strId "1,2" 
+     * @returns [1,2]
+     */
     private strToId(strId: string) {
         let eventIdArray: number[]
         try {
@@ -43,6 +60,7 @@ export default class FacadeEvent {
         }
     }
 
+    /**Поростое подтверждение события */
     async simpleAccept(userId: number, compositeId: string) {
         const eventId = this.strToId(compositeId)
         const event = await this.getEvent.getById(eventId)
@@ -51,6 +69,7 @@ export default class FacadeEvent {
         return res
     }
 
+    /**Отклонение события */
     async reject(userId: number, compositeId: string) {
         const eventId = this.strToId(compositeId)
         const event = await this.getEvent.getById(eventId)

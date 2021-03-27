@@ -12,7 +12,11 @@ router.route('/events')
         next()
     })
     .get((req, res, next) => {
-        sendP(next)(res)(req.myObj.getEventAll())
+        if(req.user.role === "admin") {
+            sendP(next)(res)(req.myObj.getEventAll())
+        } else {
+            sendP(next)(res)(req.myObj.getEventUser(req.user.id))
+        }
     })
 
 module.exports = router
