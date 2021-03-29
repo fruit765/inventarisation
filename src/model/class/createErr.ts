@@ -12,7 +12,10 @@ export default class CreateErr {
             dataPath: "." + dataPath,
             message: message
         }]
-        const err = createError(errCode, buildMessage)
+        
+        const err: any = new Error()
+        err.status = errCode
+        err.message = buildMessage
         return err
     }
 
