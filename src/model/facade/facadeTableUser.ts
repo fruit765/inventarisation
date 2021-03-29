@@ -26,7 +26,7 @@ export default class FacadeTableUser extends FacadeTable {
 
     async patch(data: any, trxOpt?: Transaction<any, any>) {
         const includeLogin = await User.query(trxOpt).where("login", data.login).first()
-        if (data.login && (includeLogin?.login !== data.login)) {
+        if (data.login && includeLogin?.login !== undefined && includeLogin.login !== data.login) {
             throw this.handleErr.mustBeUniq("login")
         }
         const id = await super.patch(_.omit(data, "password"), trxOpt)
