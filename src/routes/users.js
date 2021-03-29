@@ -15,9 +15,9 @@ router.route('/users')
         sendP(next)(res)(req.myObj.getUnconfirm())
     })
     .post(async (req, res, next) => {
-        sendP(next)(res)(this.myObj.insertAndFetch(req.body))
+        sendP(next)(res)(req.myObj.insertAndFetch(req.body))
     })
     .patch(async (req, res, next) => {
-        sendP(next)(res)(this.myObj.patchAndFetch(req.body))
+        sendP(next)(res)(req.myObj.patchAndFetch(req.body))
     })
 module.exports = router
