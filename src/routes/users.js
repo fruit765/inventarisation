@@ -3,7 +3,7 @@
 const express = require('express')
 const { sendP } = require('../model/libs/command')
 const router = express.Router()
-const FacadeTableUser = require('../model/facade/FacadeTableUser').default
+const FacadeTableUser = require('../model/facade/facadeTableUser').default
 const _ = require("lodash")
 
 router.route('/users')
