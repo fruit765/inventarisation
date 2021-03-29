@@ -908,7 +908,6 @@ paths:
                 - full_name
                 - password
                 - login
-                - role_id
     patch:
       summary: Редактировать пользователя
       operationId: patch-users
