@@ -154,32 +154,41 @@ paths:
                   type: integer
                 supplier_id:
                   type: integer
+                  nullable: true
                 location_id:
                   type: integer
                 brand_id:
                   type: integer
+                  nullable: true
                 model:
                   type: string
+                  nullable: true
                 comments:
                   type: string
+                  nullable: true
                 price:
                   type: integer
+                  nullable: true
                 isArchive:
                   type: integer
                 specifications: {}
                 date_purchase:
+                  nullable: true
                   type: string
                   format: date
                   x-date-to-iso: true
                 date_warranty_end:
+                  nullable: true
                   type: string
                   format: date
                   x-date-to-iso: true
                 inv_number:
                   type: string
                 SN:
+                  nullable: true
                   type: string
                 order_number:
+                  nullable: true
                   type: string
               required:
                 - category_id
@@ -247,37 +256,47 @@ paths:
                 id:
                   type: integer
                 parent_id:
-                  x-type: intOrNull
+                  type: integer
+                  nullable: true
                 category_id:
                   type: integer
                 user_id:
                   type: integer
                 supplier_id:
                   type: integer
+                  nullable: true
                 location_id:
                   type: integer
                 brand_id:
                   type: integer
+                  nullable: true
                 model:
                   type: string
+                  nullable: true
                 comments:
                   type: string
+                  nullable: true
                 price:
                   type: integer
+                  nullable: true
                 isArchive:
                   type: integer
                 specifications: {}
                 date_purchase:
+                  nullable: true
                   type: string
                   x-date-to-iso: true
                 date_warranty_end:
+                  nullable: true
                   type: string
                   x-date-to-iso: true
                 inv_number:
                   type: string
                 SN:
+                  nullable: true
                   type: string
                 order_number:
+                  nullable: true
                   type: string
               required:
                 - id

@@ -3,10 +3,9 @@
 const Ajv = require('ajv')
 const SwaggerParser = require("@apidevtools/swagger-parser")
 const fp = require('lodash/fp')
+const _ = require('lodash')
 const transform = require("lodash/fp/transform").convert({ 'cap': false })
-const forIn = require("lodash/fp/forIn").convert({ 'cap': false })
 const createError = require('http-errors')
-const { logger } = require('./exceptionHandling')
 const { bindAllKeywords } = require('./ajvKeywords')
 // проверка параметров пути не реализованна
 class OpenApiValid {
@@ -49,8 +48,27 @@ class OpenApiValid {
         return JSchema
     }
 
+    _nullable(schema) {
+        if (schema.nullable === true) {
+            if (_.isArray(schema.type)) {
+                schema.type.push("null")
+            } else if (schema.type === undefined) {
+                schema.type = "null"
+            } else {
+                schema.type = ["null", schema.type]
+            }
+        }
+
+        if (schema.properties) {
+            schema.properties = _.mapValues(schema.properties, x => this._nullable(x))
+        }
+
+        return schema
+    }
+
     _makeReqBodyJSchema(oApiMethodBlock) {
-        return fp.get("requestBody.content.application/json.schema")(oApiMethodBlock) || null
+        const res = _.get(oApiMethodBlock, "requestBody.content.application/json.schema")
+        return res ? this._nullable(res) : null
     }
 
     _validate(ajvValidator, object, next) {
@@ -84,13 +102,14 @@ class OpenApiValid {
                     }
 
                     bodyJSchema["$async"] = true
+                    console.log(bodyJSchema)
                     req.body = this.ajv.compile(bodyJSchema)
 
                     queryJSchema["$async"] = true
                     req.query = this.ajv.compile(queryJSchema)
 
                     return { req }
-                    
+
                 }))(fp.mapKeys(fp.toLower)(rawOApiObj.paths))
         )
     }
@@ -136,12 +155,12 @@ class OpenApiValid {
                     if (!validReqBlock) {
                         return next(new createError.MethodNotAllowed())
                     }
-                
+
                     const queryIsValid = await this._validate(validReqBlock.query, req.query, next)
                     const bodyIsValid = await this._validate(validReqBlock.body, req.body, next)
                     if (queryIsValid && bodyIsValid) {
                         next()
-                    } 
+                    }
                 })
         }
     }
