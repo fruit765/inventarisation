@@ -184,12 +184,7 @@ paths:
               required:
                 - category_id
                 - user_id
-                - supplier_id
                 - location_id
-                - brand_id
-                - model
-                - date_purchase
-                - date_warranty_end
     description: ''
     patch:
       summary: Редактировать оборудование
