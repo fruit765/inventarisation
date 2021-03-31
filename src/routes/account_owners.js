@@ -9,7 +9,7 @@ const Account_owner = require("../model/orm/account_owner")
 
 router.route('/account_owners')
     .all((req, res, next) => {
-        this.myObj = new Table("Account", req.user.id)
+        this.myObj = new Table("account_owner", req.user.id)
         next()
     })
     .get((req, res, next) => {
