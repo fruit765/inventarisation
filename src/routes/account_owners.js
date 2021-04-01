@@ -38,4 +38,4 @@ router.route('/account_owners')
         sendP(next)(res)(this.myObj.delete(req.body.id))
     })
 
-module.exports = router
+module.exports = router 

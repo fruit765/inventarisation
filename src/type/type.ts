@@ -65,4 +65,9 @@ export namespace classInterface {
     export interface stringBlock {
         get: () => Promise<any>
     }
+
+    export interface userConnector {
+        bind: () => any
+        unbind: () => any
+    }
 }
