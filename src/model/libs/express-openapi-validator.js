@@ -102,7 +102,6 @@ class OpenApiValid {
                     }
 
                     bodyJSchema["$async"] = true
-                    console.log(bodyJSchema)
                     req.body = this.ajv.compile(bodyJSchema)
 
                     queryJSchema["$async"] = true
