@@ -68,7 +68,7 @@ export class RecHistory {
             return false
         }
         return startTransOpt(this.trx, async trx => {
-            const openEvents = await Event_confirm.query(trx).where("history_id", this.id).whereNotNull("date_completed")
+            const openEvents = await Event_confirm.query(trx).where("history_id", this.id).whereNull("date_completed")
             if (!openEvents.length) {
                 const curretDataTime = dayjs().toISOString()
                 await History.query(trx).where("id", this.id).whereNull("commit_date").patch(<any>{ commit_date: curretDataTime })
