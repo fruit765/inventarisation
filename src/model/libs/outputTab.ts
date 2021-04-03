@@ -12,6 +12,13 @@ async function getUnconfirmOnly(tabName: string, id?: number) {
     let eventMaxPriorSingle: any[] = []
     const hisColName = hasHistory(tabName + "_id") ? tabName + "_id" : null
     if (hisColName) {
+
+        knex.raw("select * from device").then(x => console.log(x[0]))
+
+        const myEvents = 
+        `
+        select * from event_confirm where date_completed is null
+        `
         const myEvents = knex("event_confirm")
             .whereNull("date_completed")
             .where(delUndefined({ [hisColName]: id, table: tabName }))
