@@ -6,6 +6,7 @@
 // const Knex = require("knex")
 // const dbConfig = require("../serverConfig").db;
 const User = require("../src/model/orm/user")
+const { default: knex } = require("./model/orm/knexConf")
 
 // const knex = Knex(dbConfig)
 // try{
@@ -13,9 +14,4 @@ const User = require("../src/model/orm/user")
 // } catch(err){
 //     console.log(err)
 // }
-const a = User
-    .query()
-    .findById(1)
-    .joinRelated("role")
-    .select("user.*", "role")
-    .then(console.log)
+knex.raw("select * from device").then(x => console.log(x[0]))
