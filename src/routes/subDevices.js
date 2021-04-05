@@ -9,11 +9,16 @@ const router = express.Router()
 router.post('/subDevices', async (req, res, next) => {
     const bindDev = await Device.query().findByIds(req.body.ids)
     const parentDev = await Device.query().findById(req.body.id)
-    await Device.query().findByIds(req.body.ids).patch(
+    await Device.query()
+        .select("id")
+        .findByIds(req.body.ids)
+        .whereNull("parent_id")
+        .where({user_id: parentDev.user_id, status_id: parentDev.status_id})
+    await Device.query().findByIds(req.body.ids).where({}).patch(
         {
             parent_id: parentDev.id,
-            user_id: parentDev.user_id,
-            status_id: parentDev.status_id
+            status_id: parentDev.status_id,
+            user_id: parentDev.user_id
         })
     //await Device.query().findByIds(req.body.ids).patch({ parent_id: req.body.id })
     const response = Device.query().findByIds(req.body.ids)
