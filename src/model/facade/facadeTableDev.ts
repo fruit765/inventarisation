@@ -97,6 +97,6 @@ export class FacadeTableDev extends FacadeTable {
     /**Проверяет является ли юзер ответственным за склад*/
     private async isUserWarehouseResponsible(userId: number) {
         const resp = <any>await Responsibility.query().findById(userId)
-        return Boolean(resp.warehouseResponsible)
+        return Boolean(resp?.warehouseResponsible)
     }
 }
