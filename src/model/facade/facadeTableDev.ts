@@ -61,7 +61,10 @@ export class FacadeTableDev extends FacadeTable {
     }
 
     /**Отвязывает оборудование от пользователя*/
-    async remove(devId: number, userId: number) {
+    async remove(devId: number, userId?: number) {
+        if (userId == undefined) {
+            userId = <number>(<any>await Responsibility.query().where("warehouseResponsible", 1).first()).id
+        }
         const unconfirm = (await this.getUnconfirm(devId))[0]
         const unconfirmStatus = unconfirm.status
         if (unconfirmStatus !== "given") {
