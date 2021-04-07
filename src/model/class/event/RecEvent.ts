@@ -124,8 +124,8 @@ export default class RecEvent {
             insertData.status = "complete"
             insertData.date_completed = dayjs().toISOString()
         }
-        startTransOpt(undefined, async trx => {
-            await knex("event_confirm").transacting(trx).where({
+        await startTransOpt(undefined, async trx => {
+            await <Promise<any>>knex("event_confirm").transacting(trx).where({
                 history_id: this.eventRec.history_id,
                 event_confirm_preset_id: this.eventRec.event_confirm_preset_id
             }).update(insertData)
@@ -143,7 +143,7 @@ export default class RecEvent {
             insertData.date_completed = dayjs().toISOString()
         }
 
-        await knex("event_confirm").where({
+        await <Promise<any>>knex("event_confirm").where({
             history_id: this.eventRec.history_id,
             event_confirm_preset_id: this.eventRec.event_confirm_preset_id
         }).update(insertData)
