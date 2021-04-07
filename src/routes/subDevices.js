@@ -13,6 +13,9 @@ router.post('/subDevices', async (req, res, next) => {
         .select("id")
         .findByIds(req.body.ids)
         .whereNull("parent_id")
+        .where(function() {
+            this.where()
+        })
         .where({user_id: parentDev.user_id, status_id: parentDev.status_id})
     await Device.query().findByIds(req.body.ids).where({}).patch(
         {
