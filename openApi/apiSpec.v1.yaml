@@ -2202,7 +2202,7 @@ paths:
               properties:
                 id:
                   type: integer
-                depatrment_id:
+                department_id:
                   type: integer
                 location_id:
                   type: integer
