@@ -103,30 +103,30 @@ export class FacadeTableDev extends FacadeTable {
         return Boolean(resp?.warehouseResponsible)
     }
 
-    async bindSubDevice(id: number, ids: number[]) {
-        const unconfirm = await this.getUnconfirm()
-        const unconfirmIndex = _.keyBy(unconfirm, "id")
-        const mainStatus = unconfirmIndex?.[id]?.status
+    // async bindSubDevice(id: number, ids: number[]) {
+    //     const unconfirm = await this.getUnconfirm()
+    //     const unconfirmIndex = _.keyBy(unconfirm, "id")
+    //     const mainStatus = unconfirmIndex?.[id]?.status
         
-        ids.map(val => {
-            const status = unconfirmIndex[val].status 
-            if (status !== "given" && status !== "stock") {
+    //     ids.map(val => {
+    //         const status = unconfirmIndex[val].status 
+    //         if (status !== "given" && status !== "stock") {
                 
-            }
-        })
-        if (mainStatus === "given" || mainStatus === "givenIncomplete") {
+    //         }
+    //     })
+    //     if (mainStatus === "given" || mainStatus === "givenIncomplete") {
 
-        }
+    //     }
 
-        if (mainStatus === "stock" || mainStatus === "return") {
+    //     if (mainStatus === "stock" || mainStatus === "return") {
 
-        }
+    //     }
 
-        if (unconfirmStatus !== "stock") {
-            throw this.handleErr.idWrong()
-        }
-        const status = await Status.query().where("status", "given").first()
-        return this.patchAndFetch({ id: devId, user_id: userId, status_id: status.id })
-        knex(this.tableName)
-    }
+    //     if (unconfirmStatus !== "stock") {
+    //         throw this.handleErr.idWrong()
+    //     }
+    //     const status = await Status.query().where("status", "given").first()
+    //     return this.patchAndFetch({ id: devId, user_id: userId, status_id: status.id })
+    //     knex(this.tableName)
+    // }
 }
