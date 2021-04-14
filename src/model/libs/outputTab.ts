@@ -1,68 +1,72 @@
 import { hasHistory } from "./bindHisTabInfo"
 import _ from "lodash"
-import { delUndefined } from "./objectOp"
 import Status from "../orm/status"
 import knex from "../orm/knexConf"
+import { Transaction } from 'knex';
+import { startTransOpt } from "./transaction"
 
 /**Получает только новые незакоммиченные данные из таблицы*/
-async function getUnconfirmOnly(tabName: string, id?: number| number[]) {
-    if (typeof id === "number") {
-        id = [id]
-    }
-    if (!await hasHistory(tabName)) {
-        return []
-    }
-    let eventMaxPriorSingle: any[] = []
-    const hisColName = hasHistory(tabName + "_id") ? tabName + "_id" : null
-    if (hisColName) {
-
-        let myEvents = knex("event_confirm")
-            .whereNull("date_completed")
-            .where({ table: tabName })
-            .innerJoin("history", "history.id", "event_confirm.history_id")
-            .innerJoin("event_confirm_preset", "event_confirm_preset.id", "event_confirm.event_confirm_preset_id")
-
-        if (id) {
-            myEvents=myEvents.whereIn(hisColName, id)
+async function getUnconfirmOnly(tabName: string, options: { id?: number | number[], trxOpt?: Transaction<any, any> }) {
+    return startTransOpt(options.trxOpt, async trx => {
+        let id = options.id
+        if (typeof id === "number") {
+            id = [id]
         }
+        if (!await hasHistory(tabName)) {
+            return []
+        }
+        let eventMaxPriorSingle: any[] = []
+        const hisColName = hasHistory(tabName + "_id") ? tabName + "_id" : null
+        if (hisColName) {
 
-        const groupMaxPriority = myEvents
-            .clone()
-            .select(hisColName)
-            .max("view_priority as max_view_priority")
-            .groupBy(hisColName)
+            let myEvents = knex("event_confirm")
+                .whereNull("date_completed")
+                .where({ table: tabName })
+                .innerJoin("history", "history.id", "event_confirm.history_id")
+                .innerJoin("event_confirm_preset", "event_confirm_preset.id", "event_confirm.event_confirm_preset_id")
+
+            if (id) {
+                myEvents = myEvents.whereIn(hisColName, id)
+            }
+
+            const groupMaxPriority = myEvents
+                .clone()
+                .select(hisColName)
+                .max("view_priority as max_view_priority")
+                .groupBy(hisColName)
 
 
-        const eventsMaxPriority = knex
-            .queryBuilder()
-            .from(function (this: any) {
-                const t1 = myEvents
-                    .select(hisColName, "view_priority", "status_id", "diff")
-                    .as("t1")
-                Object.assign(this, t1)
-            })
-            .innerJoin(
-                function () {
-                    const t0 = groupMaxPriority.as("t0")
-                    Object.assign(this, t0)
-                },
-                function () {
-                    this.on("t0." + hisColName, "t1." + hisColName).andOn("t0.max_view_priority", "t1.view_priority")
-                }
-            )
-        eventMaxPriorSingle = await <Promise<any[]>>eventsMaxPriority.select("t1.*").groupBy("t1." + hisColName)
-    }
-
-    return eventMaxPriorSingle
+            const eventsMaxPriority = knex
+                .queryBuilder()
+                .from(function (this: any) {
+                    const t1 = myEvents
+                        .select(hisColName, "view_priority", "status_id", "diff")
+                        .as("t1")
+                    Object.assign(this, t1)
+                })
+                .innerJoin(
+                    function () {
+                        const t0 = groupMaxPriority.as("t0")
+                        Object.assign(this, t0)
+                    },
+                    function () {
+                        this.on("t0." + hisColName, "t1." + hisColName).andOn("t0.max_view_priority", "t1.view_priority")
+                    }
+                )
+            eventMaxPriorSingle = await <Promise<any[]>>eventsMaxPriority.transacting(trx).select("t1.*").groupBy("t1." + hisColName)
+        }
+        return eventMaxPriorSingle
+    })
 }
 
 /**Получает данные из таблицы с новой еще не закомиченной информацией*/
-async function getUnconfirm(tabName: string, id?: number | number[]) {
-    if(typeof id === "number") {
+async function getUnconfirm(tabName: string, options: { id?: number | number[], trxOpt?: Transaction<any, any> }) {
+    let id = options.id
+    if (typeof id === "number") {
         id = [id]
     }
     const priority = -0.1
-    const unconfirm = await getUnconfirmOnly(tabName, id)
+    const unconfirm = await getUnconfirmOnly(tabName, options)
     let tableQuery = knex(tabName)
     if (id) {
         tableQuery = tableQuery.whereIn("id", id)

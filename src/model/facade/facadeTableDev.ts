@@ -58,8 +58,9 @@ export class FacadeTableDev extends FacadeTable {
         return startTransOpt(trxOpt, async (trx) => {
             const unconfirm = (await this.getUnconfirm(devId))[0]
             const unconfirmStatus = unconfirm.status
+            const category = await <Promise<any>>knex("category").where("id", unconfirm.category_id).first()
 
-            if (unconfirmStatus !== "stock" && unconfirm.parent_id !== null) {
+            if (unconfirmStatus !== "stock" || unconfirm.parent_id !== null || category.is_attached !== 1 ) {
                 throw this.handleErr.idWrong()
             }
 
@@ -153,6 +154,7 @@ export class FacadeTableDev extends FacadeTable {
                     const valStatus = unconfirmIndex[val].status
                     const valUser = unconfirmIndex[val].user_id
                     if (!(valStatus === "given" && valUser === mainUser) && valStatus !== "stock") {
+                        console.log(unconfirmIndex[val])
                         throw this.handleErr.bindSubDevNotAllowed()
                     }
                 })

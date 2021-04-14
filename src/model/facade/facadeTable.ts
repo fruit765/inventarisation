@@ -7,7 +7,7 @@ import { delUndefined } from '../libs/objectOp'
 import { getUnconfirm } from '../libs/outputTab'
 import { startTransOpt } from '../libs/transaction'
 import knex from '../orm/knexConf'
-import CreateErr  from './../class/createErr'
+import CreateErr from './../class/createErr'
 
 /**@classdesc Класс фасад, для работы с таблицами */
 export class FacadeTable {
@@ -22,7 +22,7 @@ export class FacadeTable {
         if (typeof tableName !== "string") {
             throw this.handleErr.internalServerError("tableName is not a string")
         }
-    
+
         this.tableName = tableName.toLowerCase()
         this.actorId = actorId
         this.isSaveHistory = Boolean(options?.isSaveHistory ?? true)
@@ -47,7 +47,7 @@ export class FacadeTable {
         await this.init()
         if (this.isSaveHistory) {
             const validDataId = (<any>await new RecValidate(data, tableName, actionTag).validate()).id
-            const validData = {...data, id: validDataId}
+            const validData = { ...data, id: validDataId }
             const newRecHistory = await new NewRecHistory(validData, tableName, actionTag, this.actorId, trx).create()
             const recHistory = newRecHistory.get()
             await recHistory.genEvents()
@@ -75,13 +75,13 @@ export class FacadeTable {
     /**Изменяет данные и возвращает объект с неподтвержденными данными */
     async patchAndFetch(data: any, trxOpt?: Transaction<any, any>) {
         const id = await this.patch(data, trxOpt)
-        return (await this.getUnconfirm(id))[0]
+        return (await this.getUnconfirm(id, trxOpt))[0]
     }
 
     /**Добовляет данные и возвращает объект с неподтвержденными данными */
     async insertAndFetch(data: any, trxOpt?: Transaction<any, any>) {
         const id = await this.insert(data, trxOpt)
-        return (await this.getUnconfirm(id))[0]
+        return (await this.getUnconfirm(id, trxOpt))[0]
     }
 
     /**Удаляет данные по id */
@@ -92,12 +92,12 @@ export class FacadeTable {
     }
 
     /**Возвращает записи с неподтверденными данными */
-    async getUnconfirm(id?: number | number[]) {
-        return getUnconfirm(this.tableName, id)
+    async getUnconfirm(id?: number | number[], trxOpt?: Transaction<any, any>) {
+        return getUnconfirm(this.tableName, {id, trxOpt})
     }
 
     /**Просто получить таблицу */
     async get(id?: number) {
-        return knex(this.tableName).where(delUndefined({id}))
+        return knex(this.tableName).where(delUndefined({ id }))
     }
 }

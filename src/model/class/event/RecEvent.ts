@@ -2,7 +2,6 @@ import { classInterface, tableRec } from "../../../type/type"
 import { getTabIdFromHis } from "../../libs/bindHisTabInfo"
 import { initAttr, startInit } from "../../libs/initHelper"
 import { uniqObjToBoolObj } from "../../libs/objectOp"
-import Event_confirm from "../../orm/event_confirm"
 import CreateErr from './../createErr'
 import ConfirmCheck from './../preset/confirm/ConfirmCheck'
 import Preset from './../preset/Preset';
