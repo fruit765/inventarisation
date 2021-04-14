@@ -44,6 +44,16 @@ export default class CreateErr {
         return this.createException(400, "wrong event id", "event_id")
     }
 
+    /**Связывание одного устройства с другим запрещено*/
+    bindSubDevNotAllowed() {
+        return this.createException(400, "bind SubDevice not allowed", "ids")
+    }
+
+    /**Нельзя открепить устройство одно от другого*/
+    unbindSubDevNotAllowed() {
+        return this.createException(400, "unbind SubDevice not allowed", "ids")
+    }
+
     /**серверная ошибка */
     internalServerError(message: string = "InternalServerError") {
         return createError(500, message)

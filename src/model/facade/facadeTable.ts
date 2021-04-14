@@ -92,7 +92,7 @@ export class FacadeTable {
     }
 
     /**Возвращает записи с неподтверденными данными */
-    async getUnconfirm(id?: number) {
+    async getUnconfirm(id?: number | number[]) {
         return getUnconfirm(this.tableName, id)
     }
 

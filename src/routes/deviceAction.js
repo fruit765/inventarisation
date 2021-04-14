@@ -7,7 +7,7 @@ const FacadeTableDev = require('../model/facade/facadeTableDev').FacadeTableDev
 
 router.route('/deviceAction')
     .all((req, res, next) => {
-        req.myObj = new FacadeTableDev("device", req.user.id)
+        req.myObj = new FacadeTableDev(req.user.id)
         next()
     })
     .post(async (req, res, next) => {

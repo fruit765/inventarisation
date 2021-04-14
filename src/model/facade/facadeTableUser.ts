@@ -31,7 +31,10 @@ export default class FacadeTableUser extends FacadeTable {
         }
         const id = await super.patch(_.omit(data, "password"), trxOpt)
         if (data.password) {
-            await (<any>Password).query(trxOpt).findById(id).patch({ password: data.password })
+            const isPatch = await (<any>Password).query(trxOpt).findById(id).patch({ password: data.password })
+            if (!isPatch) {
+                await (<any>Password).query(trxOpt).insert({ id, password: data.password })
+            }
         }
         return id
     }

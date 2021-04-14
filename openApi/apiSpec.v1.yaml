@@ -572,9 +572,12 @@ paths:
                       type: integer
                     schema:
                       description: Схема дополнительный полей устройст категории
+                    is_attached:
+                      type: number
                   required:
                     - id
                     - category
+                    - is_attached
               examples: {}
       operationId: get-categories
       description: Получает все данные из таблицы
@@ -611,6 +614,11 @@ paths:
                 schema: {}
                 parent_id:
                   type: integer
+                is_attached:
+                  type: integer
+                inv_prefix:
+                  type: string
+                sub_devices: {}
               required:
                 - category
         description: ''
@@ -645,6 +653,11 @@ paths:
                 parent_id:
                   type: integer
                 schema: {}
+                is_attached:
+                  type: integer
+                inv_prefix:
+                  type: string
+                sub_devices: {}
               required:
                 - id
         description: ''
@@ -1176,6 +1189,7 @@ paths:
               properties:
                 id:
                   type: integer
+                  nullable: true
                 ids:
                   type: array
                   items:

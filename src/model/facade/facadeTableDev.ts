@@ -8,12 +8,16 @@ import CyrillicToTranslit from "cyrillic-to-translit-js"
 import RecValidate from "../class/recValidate"
 import { FacadeTable } from "./facadeTable"
 import knex from "../orm/knexConf"
+import { startTransOpt } from '../libs/transaction'
 
 const ajv = new Ajv({ errorDataPath: 'property', coerceTypes: true, removeAdditional: "all" })
 const cyrillicToTranslit = new CyrillicToTranslit()
 
 export class FacadeTableDev extends FacadeTable {
 
+    constructor(actorId: number, options?: { isSaveHistory?: boolean }) {
+        super("Device", actorId, options)
+    }
     /**
      * Добовляет данные в таблицу возвражает id записи
      * Так же проверяет на привязку к ответственному по складу
@@ -49,32 +53,63 @@ export class FacadeTableDev extends FacadeTable {
         return super.patch(dataClone, trxOpt)
     }
 
-     /**Привязывает оборудование к пользователю*/
-      async bind(devId: number, userId: number) {
-        const unconfirm = (await this.getUnconfirm(devId))[0]
-        const unconfirmStatus = unconfirm.status
-        if (unconfirmStatus !== "stock") {
-            throw this.handleErr.idWrong()
-        }
-        const status = await Status.query().where("status", "given").first()
-        return this.patchAndFetch({ id: devId, user_id: userId, status_id: status.id })
+    /**Привязывает оборудование к пользователю*/
+    async bind(devId: number, userId: number, trxOpt?: Transaction<any, any>): Promise<any[]> {
+        return startTransOpt(trxOpt, async (trx) => {
+            const unconfirm = (await this.getUnconfirm(devId))[0]
+            const unconfirmStatus = unconfirm.status
+
+            if (unconfirmStatus !== "stock" && unconfirm.parent_id !== null) {
+                throw this.handleErr.idWrong()
+            }
+
+            let childDevRes: any[] = []
+            const childDev = await <Promise<any[]>>knex(this.tableName).transacting(trx).where("parent_id", devId)
+            if (childDev.length) {
+                for (let value of childDev) {
+                    childDevRes = childDevRes.concat(await this.bind(value.id, userId, trx))
+                }
+            }
+            const status = await Status.query().where("status", "given").first()
+            const res = await this.patchAndFetch({ id: devId, user_id: userId, status_id: status.id }, trx)
+            return childDevRes.concat(res)
+        })
     }
 
     /**Отвязывает оборудование от пользователя*/
-    async remove(devId: number, userId?: number) {
-        if (userId == undefined) {
-            userId = <number>(<any>await Responsibility.query().where("warehouseResponsible", 1).first()).id
-        }
-        const unconfirm = (await this.getUnconfirm(devId))[0]
-        const unconfirmStatus = unconfirm.status
-        if (unconfirmStatus !== "given") {
-            throw this.handleErr.idWrong()
-        }
-        if (!await this.isUserWarehouseResponsible(userId)) {
-            throw this.handleErr.userIdWrong()
-        }
-        const status = await Status.query().where("status", "stock").first()
-        return this.patchAndFetch({ id: devId, user_id: userId, status_id: status.id })
+    async remove(devId: number, userId?: number, trxOpt?: Transaction<any, any>): Promise<any[]> {
+        return startTransOpt(trxOpt, async (trx) => {
+            if (userId == undefined) {
+                userId = await this.getLastWarResp(devId)
+            }
+            const unconfirm = (await this.getUnconfirm(devId))[0]
+            const unconfirmStatus = unconfirm.status
+
+            if (unconfirmStatus !== "given" || unconfirm.parent_id !== null) {
+                throw this.handleErr.idWrong()
+            }
+
+            if (!await this.isUserWarehouseResponsible(userId)) {
+                throw this.handleErr.userIdWrong()
+            }
+
+            let childDevRes: any[] = []
+            const childDev = await <Promise<any[]>>knex(this.tableName).transacting(trx).where("parent_id", devId)
+            if (childDev.length) {
+                for (let value of childDev) {
+                    childDevRes = childDevRes.concat(await this.remove(value.id, userId, trx))
+                }
+            }
+
+            const status = await Status.query().where("status", "stock").first()
+            const res = await this.patchAndFetch({ id: devId, user_id: userId, status_id: status.id }, trx)
+            return childDevRes.concat(res)
+        })
+    }
+
+    /**Возвращает последнего ответственного за склад для устройства */
+    async getLastWarResp(devId: number) {
+        return <number>(<any>await Responsibility.query().where("warehouseResponsible", 1).first()).id
     }
 
     /**Проверка спецификации оборудования на схему в категории
@@ -92,7 +127,7 @@ export class FacadeTableDev extends FacadeTable {
             for (let key in err.errors) {
                 err.errors[key].dataPath = ".specifications" + err.errors[key].dataPath
             }
-            throw this.handleErr.createError(400, {message:err.errors})
+            throw this.handleErr.createError(400, { message: err.errors })
         })
         return spec
     }
@@ -103,30 +138,63 @@ export class FacadeTableDev extends FacadeTable {
         return Boolean(resp?.warehouseResponsible)
     }
 
-    // async bindSubDevice(id: number, ids: number[]) {
-    //     const unconfirm = await this.getUnconfirm()
-    //     const unconfirmIndex = _.keyBy(unconfirm, "id")
-    //     const mainStatus = unconfirmIndex?.[id]?.status
-        
-    //     ids.map(val => {
-    //         const status = unconfirmIndex[val].status 
-    //         if (status !== "given" && status !== "stock") {
-                
-    //         }
-    //     })
-    //     if (mainStatus === "given" || mainStatus === "givenIncomplete") {
+    /**Привязывает одно оборудование к другому, формирует составное оборудование */
+    async bindSubDevice(id: number, ids: number[], trxOpt?: Transaction<any, any>) {
+        return startTransOpt(trxOpt, async (trx) => {
+            const unconfirm = await this.getUnconfirm(ids.concat(id))
+            const unconfirmIndex = _.keyBy(unconfirm, "id")
+            const mainStatus = unconfirmIndex[id].status
+            const mainUser = unconfirmIndex[id].user_id
+            const mainStatusId = unconfirmIndex[id].status_id
+            const res = []
 
-    //     }
+            if (mainStatus === "given") {
+                ids.forEach(val => {
+                    const valStatus = unconfirmIndex[val].status
+                    const valUser = unconfirmIndex[val].user_id
+                    if (!(valStatus === "given" && valUser === mainUser) && valStatus !== "stock") {
+                        throw this.handleErr.bindSubDevNotAllowed()
+                    }
+                })
+            } else if (mainStatus === "stock") {
+                ids.forEach(val => {
+                    const valStatus = unconfirmIndex[val].status
+                    if (valStatus !== "given" && valStatus !== "stock") {
+                        throw this.handleErr.bindSubDevNotAllowed()
+                    }
+                })
+            } else {
+                throw this.handleErr.bindSubDevNotAllowed()
+            }
 
-    //     if (mainStatus === "stock" || mainStatus === "return") {
+            for (let subId of ids) {
+                const x = await this.patchAndFetch({ id: subId, user_id: mainUser, status_id: mainStatusId, parent_id: id }, trx)
+                res.push(x)
+            }
+            return res
+        })
+    }
 
-    //     }
-
-    //     if (unconfirmStatus !== "stock") {
-    //         throw this.handleErr.idWrong()
-    //     }
-    //     const status = await Status.query().where("status", "given").first()
-    //     return this.patchAndFetch({ id: devId, user_id: userId, status_id: status.id })
-    //     knex(this.tableName)
-    // }
+    /**Отвязывает одно оборудование от другого */
+    async unbindSubDevice(ids: number[], trxOpt?: Transaction<any, any>): Promise<any[]> {
+        return startTransOpt(trxOpt, async (trx) => {
+            const unconfirm = await this.getUnconfirm(ids)
+            const unconfirmIndex = _.keyBy(unconfirm, "id")
+            const status = await Status.query().where("status", "stock").first()
+            const res = []
+            for (let id of ids) {
+                let userid: number
+                if (unconfirmIndex[id].status === "given") {
+                    userid = await this.getLastWarResp(id)
+                } else if (unconfirmIndex[id].status === "stock") {
+                    userid = unconfirmIndex[id].user_id
+                } else {
+                    throw this.handleErr.unbindSubDevNotAllowed()
+                }
+                const x = await this.patchAndFetch({ id: id, parent_id: null, status_id: status.id, user_id: userid }, trx)
+                res.push(x)
+            }
+            return res
+        })
+    }
 }
