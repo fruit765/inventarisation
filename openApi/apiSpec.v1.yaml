@@ -2280,6 +2280,69 @@ paths:
       operationId: get-roles
       description: Получить список ролей
     parameters: []
+  /softwares:
+    get:
+      summary: Получить ПО
+      tags:
+        - software
+      responses:
+        '200':
+          description: OK
+      operationId: get-softwares
+      description: Получает список всего ПО
+    post:
+      summary: Добавляем ПО
+      operationId: post-softwares
+      responses:
+        '200':
+          description: OK
+      description: Добавляет ПО
+      tags:
+        - software
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                spec: {}
+                software_category_id:
+                  type: integer
+              required:
+                - software_category_id
+        description: ''
+    patch:
+      summary: Редактировать ПО
+      operationId: patch-softwares
+      responses:
+        '200':
+          description: OK
+      description: Редактирует ПО
+      tags:
+        - software
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                spec: {}
+                software_category_id:
+                  type: integer
+              required:
+                - id
+  /softwareCategory:
+    get:
+      summary: Получить категорию ПО
+      tags:
+        - software
+      responses:
+        '200':
+          description: OK
+      operationId: get-softwareCategory
+      description: Получить категорию ПО
 components:
   schemas: {}
   securitySchemes: {}
@@ -2292,3 +2355,4 @@ tags:
   - name: acts
   - name: events
   - name: departments
+  - name: software

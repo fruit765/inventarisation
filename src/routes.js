@@ -21,6 +21,8 @@ const departments = require('./routes/departments')
 const role = require('./routes/role')
 
 const accounts = require('./routes/accounts')
+const softwares = require('./routes/softwares')
+const softwareCategory = require('./routes/softwareCategory')
 const account_types = require('./routes/account_types')
 const accounts_owner = require('./routes/account_owners')
 const events = require('./routes/events')
@@ -60,6 +62,8 @@ module.exports = function (app) {
     app.use(post_dep_loc)
     app.use(departments)
 
+    app.use(softwares)
+    app.use(softwareCategory)
     app.use(accounts)
     app.use(account_types)
     app.use(accounts_owner)
