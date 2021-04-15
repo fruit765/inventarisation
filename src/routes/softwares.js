@@ -1,6 +1,6 @@
 "use strict"
 
-const FacadeTabSoftware = require('../model/facade/FacadeTabSoftware').default
+const FacadeTabSoftware = require('../model/facade/facadeTabSoftware').default
 const express = require('express')
 const { sendP } = require('../model/libs/command')
 const router = express.Router()
