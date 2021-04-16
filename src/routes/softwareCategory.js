@@ -14,11 +14,5 @@ router.route('/softwareCategory')
         const response = this.myObj.getUnconfirm()
         sendP(next)(res)(response)
     })
-    .post((req, res, next) => {
-        sendP(next)(res)(this.myObj.insertAndFetch(req.body))
-    })
-    .patch((req, res, next) => {
-        sendP(next)(res)(this.myObj.patchAndFetch(req.body))
-    })
 
 module.exports = router

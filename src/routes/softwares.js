@@ -11,7 +11,7 @@ router.route('/softwares')
         next()
     })
     .get(async (req, res, next) => {
-        const response = this.myObj.getUnconfirm()
+        const response = this.myObj.getUnconfAdditional()
         sendP(next)(res)(response)
     })
     .post((req, res, next) => {

@@ -58,4 +58,19 @@ export default class CreateErr {
     internalServerError(message: string = "InternalServerError") {
         return createError(500, message)
     }
+
+    /**Прикрепление ПО уже существует */
+    attachAlreadyExists() {
+        return this.createException(400, "attachment already exist", "id")
+    }
+
+    /**Прикрепление ПО не существует */
+    attachNotExist() {
+        return this.createException(400, "attachment does not exist", "id")
+    }
+
+    /**Прикрепление ПО не разрешено */
+    attachDisallowed() {
+        return this.createException(400, "attachment disallowed", "id")
+    }
 }

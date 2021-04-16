@@ -70,4 +70,10 @@ export namespace classInterface {
         bind: () => any
         unbind: () => any
     }
+
+    export interface softwareConnector {
+        get: () => any
+        bind: (message: any) => Promise<void>
+        unbind: (message: any) => Promise<void>
+    }
 }

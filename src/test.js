@@ -5,7 +5,7 @@
 // const dayjs = require("dayjs")
 // const Knex = require("knex")
 // const dbConfig = require("../serverConfig").db;
-const User = require("../src/model/orm/user")
+
 const { default: knex } = require("./model/orm/knexConf")
 
 // const knex = Knex(dbConfig)
@@ -14,4 +14,19 @@ const { default: knex } = require("./model/orm/knexConf")
 // } catch(err){
 //     console.log(err)
 // }
-knex.raw("select * from device").then(x => console.log(x[0]))
+const x = async () => {
+    try {
+        await knex("software_owner")
+        .insert({ device_id: 1, software_id: 1 })
+        .then(x => console.log(x))
+    } catch (err) {
+        console.log(err)
+    }
+    
+    // await knex("software_owner")
+    //     .insert({ device_id: 1, software_id: 1 })
+    //     .onConflict()
+    //     .ignore().then(x => console.log(x))
+}
+x()
+//knex("device").whereIn("id", []).then(x => console.log(x[0]))
