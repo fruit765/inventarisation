@@ -2305,7 +2305,7 @@ paths:
             schema:
               type: object
               properties:
-                spec: {}
+                specifications: {}
                 software_category_id:
                   type: integer
               required:
@@ -2328,7 +2328,7 @@ paths:
               properties:
                 id:
                   type: integer
-                spec: {}
+                specifications: {}
                 software_category_id:
                   type: integer
               required:
