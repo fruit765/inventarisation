@@ -2343,6 +2343,16 @@ paths:
           description: OK
       operationId: get-softwareCategory
       description: Получить категорию ПО
+  /software_owner:
+    get:
+      summary: Получить связи ПО
+      tags:
+        - software
+      responses:
+        '200':
+          description: OK
+      operationId: get-software_owner
+      description: Получить связи ПО
 components:
   schemas: {}
   securitySchemes: {}

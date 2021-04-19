@@ -23,6 +23,8 @@ const role = require('./routes/role')
 const accounts = require('./routes/accounts')
 const softwares = require('./routes/softwares')
 const softwareCategory = require('./routes/softwareCategory')
+const softwareAction = require('./routes/softwareAction')
+const software_owner = require('./routes/software_owner')
 const account_types = require('./routes/account_types')
 const accounts_owner = require('./routes/account_owners')
 const events = require('./routes/events')
@@ -64,11 +66,11 @@ module.exports = function (app) {
 
     app.use(softwares)
     app.use(softwareCategory)
+    app.use(softwareAction)
+    app.use(software_owner)
     app.use(accounts)
     app.use(account_types)
     app.use(accounts_owner)
-
-    app.use(events)
     app.use(eventAction)
 
     app.get("/test", async (req, res, next) => {
