@@ -11,7 +11,12 @@ router.route('/software_owners')
         next()
     })
     .get((req, res, next) => {
-        sendP(next)(res)(this.myObj.getUnconfirm())
+        const filterObj = _.omitBy({
+            device_id: req.query.device_id,
+            software_id: req.query.software_id
+        }, _.isUndefined)
+        const response = this.myObj.getUnconfirm().then(x => _.filter(x, filterObj))
+        sendP(next)(res)(response)
     })
 
-module.exports = router 
+module.exports = router

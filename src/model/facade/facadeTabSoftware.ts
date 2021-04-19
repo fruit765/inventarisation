@@ -4,6 +4,9 @@ import _ from 'lodash'
 import SoftwareTypeSingle from '../class/software/SoftwareTypeSingle'
 import SoftwareTypeMulti from './../class/software/SoftwareTypeMulti'
 import { classInterface } from '../../type/type'
+import Ajv from "ajv"
+import { Transaction } from 'knex';
+const ajv = new Ajv({ errorDataPath: 'property', coerceTypes: true, removeAdditional: "all" })
 
 export default class FacadeTabSoftware extends FacadeTable {
     constructor(actorId: number, options?: { isSaveHistory?: boolean }) {
@@ -38,6 +41,37 @@ export default class FacadeTabSoftware extends FacadeTable {
                 throw this.handleErr.internalServerError("wrong software type")
             }
         })
+    }
+
+    /**Проверка спецификации оборудования на схему в категории
+    * @param spec мутирует этот объект*/
+    async specValidation(catId: number, spec: any = {}) {
+        const catRow = await <Promise<any>>knex("software_category").where("id", catId).first()
+        const schema = Object.assign(catRow.schema, { $async: true })
+        const validate = ajv.compile(schema)
+        const valid = validate(spec)
+        if (typeof valid === "boolean") {
+            throw this.handleErr.internalServerError("the spec in the category has no property $ async: true")
+        }
+        await valid.then(null, err => {
+            if (!(err instanceof Ajv.ValidationError)) throw err
+            for (let key in err.errors) {
+                err.errors[key].dataPath = ".specifications" + err.errors[key].dataPath
+            }
+            throw this.handleErr.createError(400, { message: err.errors })
+        })
+        return spec
+    }
+
+    /**
+     * Обновляет данные в таблице возвражает id записи
+     * Производит валидацию спецификации по категории
+     */
+    async patch(data: any, trxOpt?: Transaction<any, any>) {
+        const dataClone = _.cloneDeep(data)
+        const categoryId = data.software_category_id ?? (await <Promise<any>>knex(this.tableName).where("id", data.id).first()).software_category_id
+        await this.specValidation(categoryId, dataClone.specifications)
+        return super.patch(dataClone, trxOpt)
     }
 
     async getUnconfAdditional(id?: number | number[]) {
