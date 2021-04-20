@@ -78,4 +78,9 @@ export default class CreateErr {
     devIdMustNotBeEmpty() {
         return this.createException(400, "device id must not be empty", "device_id")
     }
+
+    /**Нет такой категории ПО */
+    wrongSoftwareCategory() {
+        return this.createException(400, "wrong software category", "software_category_id")
+    }
 }

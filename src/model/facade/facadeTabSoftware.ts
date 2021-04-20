@@ -46,7 +46,11 @@ export default class FacadeTabSoftware extends FacadeTable {
     /**Проверка спецификации оборудования на схему в категории
     * @param spec мутирует этот объект*/
     async specValidation(catId: number, spec: any = {}) {
+        console.log(catId)
         const catRow = await <Promise<any>>knex("software_category").where("id", catId).first()
+        if (!catRow) {
+            throw this.handleErr.wrongSoftwareCategory()
+        }
         const schema = Object.assign(catRow.schema, { $async: true })
         const validate = ajv.compile(schema)
         const valid = validate(spec)
@@ -80,7 +84,7 @@ export default class FacadeTabSoftware extends FacadeTable {
      */
     async insert(data: any, trxOpt?: Transaction<any, any>) {
         const dataClone = _.cloneDeep(data)
-        await this.specValidation(data.category_id, dataClone.specifications)
+        await this.specValidation(data.software_category_id, dataClone.specifications)
         return super.insert(dataClone, trxOpt)
     }
 
