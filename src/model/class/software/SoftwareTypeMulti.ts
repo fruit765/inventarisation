@@ -4,7 +4,7 @@ import SoftwareTypeSingle from './SoftwareTypeSingle'
 export default class SoftwareTypeMulti extends SoftwareTypeSingle implements classInterface.softwareConnector {
 
     protected async getBindInfo() {
-        if (this.owner.length < this.software.spec?.number ?? 0) {
+        if (this.owner.length < this.software.specifications?.number ?? 0) {
             return { deviceAttached: 1 }
         } else {
             return {}
@@ -12,7 +12,7 @@ export default class SoftwareTypeMulti extends SoftwareTypeSingle implements cla
     }
 
     private async getInfo() {
-        return {free: this.software.spec?.number ?? 0 - this.owner.length}
+        return {free: this.software.specifications?.number ?? 0 - this.owner.length}
     }
 
     async get() {
