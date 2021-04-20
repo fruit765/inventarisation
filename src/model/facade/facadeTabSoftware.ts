@@ -89,7 +89,7 @@ export default class FacadeTabSoftware extends FacadeTable {
     }
 
     /**Получаем ПО с дополнительными полями */
-    async getUnconfAdditional(id?: number | number[]) {
+    async getUnconfirm(id?: number | number[]) {
         const softwares = await this.createSoftwareClasses(id)
         return Promise.all(softwares.map(x => x.get()))
     }
