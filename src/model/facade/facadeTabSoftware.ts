@@ -13,11 +13,11 @@ export default class FacadeTabSoftware extends FacadeTable {
         super("software", actorId, options)
     }
 
-    private async createSoftwareClasses(id?: number | number[]): Promise<classInterface.softwareConnector[]> {
+    private async createSoftwareClasses(id?: number | number[], trxOpt?: Transaction<any, any> ): Promise<classInterface.softwareConnector[]> {
         if (typeof id === "number") {
             id = [id]
         }
-        const unconfirm = await super.getUnconfirm(id)
+        const unconfirm = await super.getUnconfirm(id, trxOpt)
         const softwareCatsIds = unconfirm.map(x => x.software_category_id)
         const softwareCats = await <Promise<any[]>>knex("software_category").whereIn("id", softwareCatsIds)
         const catTypesIds = softwareCats.map(x => x.software_cat_type_id)
@@ -89,8 +89,8 @@ export default class FacadeTabSoftware extends FacadeTable {
     }
 
     /**Получаем ПО с дополнительными полями */
-    async getUnconfirm(id?: number | number[]) {
-        const softwares = await this.createSoftwareClasses(id)
+    async getUnconfirm(id?: number | number[], trxOpt?: Transaction<any, any>) {
+        const softwares = await this.createSoftwareClasses(id, trxOpt)
         return Promise.all(softwares.map(x => x.get()))
     }
 
