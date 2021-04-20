@@ -2377,9 +2377,9 @@ paths:
               type: object
               properties:
                 software_id:
-                  type: string
+                  type: integer
                 device_id:
-                  type: string
+                  type: integer
               required:
                 - software_id
                 - device_id
