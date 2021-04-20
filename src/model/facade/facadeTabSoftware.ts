@@ -74,17 +74,30 @@ export default class FacadeTabSoftware extends FacadeTable {
         return super.patch(dataClone, trxOpt)
     }
 
+    /**
+     * Добовляет данные в таблицу возвражает id записи
+     * Производит валидацию спецификации 
+     */
+    async insert(data: any, trxOpt?: Transaction<any, any>) {
+        const dataClone = _.cloneDeep(data)
+        await this.specValidation(data.category_id, dataClone.specifications)
+        return super.insert(dataClone, trxOpt)
+    }
+
+    /**Получаем ПО с дополнительными полями */
     async getUnconfAdditional(id?: number | number[]) {
         const softwares = await this.createSoftwareClasses(id)
         return Promise.all(softwares.map(x => x.get()))
     }
 
+    /**Привязка ПО к оборудованию*/
     async bind(id: number, message: any) {
         const software = (await this.createSoftwareClasses(id))[0]
         await software.bind(message)
         return software.get()
     }
 
+    /**Отвязка ПО от оборудования */
     async unbind(id: number, message: any) {
         const software = (await this.createSoftwareClasses(id))[0]
         await software.unbind(message)

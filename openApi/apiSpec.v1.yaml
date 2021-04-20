@@ -2353,7 +2353,45 @@ paths:
           description: OK
       operationId: get-software_owners
       description: Получить связи ПО
+      parameters:
+        - schema:
+            type: integer
+          in: query
+          name: device_id
+        - schema:
+            type: string
+          in: query
+          name: software_id
     parameters: []
+  /softwareAction:
+    post:
+      summary: Действия с ПО
+      operationId: post-softwareAction
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                software_id:
+                  type: string
+                device_id:
+                  type: string
+              required:
+                - software_id
+                - device_id
+        description: ''
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: action
+      description: Действия с ПО
+      tags:
+        - software
 components:
   schemas: {}
   securitySchemes: {}
