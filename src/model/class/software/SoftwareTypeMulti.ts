@@ -12,7 +12,7 @@ export default class SoftwareTypeMulti extends SoftwareTypeSingle implements cla
     }
 
     private async getInfo() {
-        return {free: this.software.specifications?.number ?? 0 - this.owner.length}
+        return {free: (this.software.specifications?.number ?? 0) - this.owner.length}
     }
 
     async get() {
