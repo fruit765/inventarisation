@@ -43,6 +43,9 @@ export default class SoftwareTypeSingle implements classInterface.softwareConnec
     }
 
     async unbind(message: any) {
+        if(!message.device_id) {
+            throw this.createErr.devIdMustNotBeEmpty()
+        }
         const binding = _.filter(this.owner, { device_id: message.device_id })
         if (!binding.length) {
             throw this.createErr.attachNotExist()
@@ -51,6 +54,7 @@ export default class SoftwareTypeSingle implements classInterface.softwareConnec
         await <Promise<number[]>>knex("software_owner")
             .where("software_id", this.software.id)
             .where({ device_id: message.device_id })
+            .delete()
 
         this.owner = _.filter(this.owner, x => x.device_id !== message.device_id)
     }

@@ -73,4 +73,9 @@ export default class CreateErr {
     attachDisallowed() {
         return this.createException(400, "attachment disallowed", "id")
     }
+
+    /**device_id не должен быть пустым */
+    devIdMustNotBeEmpty() {
+        return this.createException(400, "device id must not be empty", "device_id")
+    }
 }
