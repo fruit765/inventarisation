@@ -2359,7 +2359,7 @@ paths:
           in: query
           name: device_id
         - schema:
-            type: string
+            type: integer
           in: query
           name: software_id
     parameters: []
