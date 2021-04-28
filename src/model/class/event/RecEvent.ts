@@ -1,5 +1,5 @@
 import { classInterface, tableRec } from "../../../type/type"
-import { getTabIdFromHis } from "../../libs/bindHisTabInfo"
+import { getTabIdFromHis, getTabNameFromHis } from "../../libs/bindHisTabInfo"
 import { initAttr, startInit } from "../../libs/initHelper"
 import { uniqObjToBoolObj } from "../../libs/objectOp"
 import CreateErr from './../createErr'
@@ -25,13 +25,14 @@ export default class RecEvent {
     private confirmCheck: ConfirmCheck
     private addition: classInterface.additionModule
 
-    private other: {
+    protected other: {
         table_id: number
         confirm_need: Record<any, any>
         confirm_accept: Record<any, any>
         confirm_reject: Record<any, any>
         personal_ids: Record<any, any>
         additional: Record<any, any>
+        tableName: string
     }
 
     constructor(
@@ -48,12 +49,14 @@ export default class RecEvent {
         this.addition = preset.getAddition(hisRec)
 
         const tableId = getTabIdFromHis(hisRec)
+        const tableName = getTabNameFromHis(hisRec)
 
-        if (!tableId) {
+        if (!tableId || !tableName) {
             throw this.handleErr.internalServerError()
         }
 
         this.other = {
+            tableName: tableName,
             table_id: tableId,
             confirm_need: [],
             confirm_accept: [],

@@ -9,12 +9,15 @@ import TempRep from './../TempRep';
 
 export default class ConfirmCheck {
     private confirmBlocks: ConfirmBlock[]
+    private personal: number[]
 
     constructor(confirm: Record<any, any>, tempRep: TempRep) {
         this.confirmBlocks = []
         _.forEach(confirm.confirms, (element, key) => {
             this.confirmBlocks[Number(key)] = new ConfirmBlock(element, tempRep)
         })
+
+        this.personal = confirm?.personal ?? []
     }
 
     /**
@@ -22,7 +25,7 @@ export default class ConfirmCheck {
      * в виде разреженного массива
      */
     private async getNeedConfirmNull(confirm: Record<any, any> | null) {
-        if(await this.isReject(confirm)) {
+        if (await this.isReject(confirm)) {
             return []
         }
 
@@ -79,14 +82,16 @@ export default class ConfirmCheck {
     async getPersonal(confirm: Record<any, any> | null) {
         const res: any[] = []
         const acceptNull = await this.getAcceptNull(confirm)
-        const NeedConfirmNull = await this.getNeedConfirmNull(confirm)
-        for (let key in NeedConfirmNull) {
-            if (acceptNull[key] != null) {
-                res[Number(key)] = acceptNull[key]?.user_id
-            } else {
-                res[Number(key)] = NeedConfirmNull[key]?.user_id
+        const needConfirmNull = await this.getNeedConfirmNull(confirm)
+        const rejectNull = await this.getRejectNull(confirm)
+        for (let key of this.personal) {
+            const userPersId = acceptNull?.[key]?.user_id || rejectNull?.[key]?.user_id || needConfirmNull?.[key]?.user_id
+            if (userPersId) {
+                res.push(userPersId)
             }
         }
+
+
 
         return _.flattenDeep(res)
     }

@@ -83,4 +83,4 @@ export default class CreateErr {
     wrongSoftwareCategory() {
         return this.createException(400, "wrong software category", "software_category_id")
     }
-}
+} 
