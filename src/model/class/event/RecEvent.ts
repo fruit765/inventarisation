@@ -134,6 +134,7 @@ export default class RecEvent {
             await new RecHistory(this.hisRec, trx).tryCommit()
         })
         Object.assign(this.eventRec, insertData, { confirm: simpleAccept })
+        return [await this.get()]
     }
 
     /**Отклоняет событие*/

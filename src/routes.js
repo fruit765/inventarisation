@@ -30,6 +30,8 @@ const accounts_owner = require('./routes/account_owners')
 const events = require('./routes/events')
 const eventAction = require('./routes/eventAction')
 
+const mentoring = require('./routes/mentoring')
+
 const Status = require("./model/orm/status")
 const Location = require("./model/orm/location")
 const History = require("./model/orm/history")
@@ -73,6 +75,8 @@ module.exports = function (app) {
     app.use(accounts_owner)
     app.use(eventAction)
     app.use(events)
+
+    app.use(mentoring)
 
     app.get("/test", async (req, res, next) => {
         const a = History.query()

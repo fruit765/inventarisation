@@ -2392,6 +2392,42 @@ paths:
       description: Действия с ПО
       tags:
         - software
+  /mentoring:
+    get:
+      summary: Просмотр наставничества
+      tags:
+        - HR
+      responses:
+        '200':
+          description: OK
+      operationId: get-mentoring
+      description: Просмотр наставничества
+    post:
+      summary: Создание наставничества
+      operationId: post-mentoring
+      responses:
+        '200':
+          description: OK
+      description: Создание наставничества
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mentor_id:
+                  type: integer
+                protege_id:
+                  type: integer
+                plan_id:
+                  type: integer
+                  nullable: true
+              required:
+                - mentor_id
+                - protege_id
+      tags:
+        - HR
 components:
   schemas: {}
   securitySchemes: {}
@@ -2405,3 +2441,4 @@ tags:
   - name: events
   - name: departments
   - name: software
+  - name: HR
