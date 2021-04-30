@@ -4,7 +4,8 @@ import RecEvent from './RecEvent'
 export default class RecEventDev extends RecEvent{
 
     // async getEventByUserIds(ids: number[]) {
-    //     knex("history").whereIn("device_id", ids).where({"is_complete"})
+    //     const history = await <Promise<any[]>>knex("history").whereIn("device_id", ids).whereNull("commit_date")
+    //     const event = knex("date_completed").w
     //     this.constructor()
     // }
 

@@ -56,13 +56,21 @@ export class FacadeTableDev extends FacadeTable {
     /**Привязывает оборудование к пользователю*/
     async bind(devId: number, userId: number, trxOpt?: Transaction<any, any>): Promise<any[]> {
         return startTransOpt(trxOpt, async (trx) => {
-            const unconfirm = (await this.getUnconfirm(devId))[0]
+            const unconfirm = (await this.getUnconfirm(devId, trx))[0]
+            if(unconfirm.parent_id) {
+                const unconfirmParent = (await this.getUnconfirm(unconfirm.parent_id, trx))[0]
+                if(unconfirmParent.user_id !== userId) {
+                    throw this.handleErr.idWrong()
+                }
+            }
             const unconfirmStatus = unconfirm.status
             const category = await <Promise<any>>knex("category").where("id", unconfirm.category_id).first()
-
-            if (unconfirmStatus !== "stock" || unconfirm.parent_id !== null || category.is_attached !== 1 ) {
+            if (unconfirmStatus !== "stock" || (category.is_attached !== 1 && unconfirm.parent_id === null) ) {
                 throw this.handleErr.idWrong()
             }
+
+            const status = await Status.query().where("status", "given").first()
+            const res = await this.patchAndFetch({ id: devId, user_id: userId, status_id: status.id }, trx)
 
             let childDevRes: any[] = []
             const childDev = await <Promise<any[]>>knex(this.tableName).transacting(trx).where("parent_id", devId)
@@ -71,8 +79,6 @@ export class FacadeTableDev extends FacadeTable {
                     childDevRes = childDevRes.concat(await this.bind(value.id, userId, trx))
                 }
             }
-            const status = await Status.query().where("status", "given").first()
-            const res = await this.patchAndFetch({ id: devId, user_id: userId, status_id: status.id }, trx)
             return childDevRes.concat(res)
         })
     }
@@ -83,7 +89,7 @@ export class FacadeTableDev extends FacadeTable {
             if (userId == undefined) {
                 userId = await this.getLastWarResp(devId)
             }
-            const unconfirm = (await this.getUnconfirm(devId))[0]
+            const unconfirm = (await this.getUnconfirm(devId, trx))[0]
             const unconfirmStatus = unconfirm.status
 
             if (unconfirmStatus !== "given" || unconfirm.parent_id !== null) {
