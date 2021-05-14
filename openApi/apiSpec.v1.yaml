@@ -2428,6 +2428,25 @@ paths:
                 - protege_id
       tags:
         - HR
+  /plans:
+    get:
+      summary: Получение планов
+      tags:
+        - HR
+      responses:
+        '200':
+          description: OK
+      operationId: get-plans
+      description: Получение планов
+    post:
+      summary: Создание плана
+      operationId: post-plans
+      responses:
+        '200':
+          description: OK
+      description: Создание плана
+      tags:
+        - HR
 components:
   schemas: {}
   securitySchemes: {}
