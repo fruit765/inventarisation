@@ -2426,6 +2426,7 @@ paths:
               required:
                 - mentor_id
                 - protege_id
+                - plan_id
       tags:
         - HR
   /plans:
