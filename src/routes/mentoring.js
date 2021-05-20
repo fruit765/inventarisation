@@ -1,13 +1,13 @@
 "use strict"
 
 const express = require('express')
-const { FacadeTable } = require('../model/facade/facadeTable')
+const FacadeTabMentoring  = require('../model/facade/FacadeTabMentoring').default
 const { sendP } = require('../model/libs/command')
 const router = express.Router()
 
 router.route('/mentoring')
     .all((req, res, next) => {
-        this.myObj = new FacadeTable("mentoring", req.user.id)
+        this.myObj = new FacadeTabMentoring(req.user.id)
         next()
     })
     .get(async (req, res, next) => {
