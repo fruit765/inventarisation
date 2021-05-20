@@ -2448,6 +2448,21 @@ paths:
       description: Создание плана
       tags:
         - HR
+  /userRights:
+    get:
+      summary: Получает права пользователей
+      tags:
+        - authorization
+      responses:
+        '200':
+          description: OK
+      operationId: get-userRights
+      parameters:
+        - schema:
+            type: integer
+          in: query
+          name: id
+      description: Получает права пользователей
 components:
   schemas: {}
   securitySchemes: {}

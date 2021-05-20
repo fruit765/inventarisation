@@ -5,28 +5,13 @@
 // const dayjs = require("dayjs")
 // const Knex = require("knex")
 // const dbConfig = require("../serverConfig").db;
+const Knex = require("knex")
+const conf = require("../serverConfig")
+const knex = Knex(conf.db)
 
-const { default: knex } = require("./model/orm/knexConf")
-
-// const knex = Knex(dbConfig)
-// try{
-//     knex.schema.hasColumn("devi1ce1", "id3").then(console.log).catch(x => console.log(x.errno))
-// } catch(err){
-//     console.log(err)
-// }
-const x = async () => {
-    try {
-        await knex("software_owner")
-        .insert({ device_id: 1, software_id: 1 })
-        .then(x => console.log(x))
-    } catch (err) {
-        console.log(err)
-    }
-    
-    // await knex("software_owner")
-    //     .insert({ device_id: 1, software_id: 1 })
-    //     .onConflict()
-    //     .ignore().then(x => console.log(x))
-}
-x()
-//knex("device").whereIn("id", []).then(x => console.log(x[0]))
+knex("responsibility")
+    .whereNotNull("responsibility.post_dep_loc_id")
+    .join("post_dep_loc", "post_dep_loc.id", "=", "responsibility.post_dep_loc_id")
+    .join("user", "user.post_dep_loc_id", "=", "post_dep_loc.id")
+    .select("user.id as id","responsibility.warehouseResponsible", "leader")
+    .then(console.log)

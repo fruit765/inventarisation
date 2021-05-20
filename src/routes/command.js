@@ -9,7 +9,7 @@ const Responsibility = require('../model/orm/responsibility')
 const router = express.Router()
 
 router.get('/warehouseResponsible', (req, res, next) => {
-    const response = Responsibility.query().where("warehouseResponsible", 1).select("id")
+    const response = Responsibility.query().where("warehouseResponsible", 1).select("user_id as id")
     sendP(next)(res)(response)
 })
 
