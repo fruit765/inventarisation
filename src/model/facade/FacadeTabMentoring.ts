@@ -15,4 +15,10 @@ export default class FacadeTabMentoring extends FacadeTable {
         const noplanStatusId = await knex("status").where("status", "noplan").first().then((x: { id: number }) => x.id)
         return super.insert({...data, status_id: noplanStatusId, plan: null}, trxOpt)
     }
+
+    /**Создание плана*/
+    async createPlan(data: any, trxOpt?: Transaction<any, any>) {
+        const planCreatedStatusId = await knex("status").where("plancreated", "noplan").first().then((x: { id: number }) => x.id)
+        return super.patchAndFetch({...data, status_id: planCreatedStatusId}, trxOpt)
+    }
 }

@@ -2429,6 +2429,54 @@ paths:
                 - plan_id
       tags:
         - HR
+    patch:
+      summary: Создание плана
+      operationId: patch-mentoring
+      responses:
+        '200':
+          description: OK
+      description: Создание плана
+      tags:
+        - HR
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                plan:
+                  type: object
+                  properties:
+                    blocks:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          title:
+                            type: string
+                          sections:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                title:
+                                  type: string
+                          tests:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                title:
+                                  type: string
+                          tasks:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                title:
+                                  type: string
   /plans:
     get:
       summary: Получение планов

@@ -14,8 +14,10 @@ router.route('/mentoring')
         sendP(next)(res)(this.myObj.getUnconfirm())
     })
     .post((req, res, next) => {
-        console.log(req.body)
         sendP(next)(res)(this.myObj.insertAndFetch(req.body))
+    })
+    .patch(async (req, res, next) => {
+        sendP(next)(res)(this.myObj.createPlan(req.data))
     })
 
 module.exports = router
