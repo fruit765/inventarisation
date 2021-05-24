@@ -18,7 +18,11 @@ export default class FacadeTabMentoring extends FacadeTable {
 
     /**Создание плана*/
     async createPlan(data: any, trxOpt?: Transaction<any, any>) {
-        const planCreatedStatusId = await knex("status").where("plancreated", "noplan").first().then((x: { id: number }) => x.id)
+        const currentMentoring = await this.getUnconfirm(data.id,trxOpt)
+        if (currentMentoring[0]?.status != "noplan") {
+            throw this.handleErr.statusMustBeNoplan()
+        }
+        const planCreatedStatusId = await knex("status").where("status", "plancreated").first().then((x: { id: number }) => x.id)
         return super.patchAndFetch({...data, status_id: planCreatedStatusId}, trxOpt)
     }
 }

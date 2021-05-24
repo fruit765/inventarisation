@@ -21,6 +21,18 @@ router.get('/userRights', async (req, res, next) => {
         userRights = userRights.whereIn("user_id", [req.query.id])
         postDepLocRights = postDepLocRights.whereIn("user.id", [req.query.id])
     }
+
+    const userRightsResolv = await userRights
+    const postDepLocRightsResolv = await postDepLocRights
+
+    const userRightsIndexed = _.keyBy(userRightsResolv)
+    const postDepLocRightsIndexed = _.keyBy(postDepLocRightsResolv)
+
+    // let rights = []
+
+    // for (let key of _.union(_.keys(userRightsIndexed), _.keys(postDepLocRightsIndexed))) {
+
+    // }
     const rights = (await userRights).concat(await postDepLocRights)
     sendP(next)(res)(rights)
 })
