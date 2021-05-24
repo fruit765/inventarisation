@@ -85,7 +85,7 @@ export default class CreateErr {
     }
 
     /**Статус должен быть noplan */
-    statusMustBeNoplan() {
-        return this.createException(400, "status must be noplan", "id")
+    statusMustBeNoplanOrPlancreated() {
+        return this.createException(400, "status must be noplan or plancreated", "id")
     }
 } 

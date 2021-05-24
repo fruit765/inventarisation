@@ -27,8 +27,8 @@ export default class PresetOneCol {
             this.old = preset.old ?? { logic: "true" }
         }
 
-        this.newClass = new PresetSubCol(preset.new)
-        this.oldClass = new PresetSubCol(preset.old)
+        this.newClass = new PresetSubCol(this.new)
+        this.oldClass = new PresetSubCol(this.old)
     }
 
     /**Проверяет значение на соответствие пресету
