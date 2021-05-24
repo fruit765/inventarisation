@@ -17,7 +17,7 @@ router.route('/mentoring')
         sendP(next)(res)(this.myObj.insertAndFetch(req.body))
     })
     .patch(async (req, res, next) => {
-        sendP(next)(res)(this.myObj.createPlan(req.data))
+        sendP(next)(res)(this.myObj.createPlan(req.body))
     })
 
 module.exports = router

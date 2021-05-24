@@ -2448,6 +2448,7 @@ paths:
                   type: integer
                 plan:
                   type: object
+                  nullable: true
                   properties:
                     blocks:
                       type: array
