@@ -29,11 +29,13 @@ router.get('/userRights', async (req, res, next) => {
     const userRightsIndexed = _.keyBy(userRightsResolv)
     const postDepLocRightsIndexed = _.keyBy(postDepLocRightsResolv)
 
-    // let rights = []
+    //let rights = []
 
     // for (let key of _.union(_.keys(userRightsIndexed), _.keys(postDepLocRightsIndexed))) {
-
+    //     const right = userRightsIndexed?.[key] + postDepLocRightsIndexed?.[key]
+    //     rights.push()
     // }
+
     const rights = (await userRights).concat(await postDepLocRights)
     sendP(next)(res)(rights)
 })

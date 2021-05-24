@@ -42,21 +42,29 @@ export class NewRecHistory {
     async create() {
         const actualData = await <Promise<any>>knex(this.tableName).where("id", this.tableId).first() ?? {}
         const modData = pack(this.data, actualData)
+        console.log(modData)
+        if (!Object.keys(modData).length) {
+            this.inserted = null
+            return this
+        }
 
         const historyInsertData = {
             actor_id: this.actorId,
             diff: JSON.stringify(modData),
             action_tag: this.actionTag,
-            [this.tableName+"_id"]: this.tableId
+            [this.tableName + "_id"]: this.tableId
         }
 
         const hisRec = await History.query(this.trx).insert(<any>historyInsertData)
-        this.inserted = Object.assign(hisRec, {diff: modData})
+        this.inserted = Object.assign(hisRec, { diff: modData })
         return this
     }
 
     /**Возвращает экземпляр созданной записи в истории*/
     get() {
+        if (!this.inserted) {
+            return null
+        }
         return new RecHistory(this.inserted, this.trx)
     }
 }

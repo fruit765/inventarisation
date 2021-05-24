@@ -50,8 +50,8 @@ export class FacadeTable {
             const validData = { ...data, id: validDataId }
             const newRecHistory = await new NewRecHistory(validData, tableName, actionTag, this.actorId, trx).create()
             const recHistory = newRecHistory.get()
-            await recHistory.genEvents()
-            await recHistory.tryCommit()
+            await recHistory?.genEvents()
+            await recHistory?.tryCommit()
             return validDataId
         } else {
             return new TabAction(data, tableName, actionTag, trx).applyAction()
