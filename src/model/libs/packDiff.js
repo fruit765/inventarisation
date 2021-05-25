@@ -27,10 +27,32 @@ const jsonDelFlag = "deleteV1StGXR8"
  * @param {*} oldData
  */
 function pack(newData, oldData) {
+    //console.log(newData?.plan, oldData?.plan)
     const diffJson = packJson(newData, oldData)
-    const res = _.mapValues(diffJson, (/** @type {string} */ x) => x === jsonDelFlag ? undefined : x)
+    //console.log(diffJson)
+    const res = _.omitBy(diffJson, (/** @type {string} */ x) => x === jsonDelFlag)
+    //console.log(res?.plan?.blocks)
     return res
 }
+
+// /**
+//  * Возвращает объект с информацией об изменении json поля
+//  * Возвращает различия между старой записью и новой
+//  * @param {*} newData
+//  * @param {*} oldData
+//  */
+// function packJson(newData, oldData) {
+//     /**@type {*} */
+//     //const diffObj = 
+//     const allKeys = _.union(_.keys(newData), _.keys(oldData))
+//     for (let key of allKeys) {
+//         const x = oneFieldDiff(newData?.[key], oldData?.[key])
+//         if (x !== undefined) {
+//             diffObj[key] = x
+//         }
+//     }
+//     return _.isEmpty(diffObj) ? undefined : diffObj
+// }
 
 /**
  * Возвращает объект с информацией об изменении json поля
@@ -43,7 +65,7 @@ function packJson(newData, oldData) {
     const oldCopy = _.cloneDeep(oldData)
     /**@type {*} */
     const diffObj = {}
-    const allKeys = _.concat(_.keys(newCopy), _.keys(oldCopy))
+    const allKeys = _.union(_.keys(newCopy), _.keys(oldCopy))
     for (let key of allKeys) {
         const x = oneFieldDiff(newCopy?.[key], oldCopy?.[key])
         if (x !== undefined) {
@@ -93,6 +115,7 @@ function dataCompare(newData, oldData) {
  * @param {Function} getOldDataFn 
  */
 async function unpack(diff, getOldDataFn) {
+    //console.log(diff?.plan?.blocks)
     /**@type {*}*/
     const diffJsonOnly = {}
     const jsonKeys = _.keys(_.pickBy(diff, _.isObject))
@@ -102,7 +125,9 @@ async function unpack(diff, getOldDataFn) {
             diffJsonOnly[key] = unpackOneJson(diff[key], actual[key])
         }
     }
-    return { ...diff, ...diffJsonOnly }
+    const res = { ...diff, ...diffJsonOnly }
+    //console.log(res?.plan?.blocks)
+    return res
 }
 
 
@@ -114,10 +139,28 @@ async function unpack(diff, getOldDataFn) {
  */
 function unpackOneJson(newData, oldData) {
     const unionData = _.merge(oldData, newData)
-    return _.mapValuesDeep(unionData,
-        (/**@type {*}*/x) => x === jsonDelFlag ? undefined : x,
-        { leavesOnly: true })
+    const res = delJsonDelFlag(unionData)
+    return res
 
+}
+
+/**
+ * Удаляет JsonDelFlag c обьектов 
+ * @param {*} data 
+ */
+function delJsonDelFlag(data) {
+    if (typeof data === "object") {
+        const resObj = new data.__proto__.constructor()
+        for (let key in data) {
+            const res = delJsonDelFlag(data[key])
+            if(res !== undefined) {
+                resObj[key] = res
+            }
+        }
+        return resObj
+    } else if (data !== jsonDelFlag) {
+        return data
+    }
 }
 
 module.exports = { pack, unpack }
