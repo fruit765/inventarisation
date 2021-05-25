@@ -9,7 +9,7 @@ function delUndefined(x: any) {
 function delUndefinedDeep(x: any) {
     const y = delUndefined(x)
     for (let key in y) {
-        if (typeof y[key] === "object") {
+        if (_.isObject(y[key])) {
             const z = delUndefinedDeep(y[key])
             if (!_.isEmpty(z)) {
                 y[key] = z

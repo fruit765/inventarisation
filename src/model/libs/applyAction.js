@@ -116,7 +116,6 @@ module.exports = class ApplyAction {
                 const diff = await unpack(hisRec.diff, () => {
                     return this.tableClass.query(trx).findById(id)
                 })
-                console.log(diff)
                 await this.applyAction({ ...diff, id: id }, hisRec.action_tag, trx)
                 return hisRec.id
             }

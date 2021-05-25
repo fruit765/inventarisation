@@ -27,11 +27,8 @@ const jsonDelFlag = "deleteV1StGXR8"
  * @param {*} oldData
  */
 function pack(newData, oldData) {
-    //console.log(newData, oldData)
     const diffJson = packJson(newData, oldData)
-    //console.log(diffJson)
     const res = _.omitBy(diffJson, (/** @type {string} */ x) => x === jsonDelFlag)
-    console.log(res)
     return res
 }
 
@@ -59,60 +56,7 @@ function packJson(newData, oldData) {
     } else if (newData !== oldData) {
         return newData
     }
-
-    // const x = oneFieldDiff(newData, oldData)
-    // if()
-    // /**@type {*} */
-    // const diffObj = new newData.__proto__.constructor()
-    // console.log(diffObj)
-    // const allKeys = _.union(_.keys(newCopy), _.keys(oldCopy))
-    // for (let key of allKeys) {
-    //     const x = oneFieldDiff(newCopy?.[key], oldCopy?.[key])
-    //     if (x !== undefined) {
-    //         diffObj[key] = x
-    //     }
-    // }
-    // return _.isEmpty(diffObj) ? undefined : diffObj
 }
-
-// /**
-//  * Возвращает объект с информацией об изменении json поля
-//  * Возвращает различия между старой записью и новой
-//  * @param {*} newData
-//  * @param {*} oldData
-//  */
-// function packJson(newData, oldData) {
-//     const newCopy = _.cloneDeep(newData)
-//     const oldCopy = _.cloneDeep(oldData)
-//     /**@type {*} */
-//     const diffObj = new newCopy.__proto__.constructor()
-//     console.log(diffObj)
-//     const allKeys = _.union(_.keys(newCopy), _.keys(oldCopy))
-//     for (let key of allKeys) {
-//         const x = oneFieldDiff(newCopy?.[key], oldCopy?.[key])
-//         if (x !== undefined) {
-//             diffObj[key] = x
-//         }
-//     }
-//     return _.isEmpty(diffObj) ? undefined : diffObj
-// }
-
-// /**
-//  * Сравнивает новое поле со старым и выдает результат
-//  * @param {*} newData 
-//  * @param {*} oldData 
-//  */
-// function oneFieldDiff(newData, oldData) {
-//     if (newData === undefined) {
-//         return jsonDelFlag
-//     } else if (oldData instanceof Date) {
-//         return dataCompare(newData, oldData)
-//     } else if (typeof newData === "object") {
-//         return packJson(newData, oldData)
-//     } else if (newData !== oldData) {
-//         return newData
-//     }
-// }
 
 /**
  * Сравнивает даты возвращает новую если она отличается от старой
@@ -137,7 +81,6 @@ function dataCompare(newData, oldData) {
  * @param {Function} getOldDataFn 
  */
 async function unpack(diff, getOldDataFn) {
-    //console.log(diff?.plan?.blocks)
     /**@type {*}*/
     const diffJsonOnly = {}
     const jsonKeys = _.keys(_.pickBy(diff, _.isObject))
@@ -148,7 +91,6 @@ async function unpack(diff, getOldDataFn) {
         }
     }
     const res = { ...diff, ...diffJsonOnly }
-    console.log(jsonKeys, res)
     return res
 }
 
@@ -171,10 +113,10 @@ function unpackOneJson(newData, oldData) {
  * @param {*} data 
  */
 function delJsonDelFlag(data) {
-    if (typeof data === "object") {
-        const resObj = new data.__proto__.constructor()
+    if (_.isObject(data)) {
+        const resObj = new /**@type {any}*/(data).__proto__.constructor()
         for (let key in data) {
-            const res = delJsonDelFlag(data[key])
+            const res = delJsonDelFlag(/**@type {any}*/(data)[key])
             if(res !== undefined) {
                 resObj[key] = res
             }

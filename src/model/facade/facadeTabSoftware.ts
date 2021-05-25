@@ -46,7 +46,6 @@ export default class FacadeTabSoftware extends FacadeTable {
     /**Проверка спецификации оборудования на схему в категории
     * @param spec мутирует этот объект*/
     async specValidation(catId: number, spec: any = {}) {
-        console.log(catId)
         const catRow = await <Promise<any>>knex("software_category").where("id", catId).first()
         if (!catRow) {
             throw this.handleErr.wrongSoftwareCategory()
