@@ -84,8 +84,13 @@ export default class CreateErr {
         return this.createException(400, "wrong software category", "software_category_id")
     }
 
-    /**Статус должен быть noplan */
+    /**Статус должен быть noplan или plancreated */
     statusMustBeNoplanOrPlancreated() {
         return this.createException(400, "status must be noplan or plancreated", "id")
+    }
+
+    /**Статус должен быть plancreated */
+    statusMustBePlancreated() {
+        return this.createException(400, "status must be plancreated", "id")
     }
 } 

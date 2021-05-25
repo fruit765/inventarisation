@@ -19,5 +19,8 @@ router.route('/mentoring')
     .patch(async (req, res, next) => {
         sendP(next)(res)(this.myObj.createPlan(req.body))
     })
+    .put((req, res, next) => {
+        sendP(next)(res)(this.myObj.acceptPlan(req.body))
+    })
 
 module.exports = router

@@ -2478,6 +2478,25 @@ paths:
                               properties:
                                 title:
                                   type: string
+    put:
+      summary: Отправить на проверку всеми
+      operationId: put-mentoring
+      responses:
+        '200':
+          description: OK
+      description: Отправить на проверку всеми
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+              required:
+                - id
+      tags:
+        - HR
   /plans:
     get:
       summary: Получение планов
