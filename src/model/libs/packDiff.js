@@ -50,7 +50,7 @@ function packJson(newData, oldData) {
         const res = new /**@type {any}*/(newData).__proto__.constructor()
         const allKeys = _.union(_.keys(newData), _.keys(oldData))
         for(let key of allKeys) {
-            const y = packJson(/**@type {any}*/(newData)[key], oldData[key])
+            const y = packJson(/**@type {any}*/(newData)[key], oldData?.[key])
             if(y !== undefined) {
                 res[key] = y
             }
