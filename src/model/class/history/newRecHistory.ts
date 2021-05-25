@@ -42,7 +42,6 @@ export class NewRecHistory {
     async create() {
         const actualData = await <Promise<any>>knex(this.tableName).where("id", this.tableId).first() ?? {}
         const modData = pack(this.data, actualData)
-        console.log(modData)
         if (!Object.keys(modData).length) {
             this.inserted = null
             return this

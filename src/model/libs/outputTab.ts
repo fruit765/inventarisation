@@ -77,7 +77,6 @@ async function getUnconfirm(tabName: string, options: { id?: number | number[], 
     const tableDataIndex = _.keyBy(tableData, "id")
     const unconfirmIndex = _.keyBy(unconfirm, tabName + "_id")
     for (let key of _.union(_.keys(tableDataIndex), _.keys(unconfirmIndex))) {
-        console.log(key)
         if (unconfirmIndex[key]) {
             if (priority < unconfirmIndex[key].view_priority) {
                 tableDataIndex[key] = _.assign(tableDataIndex[key], unconfirmIndex[key].diff)

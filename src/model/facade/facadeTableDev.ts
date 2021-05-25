@@ -160,7 +160,6 @@ export class FacadeTableDev extends FacadeTable {
                     const valStatus = unconfirmIndex[val].status
                     const valUser = unconfirmIndex[val].user_id
                     if (!(valStatus === "given" && valUser === mainUser) && valStatus !== "stock") {
-                        console.log(unconfirmIndex[val])
                         throw this.handleErr.bindSubDevNotAllowed()
                     }
                 })
