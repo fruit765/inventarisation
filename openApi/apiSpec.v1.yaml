@@ -2420,13 +2420,9 @@ paths:
                   type: integer
                 protege_id:
                   type: integer
-                plan_id:
-                  type: integer
-                  nullable: true
               required:
                 - mentor_id
                 - protege_id
-                - plan_id
       tags:
         - HR
     patch:
