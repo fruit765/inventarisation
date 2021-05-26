@@ -127,6 +127,9 @@ module.exports = class PresetSubCol {
      * @private
      */
     atomicCheck(sign, key, value) {
+        if(value === undefined) {
+            return false
+        }
         let flattenValue = (typeof this.value[key] !== "object") ?
             [this.value[key]] : _.flattenDeep(this.value[key])
         switch (sign) {
@@ -217,10 +220,8 @@ module.exports = class PresetSubCol {
      */
     async match(data) {
         await this.init()
-        if (data === undefined) {
-            return false
-        }
         this.matchValue = data
+        //console.log(this.evalLogic,"aa",this.matchValue)
         const res = Boolean(eval(this.evalLogic))
         return res
     }

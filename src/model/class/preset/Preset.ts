@@ -5,6 +5,7 @@ import Addition from "./additional/Addition";
 import PresetAllCol from './preset/presetAllCol';
 import ConfirmCheck from './confirm/ConfirmCheck';
 import TempRep from './TempRep';
+import { getTabNameFromHis } from "../../libs/bindHisTabInfo";
 
 /**@classdesc класс отечающий за один пресет */
 export default class Preset {
@@ -19,7 +20,11 @@ export default class Preset {
 
     /** Проверяет запись в истории на соответствии пресету, если соответствует генерирует событие*/
     async genEventsByHisRec(hisRec: any, actualData: any, trx: Transaction<any, any>) {
-        this.presetAllCol = this.presetAllCol ?? new PresetAllCol(this.presetRec.preset)
+        if(this.presetAllCol === undefined && this.presetRec.table === getTabNameFromHis(hisRec)) {
+            this.presetAllCol = new PresetAllCol(this.presetRec.preset)
+        } else {
+            return void 0
+        }
         if (await this.presetAllCol.match([hisRec.diff, actualData])) {
             await <Promise<any>>Event_confirm.query(trx)
                 .insert(
