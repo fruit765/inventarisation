@@ -28,6 +28,7 @@ export default class SubBlockValue {
     /**Возвращает массив id которые нужны для подтверждения */
     async getConfirm() {
         const result = await this.baseValueClass.get()
+        //console.log(result)
         return _.compact(_.flattenDeep(<any[]>result))
     }
 

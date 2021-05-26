@@ -40,6 +40,7 @@ export default class RecEvent {
         hisRec: tableRec.history,
         presetRec: tableRec.preset
     ) {
+        this.initAttr = {}
         this.handleErr = new CreateErr()
         this.eventRec = eventRec
         this.hisRec = hisRec

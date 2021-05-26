@@ -12,9 +12,10 @@ export default class SubBlockGroup {
     private value?: string
     private sql?: string
     private tempRep: classInterface.templateReplace
-    private initAttr?: initAttr
+    private initAttr: initAttr
 
     constructor(groupRec: groupRec, tempRep: classInterface.templateReplace) {
+        this.initAttr = {}
         this.tempRep = tempRep
         if (typeof groupRec === "string") {
             this.value = groupRec

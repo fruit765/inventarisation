@@ -9,7 +9,7 @@ import { sqlsToValues } from "../../libs/queryHelper";
 
 export default class BaseValueBlock implements classInterface.valueBlock {
 
-    private initAttr?: initAttr
+    private initAttr: initAttr
     private sql: Record<any, string>
     private value: Record<any, any>
     private tempRep: classInterface.templateReplace
@@ -17,6 +17,7 @@ export default class BaseValueBlock implements classInterface.valueBlock {
     constructor(
         value: { value: any | any[], sql: string | string[] },
         tempRec: classInterface.templateReplace) {
+        this.initAttr = {}
         this.tempRep = tempRec
         this.sql = <any>this.warpToArray(value.sql)
         this.value = this.warpToArray(value.value)
@@ -25,9 +26,12 @@ export default class BaseValueBlock implements classInterface.valueBlock {
     /**Совершает все шаги для генерации массива значений id в values*/
     private init() {
         return startInit(this.initAttr, async () => {
+            console.log("aa", this.sql)
             await this.subsValueDeep(this.sql)
+            console.log("ff", this.sql)
             await this.subsValueDeep(this.value)
             await this.sqlsToValuesDeep(this.sql)
+            console.log(this.sql, "dd",this.value)
         })
     }
 
@@ -53,6 +57,7 @@ export default class BaseValueBlock implements classInterface.valueBlock {
 
     /**Находит в обьекте все строки и делает запрос в БД и меняет их на значения*/
     private async sqlsToValuesDeep(sqlObj: Record<any, any>) {
+        //console.log(sqlObj)
         for (let key in sqlObj) {
             if (_.isString(sqlObj[key])) {
                 sqlObj[key] = await sqlsToValues(sqlObj[key])
