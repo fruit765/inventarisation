@@ -59,7 +59,7 @@ export namespace classInterface {
     }
 
     export interface valueBlock {
-        get: () => Promise<any>
+        getUniqArray: () => Promise<any>
     }
 
     export interface stringBlock {

@@ -26,12 +26,9 @@ export default class BaseValueBlock implements classInterface.valueBlock {
     /**Совершает все шаги для генерации массива значений id в values*/
     private init() {
         return startInit(this.initAttr, async () => {
-            console.log("aa", this.sql)
             await this.subsValueDeep(this.sql)
-            console.log("ff", this.sql)
             await this.subsValueDeep(this.value)
             await this.sqlsToValuesDeep(this.sql)
-            console.log(this.sql, "dd",this.value)
         })
     }
 
@@ -67,10 +64,12 @@ export default class BaseValueBlock implements classInterface.valueBlock {
         }
     }
 
-    /**Получить значения*/
-    async get() {
+    /**Получить все уникальные значения в виде разглаженного массива*/
+    async getUniqArray() {
         await this.init()
-        const res = this.value
-        return res
+        if (!(_.isArray(this.value) && _.isArray(this.sql))) {
+            return null
+        }
+        return _.compact(_.union(_.flattenDeep(this.value), _.flattenDeep(this.sql)))
     }
 }

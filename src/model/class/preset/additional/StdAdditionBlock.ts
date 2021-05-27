@@ -18,10 +18,9 @@ export default class StdAdditionsBlock implements classInterface.additionModule 
 
     /**Возвращает значения полученные после парсинга в "stdModule" */
     async get() {
-        const res = {
-            value: await this.valueClass.get(), 
+        return {
+            value: await this.valueClass.getUniqArray(), 
             name: await this.nameClass.get()
         }
-        return res
     }
 }
