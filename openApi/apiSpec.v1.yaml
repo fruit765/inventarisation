@@ -2531,6 +2531,28 @@ paths:
           in: query
           name: id
       description: Получает права пользователей
+  /sendProtegeTest:
+    get:
+      summary: Отправка теста стажером
+      tags:
+        - HR
+      responses:
+        '200':
+          description: OK
+      operationId: get-sendProtegeTest
+      description: Отправка теста стажером
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                testNo:
+                  type: integer
+                '':
+                  type: string
 components:
   schemas: {}
   securitySchemes: {}
