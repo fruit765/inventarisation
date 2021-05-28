@@ -2467,6 +2467,29 @@ paths:
                               properties:
                                 title:
                                   type: string
+                                questions:
+                                  type: array
+                                  items:
+                                    type: object
+                                    properties:
+                                      title:
+                                        type: string
+                                      answers:
+                                        type: array
+                                        items:
+                                          type: object
+                                          properties:
+                                            title:
+                                              type: string
+                                            img:
+                                              type: string
+                                            isRight:
+                                              type: integer
+                                              enum:
+                                                - 0
+                                                - 1
+                                      img:
+                                        type: string
                           tasks:
                             type: array
                             items:
@@ -2491,25 +2514,6 @@ paths:
                   type: integer
               required:
                 - id
-      tags:
-        - HR
-  /plans:
-    get:
-      summary: Получение планов
-      tags:
-        - HR
-      responses:
-        '200':
-          description: OK
-      operationId: get-plans
-      description: Получение планов
-    post:
-      summary: Создание плана
-      operationId: post-plans
-      responses:
-        '200':
-          description: OK
-      description: Создание плана
       tags:
         - HR
   /userRights:
