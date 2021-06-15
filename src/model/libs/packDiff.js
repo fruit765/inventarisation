@@ -44,6 +44,7 @@ function packJson(newData, oldData) {
     } else if (oldData instanceof Date) {
         return dataCompare(newData, oldData)
     } else if (_.isObject(newData)) {
+        
         const res = new /**@type {any}*/(newData).__proto__.constructor()
         const allKeys = _.union(_.keys(newData), _.keys(oldData))
         for(let key of allKeys) {

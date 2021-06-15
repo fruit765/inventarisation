@@ -1,6 +1,9 @@
 "use strict"
 
 const { send, getTable, sendP } = require("./model/libs/command")
+const multer  = require('multer')
+const upload = multer()
+
 const devices = require('./routes/devices')
 const categories = require('./routes/categories')
 const users = require('./routes/users')
@@ -80,9 +83,9 @@ module.exports = function (app) {
 
     app.use(mentoring)
 
-    app.get("/test", async (req, res, next) => {
-        const a = History.query()
-        console.log(a)
+    app.post("/test", upload.none(), async (req, res, next) => {
+        //const a = History.query()
+        console.log(req.body)
     })
 
     app.use((err, req, res, next) => {

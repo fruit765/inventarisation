@@ -29,6 +29,7 @@
     "json-schema-traverse": "^0.5.0",
     "lodash": "^4.17.20",
     "luxon": "^1.25.0",
+    "multer": "^1.4.2",
     "mysql2": "^2.2.5",
     "objection": "^2.2.14",
     "objection-password": "^3.0.0",

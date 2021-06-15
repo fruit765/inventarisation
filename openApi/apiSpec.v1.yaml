@@ -1682,6 +1682,19 @@ paths:
                     type: string
       operationId: get-test
       description: sadasd
+    post:
+      summary: asdasd
+      operationId: post-test
+      responses:
+        '200':
+          description: OK
+      description: asdasd
+      requestBody:
+        content:
+          application/json:
+            schema: {}
+      tags:
+        - device
   /account_types:
     get:
       summary: Изменение имен сервисов
@@ -2488,6 +2501,8 @@ paths:
                                               enum:
                                                 - 0
                                                 - 1
+                                            protegeСhoice:
+                                              type: integer
                                       img:
                                         type: string
                           tasks:
@@ -2531,16 +2546,16 @@ paths:
           in: query
           name: id
       description: Получает права пользователей
-  /sendProtegeTest:
-    get:
-      summary: Отправка теста стажером
-      tags:
-        - HR
+  /mentoringRating:
+    post:
+      summary: Оценка наставнечества стажером/наставником
+      operationId: post-mentoringRating
       responses:
         '200':
           description: OK
-      operationId: get-sendProtegeTest
-      description: Отправка теста стажером
+      tags:
+        - HR
+      description: 'Оценка наставнечества стажером/наставником '
       requestBody:
         content:
           application/json:
@@ -2549,10 +2564,11 @@ paths:
               properties:
                 id:
                   type: integer
-                testNo:
-                  type: integer
-                '':
-                  type: string
+                rating:
+                  type: object
+                  properties:
+                    test:
+                      type: string
 components:
   schemas: {}
   securitySchemes: {}
