@@ -35,4 +35,9 @@ export default class FacadeTabMentoring extends FacadeTable {
         const planCreatedStatusId = await knex("status").where("status", "planconfirmed").first().then((x: { id: number }) => x.id)
         return super.patchAndFetch({...data, status_id: planCreatedStatusId}, trxOpt)
     }
+
+    /**Загрузка изображений которые будут использоваться в наставничистве */
+    // async imgLoad(planId: number, ) {
+
+    // }
 }

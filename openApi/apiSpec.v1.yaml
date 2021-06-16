@@ -2569,6 +2569,22 @@ paths:
                   properties:
                     test:
                       type: string
+  /mentoringImgLoad:
+    post:
+      summary: Отправка изображений для заданий и тестов
+      operationId: post-mentoringImgLoad
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+      description: Отправка изображений для заданий и тестов
+      tags:
+        - HR
 components:
   schemas: {}
   securitySchemes: {}

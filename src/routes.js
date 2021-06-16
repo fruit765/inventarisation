@@ -83,9 +83,9 @@ module.exports = function (app) {
 
     app.use(mentoring)
 
-    app.post("/test", upload.none(), async (req, res, next) => {
+    app.post("/test", upload.single('avatar'), async (req, res, next) => {
         //const a = History.query()
-        console.log(req.body)
+        res.json(req.file)
     })
 
     app.use((err, req, res, next) => {
