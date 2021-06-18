@@ -15,18 +15,21 @@ router.route('/mentoringImgLoad')
         this.myObj = new FacadeTabMentoring(req.user.id)
         next()
     })
-    .post((req, res, next) => {
-        const id = req.body.id
-        fsPromises.mkdir( "./uploaded/mentoring/" + id [, options])
-        const storage = multer.diskStorage({
-            destination: function (req, file, cb) {
-                cb(null, './uploaded/mentoring/'+req.body.id)
-            },
-            filename: function (req, file, cb) {
-                cb(null, id + "-" + nanoid())
-            }
-        })
-        sendP(next)(res)(this.myObj.loadImg(id,))
-    })
+    // .post(async (req, res, next) => {
+    //     const path = "./uploaded/mentoring/" + req.body.id
+    //     if (!fs.existsSync(path)) {
+    //         await fsPromises.mkdir(path, { recursive: true })
+    //     }
+        
+    //     const storage = multer.diskStorage({
+    //         destination: function (req, file, cb) {
+    //             cb(null, path)
+    //         },
+    //         filename: function (req, file, cb) {
+    //             cb(null, nanoid())
+    //         }
+    //     })
+    //     sendP(next)(res)(this.myObj.loadImg(id,))
+    // })
 
 module.exports = router

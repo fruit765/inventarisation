@@ -1,8 +1,6 @@
 "use strict"
 
 const { send, getTable, sendP } = require("./model/libs/command")
-const multer  = require('multer')
-const upload = multer()
 
 const devices = require('./routes/devices')
 const categories = require('./routes/categories')
@@ -83,8 +81,38 @@ module.exports = function (app) {
 
     app.use(mentoring)
 
-    app.post("/test", upload.single('avatar'), async (req, res, next) => {
-        //const a = History.query()
+    const { customAlphabet } = require('nanoid')
+    const nanoid = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyz', 14)
+    const multer = require('multer')
+    const fs = require('fs')
+    const fsPromises = require('fs').promises
+    const { deferred } = require('promise-callbacks')
+
+    app.post("/test", async (req, res, next) => {
+        const format = [".gif", ".jpg", ".jpeg", ".jfif", ".pjpeg", ".pjp", ".png", ".svg", ".webp"]
+        const storage = multer.diskStorage({
+            destination: async function (reqx, file, cb) {
+                let path = "./uploaded/mentoring/" + reqx.body.id
+                if (!fs.existsSync(path)) {
+                    await fsPromises.mkdir(path, { recursive: true })
+                }
+                cb(null, path)
+            },
+            filename: function (reqx, file, cb) {
+                const extension = file.originalname?.match(/\.[0-9a-z]+$/gi)?.[0]?.toLocaleLowerCase() ?? ""
+                if(!format.includes(extension)) {
+                    throw 
+                }
+                cb(null, nanoid() + extension)
+            }
+        })
+
+        const upload = multer({ storage: storage })
+
+        const uploadPromise = deferred()
+        upload.single('file')(req, res, uploadPromise.defer())
+        await uploadPromise
+        console.log(req.body.id)
         res.json(req.file)
     })
 
