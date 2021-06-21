@@ -2567,7 +2567,7 @@ paths:
                       type: string
   /mentoringFileLoad:
     post:
-      summary: Отправка изображений для заданий и тестов
+      summary: Отправка файлов для заданий и тестов
       operationId: post-mentoringFileLoad
       responses:
         '200':
@@ -2579,6 +2579,12 @@ paths:
       description: Отправка изображений для заданий и тестов
       tags:
         - HR
+      parameters:
+        - schema:
+            type: integer
+          in: query
+          name: id
+          required: true
     parameters: []
 components:
   schemas: {}

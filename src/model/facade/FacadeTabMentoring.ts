@@ -24,7 +24,7 @@ export default class FacadeTabMentoring extends FacadeTable {
         return super.insert({ ...data, status_id: noplanStatusId, plan: null }, trxOpt)
     }
 
-    /**Создание плана*/
+    /**Создание или редактирование плана*/
     async createPlan(data: any, trxOpt?: Transaction<any, any>) {
         const currentMentoring = await this.getUnconfirm(data.id, trxOpt)
         if (currentMentoring[0]?.status != "noplan" && currentMentoring[0]?.status != "plancreated") {
@@ -46,10 +46,10 @@ export default class FacadeTabMentoring extends FacadeTable {
 
     /**Загрузка файлов которые будут использоваться в наставничистве */
     async fileLoad(req: any, res: any, next: any) {
-        const format = [".gif", ".jpg", ".jpeg", ".jfif", ".pjpeg", ".pjp", ".png", ".svg", ".webp"]
+        //const format = [".gif", ".jpg", ".jpeg", ".jfif", ".pjpeg", ".pjp", ".png", ".svg", ".webp"]
         const storage = multer.diskStorage({
             destination: async function (reqx, file, cb) {
-                let path = "./uploaded/mentoring/" + reqx.body.id
+                let path = "./uploaded/mentoring/" + reqx.query.id
                 if (!fs.existsSync(path)) {
                     await fsPromises.mkdir(path, { recursive: true })
                 }
@@ -57,9 +57,6 @@ export default class FacadeTabMentoring extends FacadeTable {
             },
             filename: function (reqx, file, cb) {
                 const extension = file.originalname?.match(/\.[0-9a-z]+$/gi)?.[0]?.toLocaleLowerCase() ?? ""
-                // if (!format.includes(extension)) {
-                //     throw this.handleErr.
-                // }
                 cb(null, nanoid() + extension)
             }
         })
