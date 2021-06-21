@@ -2474,40 +2474,40 @@ paths:
                                 title:
                                   type: string
                           test:
-                              type: object
-                              properties:
-                                title:
-                                  type: string
-                                questions:
-                                  type: array
-                                  items:
-                                    type: object
-                                    properties:
-                                      title:
-                                        type: string
-                                      answers:
-                                        type: array
-                                        items:
-                                          type: object
-                                          properties:
-                                            title:
-                                              type: string
-                                            img:
-                                              type: string
-                                            isRight:
-                                              type: integer
-                                              enum:
-                                                - 0
-                                                - 1
-                                            protegeСhoice:
-                                              type: integer
-                                      img:
-                                        type: string
+                            type: object
+                            properties:
+                              title:
+                                type: string
+                              questions:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    title:
+                                      type: string
+                                    answers:
+                                      type: array
+                                      items:
+                                        type: object
+                                        properties:
+                                          title:
+                                            type: string
+                                          img:
+                                            type: string
+                                          isRight:
+                                            type: integer
+                                            enum:
+                                              - 0
+                                              - 1
+                                          protegeСhoice:
+                                            type: integer
+                                    img:
+                                      type: string
                           task:
-                              type: object
-                              properties:
-                                title:
-                                  type: string
+                            type: object
+                            properties:
+                              title:
+                                type: string
     put:
       summary: Отправить на проверку всеми
       operationId: put-mentoring
@@ -2565,22 +2565,21 @@ paths:
                   properties:
                     test:
                       type: string
-  /mentoringImgLoad:
+  /mentoringFileLoad:
     post:
       summary: Отправка изображений для заданий и тестов
-      operationId: post-mentoringImgLoad
+      operationId: post-mentoringFileLoad
       responses:
         '200':
           description: OK
       requestBody:
         content:
-          application/json:
-            schema:
-              type: object
-              properties: {}
+          multipart/form-data:
+            schema: {}
       description: Отправка изображений для заданий и тестов
       tags:
         - HR
+    parameters: []
 components:
   schemas: {}
   securitySchemes: {}

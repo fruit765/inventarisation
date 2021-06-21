@@ -7,11 +7,11 @@ const FacadeTabSoftwareCat = require('../model/facade/facadeTabSoftwareCat').def
 
 router.route('/softwareCategory')
     .all((req, res, next) => {
-        this.myObj = new FacadeTabSoftwareCat(req.user.id)
+        req.myObj = new FacadeTabSoftwareCat(req.user.id)
         next()
     })
     .get(async (req, res, next) => {
-        const response = this.myObj.getUnconfWithType()
+        const response = req.myObj.getUnconfWithType()
         sendP(next)(res)(response)
     })
 

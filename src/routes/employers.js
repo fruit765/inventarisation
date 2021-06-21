@@ -7,18 +7,18 @@ const Table = require('../model/facade/facadeTable').FacadeTable
 
 router.route('/employers')
     .all((req, res, next) => {
-        this.myObj = new Table("employer", req.user.id)
+        req.myObj = new Table("employer", req.user.id)
         next()
     })
     .get(async (req, res, next) => {
-        const response = this.myObj.getUnconfirm()
+        const response = req.myObj.getUnconfirm()
         sendP(next)(res)(response)
     })
     .post((req, res, next) => {
-        sendP(next)(res)(this.myObj.insertAndFetch(req.body))
+        sendP(next)(res)(req.myObj.insertAndFetch(req.body))
     })
     .patch((req, res, next) => {
-        sendP(next)(res)(this.myObj.patchAndFetch(req.body))
+        sendP(next)(res)(req.myObj.patchAndFetch(req.body))
     })
 
 module.exports = router

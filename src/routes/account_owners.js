@@ -9,7 +9,7 @@ const Account_owner = require("../model/orm/account_owner")
 
 router.route('/account_owners')
     .all((req, res, next) => {
-        this.myObj = new Table("account_owner", req.user.id)
+        req.myObj = new Table("account_owner", req.user.id)
         next()
     })
     .get((req, res, next) => {
@@ -29,13 +29,13 @@ router.route('/account_owners')
             throw createError(400, "dep_loc_id and user_id can't both contain values")
         }
 
-        sendP(next)(res)(this.myObj.insertAndFetch(req.body))
+        sendP(next)(res)(req.myObj.insertAndFetch(req.body))
     })
     .delete((req, res, next) => {
         if (Object.keys(req.body).length === 0) {
             throw table.createError400Pattern("object", "object must be not empty")
         }
-        sendP(next)(res)(this.myObj.delete(req.body.id))
+        sendP(next)(res)(req.myObj.delete(req.body.id))
     })
 
 module.exports = router 

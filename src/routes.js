@@ -33,6 +33,7 @@ const events = require('./routes/events')
 const eventAction = require('./routes/eventAction')
 
 const mentoring = require('./routes/mentoring')
+const mentoringFileLoad = require('./routes/mentoringFileLoad')
 
 const Status = require("./model/orm/status")
 const Location = require("./model/orm/location")
@@ -79,6 +80,7 @@ module.exports = function (app) {
     app.use(events)
 
     app.use(mentoring)
+    app.use(mentoringFileLoad)
 
     app.post("/test", async (req, res, next) => {
         // const format = [".gif", ".jpg", ".jpeg", ".jfif", ".pjpeg", ".pjp", ".png", ".svg", ".webp"]

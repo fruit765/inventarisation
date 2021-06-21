@@ -8,7 +8,7 @@ const _ = require("lodash")
 
 router.route('/software_owners')
     .all((req, res, next) => {
-        this.myObj = new Table("software_owner", req.user.id)
+        req.myObj = new Table("software_owner", req.user.id)
         next()
     })
     .get((req, res, next) => {
@@ -16,7 +16,7 @@ router.route('/software_owners')
             device_id: req.query.device_id,
             software_id: req.query.software_id
         }, _.isUndefined)
-        const response = this.myObj.getUnconfirm().then(x => _.filter(x, filterObj))
+        const response = req.myObj.getUnconfirm().then(x => _.filter(x, filterObj))
         sendP(next)(res)(response)
     })
 

@@ -7,6 +7,7 @@ import multer from 'multer'
 import fs from 'fs'
 //@ts-ignore
 import { deferred } from 'promise-callbacks'
+import { sendP } from '../libs/command'
 const nanoid = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyz', 14)
 const fsPromises = require('fs').promises
 
@@ -43,8 +44,8 @@ export default class FacadeTabMentoring extends FacadeTable {
         return super.patchAndFetch({ ...data, status_id: planCreatedStatusId }, trxOpt)
     }
 
-    /**Загрузка изображений которые будут использоваться в наставничистве */
-    async imgLoad(req: any, res: any, next: any) {
+    /**Загрузка файлов которые будут использоваться в наставничистве */
+    async fileLoad(req: any, res: any, next: any) {
         const format = [".gif", ".jpg", ".jpeg", ".jfif", ".pjpeg", ".pjp", ".png", ".svg", ".webp"]
         const storage = multer.diskStorage({
             destination: async function (reqx, file, cb) {
@@ -56,19 +57,24 @@ export default class FacadeTabMentoring extends FacadeTable {
             },
             filename: function (reqx, file, cb) {
                 const extension = file.originalname?.match(/\.[0-9a-z]+$/gi)?.[0]?.toLocaleLowerCase() ?? ""
-                if (!format.includes(extension)) {
-                //throw
-                }
+                // if (!format.includes(extension)) {
+                //     throw this.handleErr.
+                // }
                 cb(null, nanoid() + extension)
             }
         })
 
-        const upload = multer({ storage: storage })
+        const upload = multer({
+            storage: storage,
+            limits: {
+                fileSize: 10485760, 
+                headerPairs: 1
+            }
+        })
 
         const uploadPromise = deferred()
         upload.single('file')(req, res, uploadPromise.defer())
         await uploadPromise
-        console.log(req.body.id)
-        res.json(req.file)
+        sendP(next)(res)(req.file)
     }
 }

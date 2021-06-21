@@ -93,4 +93,9 @@ export default class CreateErr {
     statusMustBePlancreated() {
         return this.createException(400, "status must be plancreated", "id")
     }
+
+    /**Ожидает изображение*/
+    awaitingImage() {
+        return this.createException(400, "awaiting image format .gif, .jpg, .jpeg, .jfif, .pjpeg, .pjp, .png, .svg, .webp", "file")
+    }
 } 
