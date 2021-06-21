@@ -55,6 +55,8 @@ module.exports = function (app) {
 
     app.use(/^(?!\/login)/, authorizationRequest)
 
+    app.use("/uploaded", express.static(process.cwd() + '/uploaded'))
+
     app.use(
         openApiValidator({
             apiSpec: "./openApi/apiSpec.v1.yaml",
@@ -64,4 +66,5 @@ module.exports = function (app) {
             }
         })
     )
+
 }
