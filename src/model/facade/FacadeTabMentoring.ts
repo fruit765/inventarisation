@@ -57,7 +57,7 @@ export default class FacadeTabMentoring extends FacadeTable {
             filename: function (reqx, file, cb) {
                 const extension = file.originalname?.match(/\.[0-9a-z]+$/gi)?.[0]?.toLocaleLowerCase() ?? ""
                 if (!format.includes(extension)) {
-                    throw
+                //throw
                 }
                 cb(null, nanoid() + extension)
             }

@@ -2473,9 +2473,7 @@ paths:
                               properties:
                                 title:
                                   type: string
-                          tests:
-                            type: array
-                            items:
+                          test:
                               type: object
                               properties:
                                 title:
@@ -2505,9 +2503,7 @@ paths:
                                               type: integer
                                       img:
                                         type: string
-                          tasks:
-                            type: array
-                            items:
+                          task:
                               type: object
                               properties:
                                 title:
