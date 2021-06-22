@@ -26,7 +26,6 @@ export default class MentoringPlan {
     }
 
     get() {
-        console.log(this.planObjClasses)
         return _.mapValues(this.planObjClasses, (value, key) => {
             if (_.isArray(value)) {
                 return value.map(x => x.get())
@@ -34,5 +33,9 @@ export default class MentoringPlan {
                 return value.get()
             }
         })
+    }
+
+    getAllFileName() {
+        return 
     }
 }
