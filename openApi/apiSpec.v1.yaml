@@ -2508,6 +2508,37 @@ paths:
                             properties:
                               title:
                                 type: string
+                    test:
+                      type: object
+                      properties:
+                        title:
+                          type: string
+                        questions:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              title:
+                                type: string
+                              answers:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    title:
+                                      type: string
+                                    img:
+                                      type: string
+                                    isRight:
+                                      type: integer
+                                      enum:
+                                        - 0
+                                        - 1
+                                    protegeСhoice:
+                                      type: integer
+                              img:
+                                type: string
+                    task: {}
     put:
       summary: Отправить на проверку всеми
       operationId: put-mentoring

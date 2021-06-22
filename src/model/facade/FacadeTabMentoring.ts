@@ -30,6 +30,7 @@ export default class FacadeTabMentoring extends FacadeTable {
         if (currentMentoring[0]?.status != "noplan" && currentMentoring[0]?.status != "plancreated") {
             throw this.handleErr.statusMustBeNoplanOrPlancreated()
         }
+        this.delete
         const planCreatedStatusId = await knex("status").where("status", "plancreated").first().then((x: { id: number }) => x.id)
         return super.patchAndFetch({ ...data, status_id: planCreatedStatusId }, trxOpt)
     }
