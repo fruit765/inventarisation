@@ -8,6 +8,7 @@ import fs from 'fs'
 //@ts-ignore
 import { deferred } from 'promise-callbacks'
 import { sendP } from '../libs/command'
+import MentoringPlan from '../class/mentoringPlan/MentoringPlan'
 const nanoid = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyz', 14)
 const fsPromises = require('fs').promises
 
@@ -30,9 +31,11 @@ export default class FacadeTabMentoring extends FacadeTable {
         if (currentMentoring[0]?.status != "noplan" && currentMentoring[0]?.status != "plancreated") {
             throw this.handleErr.statusMustBeNoplanOrPlancreated()
         }
-        this.delete
+        // this.delete
         const planCreatedStatusId = await knex("status").where("status", "plancreated").first().then((x: { id: number }) => x.id)
-        return super.patchAndFetch({ ...data, status_id: planCreatedStatusId }, trxOpt)
+        const Plan = new MentoringPlan(data?.plan)
+        console.log(Plan.get())
+        return super.patchAndFetch({ plan: Plan.get(), id: data.id, status_id: planCreatedStatusId }, trxOpt)
     }
 
     /**Подтверждаем план*/
