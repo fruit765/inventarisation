@@ -55,7 +55,7 @@ module.exports = function (app) {
 
     app.use(/^(?!\/login)/, authorizationRequest)
 
-    app.use("/uploaded", (req, res, next) => express.static(process.cwd() + '/uploaded'))
+    app.use("/uploaded", (req, res, next) => express.static(process.cwd() + '/uploaded')(req, res, next))
 
     app.use(
         openApiValidator({
