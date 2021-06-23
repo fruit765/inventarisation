@@ -1,7 +1,7 @@
 import _ from "lodash"
 import MentoringTest from "./MentoringTest"
 import MentoringTask from "./MentoringTask"
-import MentoringBlock from "./MentoringBlock"
+import MentoringBlocks from "./MentoringBlocks"
 
 /**
  * Класс отвечает за план в системе наставнечества
@@ -16,7 +16,7 @@ export default class MentoringPlan {
         this.planObject = planObject
         this.planObjClasses = _.mapValues(planObject, (value, key) => {
             if (key === "blocks") {
-                return _.map(value, (block) => new MentoringBlock(block))
+                return new MentoringBlocks(value)
             } else if (key === "test") {
                 return new MentoringTest(value)
             } else if (key == "task") {
@@ -26,16 +26,13 @@ export default class MentoringPlan {
     }
 
     get() {
-        return _.mapValues(this.planObjClasses, (value, key) => {
-            if (_.isArray(value)) {
-                return value.map(x => x.get())
-            } else {
-                return value.get()
-            }
-        })
+        return _.mapValues(this.planObjClasses, value => value.get())
     }
 
     getAllFileName() {
-        return 
+        const fileArrayRaw = _.transform(this.planObjClasses, (result, value, key) => {
+            _.concat(result, value.getAllFileName() ?? [])
+        }, [])
+        return _.compact(_.uniq(fileArrayRaw))
     }
 }

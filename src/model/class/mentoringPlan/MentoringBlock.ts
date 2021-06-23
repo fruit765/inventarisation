@@ -2,7 +2,7 @@ import _ from "lodash"
 import MentoringTask from "./MentoringTask"
 import MentoringTest from "./MentoringTest"
 /**
- * Класс отвечает за блоки в плане в системе наставнечества
+ * Класс отвечает за один блок в плане в системе наставнечества
  * @class
  */
 export default class MentoringBlock {
@@ -12,7 +12,6 @@ export default class MentoringBlock {
 
     constructor(blockObject: any) {
         this.blockObject = blockObject
-        this.blockObjClasses = {}
         this.blockObjClasses = _.mapValues(blockObject, (value, key) => {
             if (key === "sections" || key === "title") {
                 return { get: () => value }
@@ -32,5 +31,11 @@ export default class MentoringBlock {
                 return value.get()
             }
         })
+    }
+
+    getAllFileName() {
+        return _.transform(this.blockObjClasses, (result, value, key) => {
+            _.concat(result, value?.getAllFileName() ?? [])
+        }, [])
     }
 }

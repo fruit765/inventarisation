@@ -2508,6 +2508,19 @@ paths:
                             properties:
                               title:
                                 type: string
+                              desc:
+                                type: string
+                              file:
+                                type: string
+                              answer:
+                                type: object
+                                properties:
+                                  comment:
+                                    type: string
+                                  file:
+                                    type: string
+                              grade:
+                                type: string
                     test:
                       type: object
                       properties:
@@ -2538,7 +2551,24 @@ paths:
                                       type: integer
                               img:
                                 type: string
-                    task: {}
+                    task:
+                            type: object
+                            properties:
+                              title:
+                                type: string
+                              desc:
+                                type: string
+                              file:
+                                type: string
+                              answer:
+                                type: object
+                                properties:
+                                  comment:
+                                    type: string
+                                  file:
+                                    type: string
+                              grade:
+                                type: string
     put:
       summary: Отправить на проверку всеми
       operationId: put-mentoring

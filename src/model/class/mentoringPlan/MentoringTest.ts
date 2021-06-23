@@ -18,4 +18,9 @@ export default class MentoringTest {
     get() {
         return this.testObject
     }
+
+    getAllFileName() {
+        return
+    }
 }
+
