@@ -13,4 +13,9 @@ export default class MentoringTask {
     get() {
         return this.taskObject
     }
+
+    getAllFileName() {
+        const questionImg = this.taskObject?.img ?? []
+        const answerImg = 
+    }
 }
