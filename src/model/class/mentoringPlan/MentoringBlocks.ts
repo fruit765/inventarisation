@@ -10,13 +10,17 @@ export default class MentoringBlocks {
     private blocksObject
     private blocksObjClasses: any
 
-    constructor(blocksObject: any) {
+    constructor(blocksObject: any, mentoringId: number) {
         this.blocksObject = blocksObject
-        this.blocksObjClasses = _.map(blocksObject, value => new MentoringBlock(value))
+        this.blocksObjClasses = _.map(blocksObject, value => new MentoringBlock(value, mentoringId))
     }
 
     get() {
         return _.map(this.blocksObjClasses, value => value.get())
+    }
+
+    getWithFilePath() {
+        return _.map(this.blocksObjClasses, value => value.getWithFilePath() || value.get())
     }
 
     getAllFileName() {

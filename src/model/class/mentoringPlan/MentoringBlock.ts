@@ -10,15 +10,15 @@ export default class MentoringBlock {
     private blockObject
     private blockObjClasses: any
 
-    constructor(blockObject: any) {
+    constructor(blockObject: any, mentoringId: number) {
         this.blockObject = blockObject
         this.blockObjClasses = _.mapValues(blockObject, (value, key) => {
             if (key === "sections" || key === "title") {
                 return { get: () => value }
             } else if (key === "test") {
-                return new MentoringTest(value)
+                return new MentoringTest(value, mentoringId)
             } else if (key == "task") {
-                return new MentoringTask(value)
+                return new MentoringTask(value, mentoringId)
             }
         })
     }
@@ -31,6 +31,10 @@ export default class MentoringBlock {
                 return value.get()
             }
         })
+    }
+
+    getWithFilePath() {
+        return _.mapValues(this.blockObjClasses, value => value?.getWithFilePath?.() || value.get())
     }
 
     getAllFileName() {

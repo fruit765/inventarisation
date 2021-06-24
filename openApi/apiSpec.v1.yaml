@@ -2552,23 +2552,23 @@ paths:
                               img:
                                 type: string
                     task:
-                            type: object
-                            properties:
-                              title:
-                                type: string
-                              desc:
-                                type: string
-                              file:
-                                type: string
-                              answer:
-                                type: object
-                                properties:
-                                  comment:
-                                    type: string
-                                  file:
-                                    type: string
-                              grade:
-                                type: string
+                      type: object
+                      properties:
+                        title:
+                          type: string
+                        desc:
+                          type: string
+                        file:
+                          type: string
+                        answer:
+                          type: object
+                          properties:
+                            comment:
+                              type: string
+                            file:
+                              type: string
+                        grade:
+                          type: string
     put:
       summary: Отправить на проверку всеми
       operationId: put-mentoring
@@ -2656,6 +2656,83 @@ paths:
           description: OK
       operationId: get-uploaded
       description: Путь для получения файлов
+  /mentoringProtege:
+    patch:
+      summary: Отправка ответов на тесты и задания для стажера
+      operationId: patch-mentoringProtege
+      responses:
+        '200':
+          description: OK
+      description: Отправка ответов на тесты и задания для стажера
+      tags:
+        - HR
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                plan:
+                  type: object
+                  nullable: true
+                  properties:
+                    blocks:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          test:
+                            type: object
+                            properties:
+                              questions:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    answers:
+                                      type: array
+                                      items:
+                                        type: object
+                                        properties:
+                                          protegeСhoice:
+                                            type: integer
+                          task:
+                            type: object
+                            properties:
+                              answer:
+                                type: object
+                                properties:
+                                  comment:
+                                    type: string
+                                  file:
+                                    type: string
+                    test:
+                      type: object
+                      properties:
+                        questions:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              answers:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    protegeСhoice:
+                                      type: integer
+                    task:
+                      type: object
+                      properties:
+                        answer:
+                          type: object
+                          properties:
+                            comment:
+                              type: string
+                            file:
+                              type: string
 components:
   schemas: {}
   securitySchemes: {}

@@ -12,7 +12,7 @@ export default class CreateErr {
             dataPath: "." + dataPath,
             message: message
         }]
-        
+
         const err: any = new Error()
         err.status = errCode
         err.message = buildMessage
@@ -92,6 +92,26 @@ export default class CreateErr {
     /**Статус должен быть plancreated */
     statusMustBePlancreated() {
         return this.createException(400, "status must be plancreated", "id")
+    }
+
+    /**Статус должен быть planconfirmed */
+    statusMustBePlanconfirmed() {
+        return this.createException(400, "status must be planconfirmed", "id")
+    }
+
+    /**Нет записи в таблице mentoring с таким id */
+    mentoringIdNotFound() {
+        return this.createException(400, "this id was not found in the mentoring table", "id")
+    }
+
+    /**Не верный путь в плане/он не может быть использован в этом плане*/
+    incorrectPath(path: string) {
+        return this.createException(400, "incorrect path: " + path, "plan")
+    }
+
+    /**Не верное имя файла в плане*/
+    incorrectFileName(fileName: string) {
+        return this.createException(400, "incorrect file name: " + fileName, "plan")
     }
 
     /**Ожидает изображение*/

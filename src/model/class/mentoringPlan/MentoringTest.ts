@@ -7,8 +7,10 @@ import _ from "lodash"
 export default class MentoringTest {
 
     private testObject
+    private mentoringId: number
 
-    constructor(testObject: any) {
+    constructor(testObject: any, mentoringId: number) {
+        this.mentoringId = mentoringId
         this.testObject = testObject
         if (this.testObject) {
             if (!this.testObject.status) {
@@ -21,9 +23,22 @@ export default class MentoringTest {
         return this.testObject
     }
 
+    getWithFilePath() {
+        const testObject = _.cloneDeep(this.testObject)
+        if (testObject?.img) {
+            testObject.img = `uploaded/mentoring/${this.mentoringId}/${testObject.img}`
+        }
+        _.forEach(testObject?.questions, value => {
+            if (value?.img) {
+                value.img = `uploaded/mentoring/${this.mentoringId}/${value.img}`
+            }
+        })
+        return testObject
+    }
+
     getAllFileName() {
         const questionImg = [this.testObject?.img]
-        const answerImg =  this.testObject?.questions.map((question: { img: string }) => {
+        const answerImg = this.testObject?.questions.map((question: { img: string }) => {
             return question?.img
         })
         const allFileArrRaw = _.concat(questionImg, answerImg)
