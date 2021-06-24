@@ -1,3 +1,4 @@
+import _ from "lodash"
 /**
  * Класс отвечает за задания в системе наставнечества
  * @class
@@ -8,6 +9,11 @@ export default class MentoringTask {
 
     constructor(taskObject: any) {
         this.taskObject = taskObject
+        if (this.taskObject) {
+            if (!this.taskObject.status) {
+                this.taskObject.status = "incomplete"
+            }
+        }
     }
 
     get() {
@@ -15,7 +21,7 @@ export default class MentoringTask {
     }
 
     getAllFileName() {
-        const questionImg = this.taskObject?.img ?? []
-        const answerImg = 
+        const allFile =  [this.taskObject?.answer?.file, this.taskObject?.file]
+        return _.compact(allFile)
     }
 }

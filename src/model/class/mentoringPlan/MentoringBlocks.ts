@@ -20,8 +20,8 @@ export default class MentoringBlocks {
     }
 
     getAllFileName() {
-        return _.transform(this.blocksObjClasses, (result, value, key) => {
-            _.concat(result, value.getAllFileName() ?? [])
+        return _.reduce(this.blocksObjClasses, (result: any, value) => {
+            return _.concat(result, value.getAllFileName() ?? [])
         }, [])
     }
 }

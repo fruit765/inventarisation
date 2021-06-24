@@ -1,3 +1,5 @@
+import _ from "lodash"
+
 /**
  * Класс отвечает за тест в системе наставнечества
  * @class
@@ -20,7 +22,12 @@ export default class MentoringTest {
     }
 
     getAllFileName() {
-        return
+        const questionImg = [this.testObject?.img]
+        const answerImg =  this.testObject?.questions.map((question: { img: string }) => {
+            return question?.img
+        })
+        const allFileArrRaw = _.concat(questionImg, answerImg)
+        return _.compact(allFileArrRaw)
     }
 }
 

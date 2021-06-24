@@ -34,8 +34,8 @@ export default class MentoringBlock {
     }
 
     getAllFileName() {
-        return _.transform(this.blockObjClasses, (result, value, key) => {
-            _.concat(result, value?.getAllFileName() ?? [])
+        return _.reduce(this.blockObjClasses, (result: any[], value) => {
+            return _.concat(result, value?.getAllFileName?.() ?? [])
         }, [])
     }
 }

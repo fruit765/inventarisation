@@ -30,8 +30,8 @@ export default class MentoringPlan {
     }
 
     getAllFileName() {
-        const fileArrayRaw = _.transform(this.planObjClasses, (result, value, key) => {
-            _.concat(result, value.getAllFileName() ?? [])
+        const fileArrayRaw = _.reduce(this.planObjClasses, (result: any, value) => {
+            return _.concat(result, value.getAllFileName() ?? [])
         }, [])
         return _.compact(_.uniq(fileArrayRaw))
     }
