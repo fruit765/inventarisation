@@ -16,14 +16,13 @@ export default class MentoringTest {
         this.testObject = testObject
         this.mentoringFile = new MentoringFile(mentoringId)
         if (this.testObject) {
-            this.refPrepare()
             if (!this.testObject.status) {
                 this.testObject.status = "incomplete"
             }
         }
     }
 
-    async refPrepare() {
+    async checkFiles() {
         if (this.testObject?.img) {
             this.testObject.img = await this.mentoringFile.checkFile(this.testObject.img)
         }

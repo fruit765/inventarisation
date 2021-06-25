@@ -2,6 +2,7 @@ import _ from "lodash"
 import MentoringTest from "./MentoringTest"
 import MentoringTask from "./MentoringTask"
 import MentoringBlocks from "./MentoringBlocks"
+import MentoringFile from "./MentoringFile"
 
 /**
  * Класс отвечает за план в системе наставнечества
@@ -26,10 +27,16 @@ export default class MentoringPlan {
     }
 
     get() {
+        if (this.planObject === null) {
+            return null
+        }
         return _.mapValues(this.planObjClasses, value => value.get())
     }
 
     getWithFilePath() {
+        if (this.planObject === null) {
+            return null
+        }
         return _.mapValues(this.planObjClasses, value => value?.getWithFilePath?.() || value.get())
     }
 
@@ -40,8 +47,10 @@ export default class MentoringPlan {
         return _.compact(_.uniq(fileArrayRaw))
     }
 
-    async fileCheck() {
-        _.forEach(this.planObjClasses, )
+    
+
+    async checkFiles() {
+        await MentoringFile.checkFiles(this.planObjClasses)
     }
 
     // async deleteUnusedFiles(mentoringId: number) {

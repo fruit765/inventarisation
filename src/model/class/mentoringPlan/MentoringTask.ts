@@ -17,7 +17,6 @@ export default class MentoringTask {
         this.mentoringId = mentoringId
         this.taskObject = taskObject
         if (this.taskObject) {
-            this.refPrepare()
             if (!this.taskObject.status) {
                 this.taskObject.status = "incomplete"
             }
@@ -36,7 +35,7 @@ export default class MentoringTask {
         }
     }
 
-    async refPrepare() {
+    async checkFiles() {
         if (this.taskObject?.file) {
             this.taskObject.file =  await this.mentoringFile.checkFile(this.taskObject.file)
         }

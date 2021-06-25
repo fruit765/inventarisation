@@ -1,5 +1,6 @@
 import _ from "lodash"
 import MentoringBlock from "./MentoringBlock"
+import MentoringFile from "./MentoringFile"
 
 /**
  * Класс отвечает за блоки в плане в системе наставнечества
@@ -13,6 +14,10 @@ export default class MentoringBlocks {
     constructor(blocksObject: any, mentoringId: number) {
         this.blocksObject = blocksObject
         this.blocksObjClasses = _.map(blocksObject, value => new MentoringBlock(value, mentoringId))
+    }
+
+    async checkFiles() {
+        await MentoringFile.checkFiles(this.blocksObjClasses)
     }
 
     get() {

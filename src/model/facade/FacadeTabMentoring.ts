@@ -27,7 +27,7 @@ export default class FacadeTabMentoring extends FacadeTable {
 
     /**Создание или редактирование плана*/
     async createPlan(data: any, trxOpt?: Transaction<any, any>) {
-        const currentMentoring = await this.getUnconfirm(data.id, trxOpt)
+        const currentMentoring = await this.getUnconfirmWithoutPath(data.id, trxOpt)
         if (!currentMentoring[0]) {
             throw this.handleErr.mentoringIdNotFound()
         }
@@ -38,31 +38,15 @@ export default class FacadeTabMentoring extends FacadeTable {
         // this.delete
         const planCreatedStatusId = await knex("status").where("status", "plancreated").first().then((x: { id: number }) => x.id)
         const Plan = new MentoringPlan(data?.plan, data.id)
-        await Plan.fileCheck()
+        await Plan.checkFiles()
         //console.log(Plan.get())
         console.log(Plan.getAllFileName())
         return super.patchAndFetch({ plan: Plan.get(), id: data.id, status_id: planCreatedStatusId }, trxOpt)
     }
 
-    /**Создание или редактирование плана*/
-    async mentorGrade(data: any, trxOpt?: Transaction<any, any>) {
-        const currentMentoring = await this.getUnconfirm(data.id, trxOpt)
-        if (!currentMentoring[0]) {
-            throw this.handleErr.mentoringIdNotFound()
-        }
-
-        // if (currentMentoring[0]?.status != "planconfirmed" ) {
-        //     throw this.handleErr.statusMustBePlanconfirmed()
-        // }
-
-        const Plan = new MentoringPlan(_.merge(currentMentoring[0]?.plan, data?.plan), data.id)
-
-        return super.patchAndFetch({ plan: Plan.get(), id: data.id}, trxOpt)
-    }
-
-    /**Отправка ответов на тесты и задания для стажера */
-    async protegeFill(data: any, trxOpt?: Transaction<any, any>) {
-        const currentMentoring = await this.getUnconfirm(data.id, trxOpt)
+    /**Используется для ответов на тесты и задания и отценки их фактически редактирует подтвержденный план*/
+    async patchConfirmPlan(data: any, trxOpt?: Transaction<any, any>) {
+        const currentMentoring = await this.getUnconfirmWithoutPath(data.id, trxOpt)
         if (!currentMentoring[0]) {
             throw this.handleErr.mentoringIdNotFound()
         }
@@ -75,7 +59,7 @@ export default class FacadeTabMentoring extends FacadeTable {
 
     /**Подтверждаем план*/
     async acceptPlan(data: any, trxOpt?: Transaction<any, any>) {
-        const currentMentoring = await this.getUnconfirm(data.id, trxOpt)
+        const currentMentoring = await this.getUnconfirmWithoutPath(data.id, trxOpt)
         if (!currentMentoring[0]) {
             throw this.handleErr.mentoringIdNotFound()
         }
@@ -115,5 +99,15 @@ export default class FacadeTabMentoring extends FacadeTable {
         upload.single('file')(req, res, uploadPromise.defer())
         await uploadPromise
         sendP(next)(res)(req.file)
+    }
+
+    async getUnconfirm(...x: any) {
+        const unconfirmRaw = await super.getUnconfirm(...x)
+        return unconfirmRaw.map( value => new MentoringPlan(value.plan, value.id).getWithFilePath())
+    }
+
+    /**Возвращает записи с неподтверденными данными как они есть, т. е. ссылки на файлы без путей*/
+    async getUnconfirmWithoutPath(...x: any) {
+        return super.getUnconfirm(...x)
     }
 }

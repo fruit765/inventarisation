@@ -1,4 +1,5 @@
 import _ from "lodash"
+import MentoringFile from "./MentoringFile"
 import MentoringTask from "./MentoringTask"
 import MentoringTest from "./MentoringTest"
 /**
@@ -21,6 +22,10 @@ export default class MentoringBlock {
                 return new MentoringTask(value, mentoringId)
             }
         })
+    }
+
+    async checkFiles() {
+        await MentoringFile.checkFiles(this.blockObjClasses)
     }
 
     get() {

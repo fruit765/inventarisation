@@ -11,7 +11,7 @@ router.route('/mentoringMentor')
         next()
     })
     .patch(async (req, res, next) => {
-        sendP(next)(res)(req.myObj.mentorGrade(req.body))
+        sendP(next)(res)(req.myObj.patchConfirmPlan(req.body))
     })
 
 module.exports = router
