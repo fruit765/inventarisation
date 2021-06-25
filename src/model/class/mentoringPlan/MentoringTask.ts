@@ -17,6 +17,7 @@ export default class MentoringTask {
         this.mentoringId = mentoringId
         this.taskObject = taskObject
         if (this.taskObject) {
+            this.refPrepare()
             if (!this.taskObject.status) {
                 this.taskObject.status = "incomplete"
             }
@@ -26,6 +27,11 @@ export default class MentoringTask {
                 } else if (this.taskObject.status !== "complete") {
                     delete (this.taskObject.grade)
                 }
+            }
+            if(this.taskObject?.checking && this.taskObject?.status === "incomplete") {
+                this.taskObject.status = "checking"
+            } else {
+                delete (this.taskObject.checking)
             }
         }
     }

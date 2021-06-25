@@ -2708,6 +2708,8 @@ paths:
                                     type: string
                                   file:
                                     type: string
+                              checking:
+                                type: string
                     test:
                       type: object
                       properties:
@@ -2733,7 +2735,7 @@ paths:
                               type: string
                             file:
                               type: string
-                        status:
+                        checking:
                           type: string
 components:
   schemas: {}
