@@ -52,7 +52,7 @@ export default class FacadeTabMentoring extends FacadeTable {
         // if (currentMentoring[0]?.status != "planconfirmed" ) {
         //     throw this.handleErr.statusMustBePlanconfirmed()
         // }
-        const Plan = new MentoringPlan(data?.plan, data.id)
+        const Plan = new MentoringPlan(_.merge(currentMentoring[0]?.plan, data?.plan), data.id)
         return super.patchAndFetch({ plan: Plan.get(), id: data.id }, trxOpt)
     }
 

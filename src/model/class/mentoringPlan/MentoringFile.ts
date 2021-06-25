@@ -1,5 +1,6 @@
 import _ from "lodash"
 import CreateErr from "../createErr"
+import { stat } from 'fs/promises'
 /**
  * Класс для работы с файлами в плане
  * @class
@@ -18,7 +19,7 @@ export default class MentoringFile {
         return `uploaded/mentoring/${this.mentoringId}/`
     }
 
-    checkFile(path: string) {
+    async checkFile(path: string) {
         const pathOnly = path.replace(/[^/]*$/gi, "").replace(/^\//gi, "")
         if (pathOnly !== this.getPrefixPath()) {
             throw this.createErr.incorrectPath(pathOnly)
@@ -27,6 +28,7 @@ export default class MentoringFile {
         if (fileName) {
             throw this.createErr.incorrectFileName(fileName)
         }
+        console.log(await stat(pathOnly + fileName))
 
         // файла не существует
         return fileName
