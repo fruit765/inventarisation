@@ -32,11 +32,11 @@ export default class MentoringTask {
 
     refPrepare() {
         if (this.taskObject?.file) {
-            this.taskObject.file = this.taskObject.file.match(/[^/]*$/gi)[0]
+            this.taskObject.file =  this.mentoringFile.checkFile(this.taskObject.file)
         }
-
+        
         if (this.taskObject?.answer?.file) {
-            this.taskObject.answer.file = this.taskObject.answer.file.match(/[^/]*$/gi)[0]
+            this.taskObject.answer.file = this.mentoringFile.checkFile(this.taskObject.answer.file)
         }
     }
 
@@ -47,11 +47,11 @@ export default class MentoringTask {
     getWithFilePath() {
         const taskObject = _.cloneDeep(this.taskObject)
         if (taskObject?.file) {
-            taskObject.file = `uploaded/mentoring/${this.mentoringId}/${taskObject.file}`
+            taskObject.file = this.mentoringFile.path(taskObject.file)
         }
 
         if (taskObject?.answer?.file) {
-            taskObject.answer.file = `uploaded/mentoring/${this.mentoringId}/${taskObject.answer.file}`
+            taskObject.answer.file = this.mentoringFile.path(taskObject.answer.file)
         }
 
         return taskObject
