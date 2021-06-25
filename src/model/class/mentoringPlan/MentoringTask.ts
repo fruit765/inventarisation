@@ -36,13 +36,13 @@ export default class MentoringTask {
         }
     }
 
-    refPrepare() {
+    async refPrepare() {
         if (this.taskObject?.file) {
-            this.taskObject.file =  this.mentoringFile.checkFile(this.taskObject.file)
+            this.taskObject.file =  await this.mentoringFile.checkFile(this.taskObject.file)
         }
         
         if (this.taskObject?.answer?.file) {
-            this.taskObject.answer.file = this.mentoringFile.checkFile(this.taskObject.answer.file)
+            this.taskObject.answer.file = await this.mentoringFile.checkFile(this.taskObject.answer.file)
         }
     }
 

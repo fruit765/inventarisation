@@ -2737,6 +2737,43 @@ paths:
                               type: string
                         checking:
                           type: string
+  /mentoringMentor:
+    patch:
+      summary: Оценка заданий ментором
+      operationId: patch-mentoringMentor
+      responses:
+        '200':
+          description: OK
+      description: Оценка заданий ментором
+      tags:
+        - HR
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                plan:
+                  type: object
+                  nullable: true
+                  properties:
+                    blocks:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          task:
+                            type: object
+                            properties:
+                              grade:
+                                type: integer
+                    task:
+                      type: object
+                      properties:
+                        grade:
+                          type: integer
 components:
   schemas: {}
   securitySchemes: {}

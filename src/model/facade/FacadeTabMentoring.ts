@@ -31,7 +31,7 @@ export default class FacadeTabMentoring extends FacadeTable {
         if (!currentMentoring[0]) {
             throw this.handleErr.mentoringIdNotFound()
         }
-        //console.log(currentMentoring)
+
         if (currentMentoring[0]?.status != "noplan" && currentMentoring[0]?.status != "plancreated") {
             throw this.handleErr.statusMustBeNoplanOrPlancreated()
         }
@@ -41,6 +41,23 @@ export default class FacadeTabMentoring extends FacadeTable {
         //console.log(Plan.get())
         console.log(Plan.getAllFileName())
         return super.patchAndFetch({ plan: Plan.get(), id: data.id, status_id: planCreatedStatusId }, trxOpt)
+    }
+
+    /**Создание или редактирование плана*/
+    async mentorGrade(data: any, trxOpt?: Transaction<any, any>) {
+        const currentMentoring = await this.getUnconfirm(data.id, trxOpt)
+        if (!currentMentoring[0]) {
+            throw this.handleErr.mentoringIdNotFound()
+        }
+
+        // if (currentMentoring[0]?.status != "planconfirmed" ) {
+        //     throw this.handleErr.statusMustBePlanconfirmed()
+        // }
+
+        const Plan = new MentoringPlan(data?.plan, data.id)
+        //console.log(Plan.get())
+        console.log(Plan.getAllFileName())
+        return super.patchAndFetch({ plan: Plan.get(), id: data.id}, trxOpt)
     }
 
     /**Отправка ответов на тесты и задания для стажера */
@@ -89,7 +106,7 @@ export default class FacadeTabMentoring extends FacadeTable {
         const upload = multer({
             storage: storage,
             limits: {
-                fileSize: 10485760, 
+                fileSize: 10485760,
                 headerPairs: 1
             }
         })

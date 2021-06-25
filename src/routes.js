@@ -34,6 +34,7 @@ const eventAction = require('./routes/eventAction')
 
 const mentoring = require('./routes/mentoring')
 const mentoringProtege = require('./routes/mentoringProtege')
+const mentoringMentor = require('./routes/mentoringMentor')
 const mentoringFileLoad = require('./routes/mentoringFileLoad')
 
 const Status = require("./model/orm/status")
@@ -82,6 +83,7 @@ module.exports = function (app) {
 
     app.use(mentoring)
     app.use(mentoringProtege)
+    app.use(mentoringMentor)
     app.use(mentoringFileLoad)
 
     app.post("/test", async (req, res, next) => {

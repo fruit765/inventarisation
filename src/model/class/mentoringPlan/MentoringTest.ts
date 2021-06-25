@@ -1,4 +1,5 @@
 import _ from "lodash"
+import MentoringFile from "./MentoringFile"
 
 /**
  * Класс отвечает за тест в системе наставнечества
@@ -8,13 +9,28 @@ export default class MentoringTest {
 
     private testObject
     private mentoringId: number
+    private mentoringFile
 
     constructor(testObject: any, mentoringId: number) {
         this.mentoringId = mentoringId
         this.testObject = testObject
+        this.mentoringFile = new MentoringFile(mentoringId)
         if (this.testObject) {
+            this.refPrepare()
             if (!this.testObject.status) {
                 this.testObject.status = "incomplete"
+            }
+        }
+    }
+
+    async refPrepare() {
+        if (this.testObject?.img) {
+            this.testObject.img = await this.mentoringFile.checkFile(this.testObject.img)
+        }
+
+        for (let value of this.testObject?.questions ?? []) {
+            if (value?.img) {
+                value.img = await this.mentoringFile.checkFile(value.img)
             }
         }
     }
@@ -26,11 +42,11 @@ export default class MentoringTest {
     getWithFilePath() {
         const testObject = _.cloneDeep(this.testObject)
         if (testObject?.img) {
-            testObject.img = `uploaded/mentoring/${this.mentoringId}/${testObject.img}`
+            testObject.img = this.mentoringFile.path(testObject.img)
         }
         _.forEach(testObject?.questions, value => {
             if (value?.img) {
-                value.img = `uploaded/mentoring/${this.mentoringId}/${value.img}`
+                value.img = this.mentoringFile.path(value.img)
             }
         })
         return testObject
