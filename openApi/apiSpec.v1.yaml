@@ -2520,7 +2520,7 @@ paths:
                                   file:
                                     type: string
                               grade:
-                                type: string
+                                type: integer
                     test:
                       type: object
                       properties:
@@ -2568,7 +2568,7 @@ paths:
                             file:
                               type: string
                         grade:
-                          type: string
+                          type: integer
     put:
       summary: Отправить на проверку всеми
       operationId: put-mentoring
@@ -2736,7 +2736,7 @@ paths:
                         status:
                           type: string
                           enum:
-                            - checknig
+                            - checking
 components:
   schemas: {}
   securitySchemes: {}

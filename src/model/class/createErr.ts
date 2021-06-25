@@ -114,6 +114,11 @@ export default class CreateErr {
         return this.createException(400, "incorrect file name: " + fileName, "plan")
     }
 
+    /**Такого файла не существует*/
+    fileNotFound(file: string) {
+        return this.createException(400, "file not found: " + file, "plan")
+    }
+
     /**Ожидает изображение*/
     awaitingImage() {
         return this.createException(400, "awaiting image format .gif, .jpg, .jpeg, .jfif, .pjpeg, .pjp, .png, .svg, .webp", "file")

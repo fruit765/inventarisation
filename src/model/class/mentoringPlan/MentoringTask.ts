@@ -1,5 +1,6 @@
 import _ from "lodash"
-import CreateErr from "../createErr"
+import MentoringFile from "./MentoringFile"
+
 /**
  * Класс отвечает за задания в системе наставнечества
  * @class
@@ -8,26 +9,23 @@ export default class MentoringTask {
 
     private taskObject
     private mentoringId: number
-    private createErr: CreateErr
+    private mentoringFile
+
 
     constructor(taskObject: any, mentoringId: number) {
-        this.createErr = new CreateErr()
+        this.mentoringFile = new MentoringFile(mentoringId)
         this.mentoringId = mentoringId
         this.taskObject = taskObject
         if (this.taskObject) {
             if (!this.taskObject.status) {
                 this.taskObject.status = "incomplete"
             }
+            if(this.taskObject.status === "checking" && this.taskObject?.grade) {
+                this.taskObject.status = "complete"
+            } else if (this.taskObject?.grade) {
+                
+            }
         }
-    }
-
-    checkFile(path: string) {
-        const fileName = path.match(/[^/]*$/gi)?.[0]
-        if (fileName) {
-            throw this.createErr.incorrectFileName(fileName)
-        }
-        return fileName
-
     }
 
     refPrepare() {
