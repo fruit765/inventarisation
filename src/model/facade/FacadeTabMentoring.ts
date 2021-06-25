@@ -38,6 +38,7 @@ export default class FacadeTabMentoring extends FacadeTable {
         // this.delete
         const planCreatedStatusId = await knex("status").where("status", "plancreated").first().then((x: { id: number }) => x.id)
         const Plan = new MentoringPlan(data?.plan, data.id)
+        await Plan.fileCheck()
         //console.log(Plan.get())
         console.log(Plan.getAllFileName())
         return super.patchAndFetch({ plan: Plan.get(), id: data.id, status_id: planCreatedStatusId }, trxOpt)
@@ -54,9 +55,8 @@ export default class FacadeTabMentoring extends FacadeTable {
         //     throw this.handleErr.statusMustBePlanconfirmed()
         // }
 
-        const Plan = new MentoringPlan(data?.plan, data.id)
-        //console.log(Plan.get())
-        console.log(Plan.getAllFileName())
+        const Plan = new MentoringPlan(_.merge(currentMentoring[0]?.plan, data?.plan), data.id)
+
         return super.patchAndFetch({ plan: Plan.get(), id: data.id}, trxOpt)
     }
 

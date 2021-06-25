@@ -40,6 +40,10 @@ export default class MentoringPlan {
         return _.compact(_.uniq(fileArrayRaw))
     }
 
+    async fileCheck() {
+        
+    }
+
     // async deleteUnusedFiles(mentoringId: number) {
     //     files = await readdir(path)
     //     this.getAllFileName()
