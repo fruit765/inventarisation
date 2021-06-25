@@ -38,7 +38,7 @@ export default class MentoringTest {
 
     getAllFileName() {
         const questionImg = [this.testObject?.img]
-        const answerImg = this.testObject?.questions.map((question: { img: string }) => {
+        const answerImg = this.testObject?.questions?.map((question: { img: string }) => {
             return question?.img
         })
         const allFileArrRaw = _.concat(questionImg, answerImg)

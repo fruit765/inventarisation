@@ -28,7 +28,7 @@ export default class MentoringFile {
             throw this.createErr.incorrectFileName(fileName)
         }
 
-        файла не существует
+        // файла не существует
         return fileName
     }
 
