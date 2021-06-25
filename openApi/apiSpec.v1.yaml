@@ -2733,6 +2733,10 @@ paths:
                               type: string
                             file:
                               type: string
+                        status:
+                          type: string
+                          enum:
+                            - checknig
 components:
   schemas: {}
   securitySchemes: {}
