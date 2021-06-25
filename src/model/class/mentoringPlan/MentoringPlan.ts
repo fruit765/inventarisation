@@ -41,7 +41,7 @@ export default class MentoringPlan {
     }
 
     async fileCheck() {
-        
+        _.forEach(this.planObjClasses, )
     }
 
     // async deleteUnusedFiles(mentoringId: number) {
