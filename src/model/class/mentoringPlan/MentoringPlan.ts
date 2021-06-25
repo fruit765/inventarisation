@@ -2,7 +2,6 @@ import _ from "lodash"
 import MentoringTest from "./MentoringTest"
 import MentoringTask from "./MentoringTask"
 import MentoringBlocks from "./MentoringBlocks"
-import { readdir } from 'fs/promises'
 
 /**
  * Класс отвечает за план в системе наставнечества

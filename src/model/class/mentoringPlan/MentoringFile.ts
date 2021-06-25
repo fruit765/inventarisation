@@ -1,5 +1,5 @@
 import CreateErr from "../createErr"
-import { stat } from 'fs/promises'
+import {promises} from "fs"
 /**
  * Класс для работы с файлами в плане
  * @class
@@ -28,7 +28,7 @@ export default class MentoringFile {
             throw this.createErr.incorrectFileName(fileName)
         }
 
-        await stat(pathOnly + fileName).catch(() => Promise.reject(this.createErr.fileNotFound(pathOnly + fileName)))
+        await promises.stat(pathOnly + fileName).catch(() => Promise.reject(this.createErr.fileNotFound(pathOnly + fileName)))
 
         return fileName
     }
