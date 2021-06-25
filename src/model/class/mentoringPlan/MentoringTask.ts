@@ -20,10 +20,12 @@ export default class MentoringTask {
             if (!this.taskObject.status) {
                 this.taskObject.status = "incomplete"
             }
-            if(this.taskObject.status === "checking" && this.taskObject?.grade) {
-                this.taskObject.status = "complete"
-            } else if (this.taskObject?.grade) {
-                
+            if (this.taskObject?.grade) {
+                if (this.taskObject.status === "checking") {
+                    this.taskObject.status = "complete"
+                } else if (this.taskObject.status !== "complete") {
+                    delete (this.taskObject.grade)
+                }
             }
         }
     }
