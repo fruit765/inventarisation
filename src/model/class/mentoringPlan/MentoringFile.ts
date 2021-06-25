@@ -1,4 +1,3 @@
-import _ from "lodash"
 import CreateErr from "../createErr"
 import { stat } from 'fs/promises'
 /**
@@ -28,9 +27,9 @@ export default class MentoringFile {
         if (fileName) {
             throw this.createErr.incorrectFileName(fileName)
         }
-        console.log(await stat(pathOnly + fileName))
 
-        // файла не существует
+        await stat(pathOnly + fileName).catch(() => Promise.reject(this.createErr.fileNotFound(pathOnly + fileName)))
+
         return fileName
     }
 
