@@ -5,7 +5,7 @@ const FacadeTabMentoring  = require('../model/facade/FacadeTabMentoring').defaul
 const { sendP } = require('../model/libs/command')
 const router = express.Router()
 
-router.route('/mentoring')
+router.route('/mentoringProtege')
     .all((req, res, next) => {
         req.myObj = new FacadeTabMentoring(req.user.id)
         next()
