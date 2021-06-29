@@ -46,6 +46,22 @@ export default class MentoringFile {
         return this.getPrefixPath() + filename
     }
 
+    async deleteExcept(files: string[]) {
+        const allFiles = await promises.readdir(this.getPrefixPath())
+        const diffFiles = _.difference(allFiles, files)
+        for (let value of diffFiles) {
+            await promises.rm(value)
+        }
+    }
+
+    async checkForImgExt(filename: string) {
+        const allowFormat = [".gif", ".jpg", ".jpeg", ".jfif", ".pjpeg", ".pjp", ".png", ".svg", ".webp"]
+        const extension = filename.match(/\.[0-9a-z]+$/gi)?.[0]?.toLocaleLowerCase() ?? ""
+        if(!allowFormat.includes(extension)) {
+            throw this.createErr.awaitingImage()
+        }
+    }
+
     
 
 }

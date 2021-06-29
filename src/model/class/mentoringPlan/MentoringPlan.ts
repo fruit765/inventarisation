@@ -12,6 +12,7 @@ export default class MentoringPlan {
 
     private planObject
     private planObjClasses: any
+    private mentoringFile
 
     constructor(planObject: any, mentoringId: number) {
         this.planObject = planObject
@@ -24,6 +25,7 @@ export default class MentoringPlan {
                 return new MentoringTask(value, mentoringId)
             }
         })
+        this.mentoringFile = new MentoringFile(mentoringId)
     }
 
     get() {
@@ -44,7 +46,7 @@ export default class MentoringPlan {
         const fileArrayRaw = _.reduce(this.planObjClasses, (result: any, value) => {
             return _.concat(result, value.getAllFileName() ?? [])
         }, [])
-        return _.compact(_.uniq(fileArrayRaw))
+        return <string[]><any>_.compact(_.uniq(fileArrayRaw))
     }
 
     
@@ -53,8 +55,7 @@ export default class MentoringPlan {
         await MentoringFile.checkFiles(this.planObjClasses)
     }
 
-    // async deleteUnusedFiles(mentoringId: number) {
-    //     files = await readdir(path)
-    //     this.getAllFileName()
-    // }
+    async deleteUnusedFiles() {
+        this.mentoringFile.deleteExcept(this.getAllFileName())
+    }
 }
