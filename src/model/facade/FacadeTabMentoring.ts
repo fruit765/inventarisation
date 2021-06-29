@@ -39,8 +39,7 @@ export default class FacadeTabMentoring extends FacadeTable {
         const planCreatedStatusId = await knex("status").where("status", "plancreated").first().then((x: { id: number }) => x.id)
         const Plan = new MentoringPlan(data?.plan, data.id)
         await Plan.checkFiles()
-        //console.log(Plan.get())
-        console.log(Plan.getAllFileName())
+        await Plan.deleteUnusedFiles()
         return super.patchAndFetch({ plan: Plan.get(), id: data.id, status_id: planCreatedStatusId }, trxOpt)
     }
 
@@ -50,10 +49,12 @@ export default class FacadeTabMentoring extends FacadeTable {
         if (!currentMentoring[0]) {
             throw this.handleErr.mentoringIdNotFound()
         }
-        // if (currentMentoring[0]?.status != "planconfirmed" ) {
-        //     throw this.handleErr.statusMustBePlanconfirmed()
-        // }
+        if (currentMentoring[0]?.status != "planconfirmed" ) {
+            throw this.handleErr.statusMustBePlanconfirmed()
+        }
         const Plan = new MentoringPlan(_.merge(currentMentoring[0]?.plan, data?.plan), data.id)
+        await Plan.checkFiles()
+        await Plan.deleteUnusedFiles()
         return super.patchAndFetch({ plan: Plan.get(), id: data.id }, trxOpt)
     }
 
@@ -72,7 +73,6 @@ export default class FacadeTabMentoring extends FacadeTable {
 
     /**Загрузка файлов которые будут использоваться в наставничистве */
     async fileLoad(req: any, res: any, next: any) {
-        //const format = [".gif", ".jpg", ".jpeg", ".jfif", ".pjpeg", ".pjp", ".png", ".svg", ".webp"]
         const storage = multer.diskStorage({
             destination: async function (reqx, file, cb) {
                 let path = "./uploaded/mentoring/" + reqx.query.id

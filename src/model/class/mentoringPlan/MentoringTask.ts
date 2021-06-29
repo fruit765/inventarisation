@@ -23,7 +23,7 @@ export default class MentoringTask {
             if (this.taskObject?.grade) {
                 if (this.taskObject.status === "checking") {
                     this.taskObject.status = "complete"
-                } else if (this.taskObject.status !== "complete") {
+                } else {
                     delete (this.taskObject.grade)
                 }
             }
