@@ -62,13 +62,13 @@ export default class MentoringTest {
     async checkFiles() {
         if (this.testObject?.img) {
             this.testObject.img = await this.mentoringFile.checkFile(this.testObject.img)
-            this.mentoringFile.checkForImgExt(this.testObject.img)
+            await this.mentoringFile.checkForImgExt(this.testObject.img)
         }
 
         for (let value of this.testObject?.questions ?? []) {
             if (value?.img) {
                 value.img = await this.mentoringFile.checkFile(value.img)
-                this.mentoringFile.checkForImgExt(value.img)
+                await this.mentoringFile.checkForImgExt(value.img)
             }
         }
     }
