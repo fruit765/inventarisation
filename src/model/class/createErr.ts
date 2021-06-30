@@ -123,4 +123,8 @@ export default class CreateErr {
     awaitingImage(file: string) {
         return this.createException(400, "the file: " + file + ", must have image format .gif, .jpg, .jpeg, .jfif, .pjpeg, .pjp, .png, .svg, .webp", "plan")
     }
+
+    allQuestionsNeedToBeAnswered() {
+        return this.createException(400, "all questions need to be answered", "plan")
+    }
 }
