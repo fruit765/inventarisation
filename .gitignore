@@ -4,4 +4,5 @@ node_modules
 /server.log
 /tmp
 /package-lock.json
+uploaded
 dist
