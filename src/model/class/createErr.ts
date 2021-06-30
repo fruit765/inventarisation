@@ -120,7 +120,7 @@ export default class CreateErr {
     }
 
     /**Ожидает изображение*/
-    awaitingImage() {
-        return this.createException(400, "awaiting image format .gif, .jpg, .jpeg, .jfif, .pjpeg, .pjp, .png, .svg, .webp", "plan")
+    awaitingImage(file: string) {
+        return this.createException(400, "the file: " + file + ", must have image format .gif, .jpg, .jpeg, .jfif, .pjpeg, .pjp, .png, .svg, .webp", "plan")
     }
-} 
+}

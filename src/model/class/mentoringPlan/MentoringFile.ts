@@ -58,7 +58,7 @@ export default class MentoringFile {
         const allowFormat = [".gif", ".jpg", ".jpeg", ".jfif", ".pjpeg", ".pjp", ".png", ".svg", ".webp"]
         const extension = filename.match(/\.[0-9a-z]+$/gi)?.[0]?.toLocaleLowerCase() ?? ""
         if(!allowFormat.includes(extension)) {
-            throw this.createErr.awaitingImage()
+            throw this.createErr.awaitingImage(filename)
         }
     }
 
