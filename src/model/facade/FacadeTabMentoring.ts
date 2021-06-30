@@ -96,9 +96,9 @@ export default class FacadeTabMentoring extends FacadeTable {
         })
 
         const uploadPromise = deferred()
-        upload.single('file')(req, res, uploadPromise.defer())
+        upload.array('file')(req, res, uploadPromise.defer())
         await uploadPromise
-        sendP(next)(res)(req.file)
+        sendP(next)(res)(req.files)
     }
 
     async getUnconfirm(...x: any) {

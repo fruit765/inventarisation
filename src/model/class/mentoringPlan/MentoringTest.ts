@@ -32,28 +32,29 @@ export default class MentoringTest {
                 }, { right: 0, questions: 0, protegeСhoices: 0 })
 
                 if (test.protegeСhoices) {
-                    if(test.protegeСhoices !== test.questions) {
-                        throw 
+                    if (test.protegeСhoices !== test.questions) {
+                        //throw
                     }
-                    this.testObject.
+                    // this.testObject.
                 }
-            //     const test = this.testObject?.questions?.reduce?.((accumulator: { right: number, questions: number, protegeСhoices: number }, question: any) => {
-            //         accumulator.questions++
-            //         for (let answer of question?.answers ?? []) {
-            //             if (answer?.isRight !== undefined && answer.isRight === answer?.protegeСhoice) {
-            //                 accumulator.right++
-            //                 accumulator.protegeСhoices++
-            //                 break
-            //             } else if (answer.protegeСhoice) {
-            //                 accumulator.protegeСhoices++
-            //                 break
-            //             }
-            //         }
-            //         return
-            //     }, { right: 0, questions: 0, protegeСhoices: 0 })
-            // }
-            if (!this.testObject.status) {
-                this.testObject.status = "incomplete"
+                //     const test = this.testObject?.questions?.reduce?.((accumulator: { right: number, questions: number, protegeСhoices: number }, question: any) => {
+                //         accumulator.questions++
+                //         for (let answer of question?.answers ?? []) {
+                //             if (answer?.isRight !== undefined && answer.isRight === answer?.protegeСhoice) {
+                //                 accumulator.right++
+                //                 accumulator.protegeСhoices++
+                //                 break
+                //             } else if (answer.protegeСhoice) {
+                //                 accumulator.protegeСhoices++
+                //                 break
+                //             }
+                //         }
+                //         return
+                //     }, { right: 0, questions: 0, protegeСhoices: 0 })
+                // }
+                if (!this.testObject.status) {
+                    this.testObject.status = "incomplete"
+                }
             }
         }
     }
