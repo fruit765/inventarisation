@@ -33,8 +33,8 @@ export default class MentoringFile {
             throw this.createErr.incorrectPath(pathOnly)
         }
         const fileName = path.match(/[^/]*$/gi)?.[0]
-        if (fileName) {
-            throw this.createErr.incorrectFileName(fileName)
+        if (!fileName) {
+            throw this.createErr.incorrectFileName()
         }
 
         await promises.stat(pathOnly + fileName).catch(() => Promise.reject(this.createErr.fileNotFound(pathOnly + fileName)))

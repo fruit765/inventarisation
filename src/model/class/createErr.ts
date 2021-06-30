@@ -110,8 +110,8 @@ export default class CreateErr {
     }
 
     /**Не верное имя файла в плане*/
-    incorrectFileName(fileName: string) {
-        return this.createException(400, "incorrect file name: " + fileName, "plan")
+    incorrectFileName() {
+        return this.createException(400, "incorrect file name", "plan")
     }
 
     /**Такого файла не существует*/
