@@ -1,4 +1,5 @@
 import _ from "lodash"
+import createErr from "../createErr"
 import MentoringFile from "./MentoringFile"
 
 /**
@@ -10,10 +11,12 @@ export default class MentoringTest {
     private testObject
     private mentoringId: number
     private mentoringFile
+    private createErr
 
     constructor(testObject: any, mentoringId: number) {
         this.mentoringId = mentoringId
         this.testObject = testObject
+        this.createErr = new createErr()
         this.mentoringFile = new MentoringFile(mentoringId)
         if (this.testObject) {
             if (this.testObject.status == "incomplete") {
@@ -33,31 +36,19 @@ export default class MentoringTest {
 
                 if (test.protegeСhoices) {
                     if (test.protegeСhoices !== test.questions) {
-                        //throw
+                        throw this.createErr.allQuestionsNeedToBeAnswered()
                     }
-                    // this.testObject.
+
+                    this.testObject.grade = Math.round((100 / test.questions) * test.right)
                 }
-                //     const test = this.testObject?.questions?.reduce?.((accumulator: { right: number, questions: number, protegeСhoices: number }, question: any) => {
-                //         accumulator.questions++
-                //         for (let answer of question?.answers ?? []) {
-                //             if (answer?.isRight !== undefined && answer.isRight === answer?.protegeСhoice) {
-                //                 accumulator.right++
-                //                 accumulator.protegeСhoices++
-                //                 break
-                //             } else if (answer.protegeСhoice) {
-                //                 accumulator.protegeСhoices++
-                //                 break
-                //             }
-                //         }
-                //         return
-                //     }, { right: 0, questions: 0, protegeСhoices: 0 })
-                // }
                 if (!this.testObject.status) {
                     this.testObject.status = "incomplete"
                 }
             }
         }
     }
+
+    checkAnswer()
 
     async checkFiles() {
         if (this.testObject?.img) {
