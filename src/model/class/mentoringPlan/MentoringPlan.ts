@@ -49,8 +49,6 @@ export default class MentoringPlan {
         return <string[]><any>_.compact(_.uniq(fileArrayRaw))
     }
 
-    
-
     async checkFiles() {
         await MentoringFile.checkFiles(this.planObjClasses)
     }
