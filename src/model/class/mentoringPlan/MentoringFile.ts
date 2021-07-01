@@ -30,14 +30,14 @@ export default class MentoringFile {
     async checkFile(path: string) {
         const pathOnly = path.replace(/[^/]*$/gi, "").replace(/^\//gi, "")
         if (pathOnly !== this.getPrefixPath()) {
-            throw this.createErr.incorrectPath(pathOnly)
+            throw this.createErr.mentoringIncorrectPath(pathOnly)
         }
         const fileName = path.match(/[^/]*$/gi)?.[0]
         if (!fileName) {
-            throw this.createErr.incorrectFileName()
+            throw this.createErr.mentoringIncorrectFileName()
         }
 
-        await promises.stat(pathOnly + fileName).catch(() => Promise.reject(this.createErr.fileNotFound(pathOnly + fileName)))
+        await promises.stat(pathOnly + fileName).catch(() => Promise.reject(this.createErr.mentoringFileNotFound(pathOnly + fileName)))
 
         return fileName
     }
@@ -58,7 +58,7 @@ export default class MentoringFile {
         const allowFormat = [".gif", ".jpg", ".jpeg", ".jfif", ".pjpeg", ".pjp", ".png", ".svg", ".webp"]
         const extension = filename.match(/\.[0-9a-z]+$/gi)?.[0]?.toLocaleLowerCase() ?? ""
         if(!allowFormat.includes(extension)) {
-            throw this.createErr.awaitingImage(filename)
+            throw this.createErr.mentoringAwaitingImage(filename)
         }
     }
 

@@ -105,26 +105,36 @@ export default class CreateErr {
     }
 
     /**Не верный путь в плане/он не может быть использован в этом плане*/
-    incorrectPath(path: string) {
+    mentoringIncorrectPath(path: string) {
         return this.createException(400, "incorrect path: " + path, "plan")
     }
 
     /**Не верное имя файла в плане*/
-    incorrectFileName() {
+    mentoringIncorrectFileName() {
         return this.createException(400, "incorrect file name", "plan")
     }
 
     /**Такого файла не существует*/
-    fileNotFound(file: string) {
+    mentoringFileNotFound(file: string) {
         return this.createException(400, "file not found: " + file, "plan")
     }
 
     /**Ожидает изображение*/
-    awaitingImage(file: string) {
+    mentoringAwaitingImage(file: string) {
         return this.createException(400, "the file: " + file + ", must have image format .gif, .jpg, .jpeg, .jfif, .pjpeg, .pjp, .png, .svg, .webp", "plan")
     }
 
-    allQuestionsNeedToBeAnswered() {
+    /**Стажер должен ответить на все вопросы */
+    mentoringAllQuestionsNeedToBeAnswered() {
         return this.createException(400, "all questions need to be answered", "plan")
+    }
+
+    /**В тесте в вопросе должен быть хотябы один правильный ответ */
+    mentoringRequiredAtLeastOneCorrectAnswer() {
+        return this.createException(400, "at least one correct answer in a test question is required", "plan")
+    }
+
+    mentoringGradeRange() {
+        return this.createException(400, "grade must be in the range from 0 to 100", "plan")
     }
 }

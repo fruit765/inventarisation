@@ -1,4 +1,5 @@
 import _ from "lodash"
+import { delete } from "../../../routes/devices"
 import createErr from "../createErr"
 import MentoringFile from "./MentoringFile"
 
@@ -20,35 +21,58 @@ export default class MentoringTest {
         this.mentoringFile = new MentoringFile(mentoringId)
         if (this.testObject) {
             if (this.testObject.status == "incomplete") {
-                const test = _.transform(this.testObject?.questions, (accumulator, question) => {
-                    accumulator.questions++
-                    for (let answer of question?.answers ?? []) {
-                        if (answer?.isRight !== undefined && answer.isRight === answer?.protegeСhoice) {
-                            accumulator.right++
-                            accumulator.protegeСhoices++
-                            break
-                        } else if (answer.protegeСhoice) {
-                            accumulator.protegeСhoices++
-                            break
-                        }
-                    }
-                }, { right: 0, questions: 0, protegeСhoices: 0 })
-
-                if (test.protegeСhoices) {
-                    if (test.protegeСhoices !== test.questions) {
-                        throw this.createErr.allQuestionsNeedToBeAnswered()
-                    }
-
-                    this.testObject.grade = Math.round((100 / test.questions) * test.right)
-                }
-                if (!this.testObject.status) {
-                    this.testObject.status = "incomplete"
-                }
+                this.checkAnswer()
+            }
+            if (!this.testObject.status) {
+                this.testObject.status = "incomplete"
             }
         }
     }
 
-    checkAnswer()
+    private checkAnswer() {
+        const test = _.reduce(this.testObject?.questions, (accumulator, question) => {
+            return this.checkQuestion(question?.answers, accumulator)
+        }, { right: 0, questions: 0, protegeСhoices: 0, isRight: 0 })
+
+        if (test.protegeСhoices) {
+            if (test.protegeСhoices !== test.questions) {
+                throw this.createErr.mentoringAllQuestionsNeedToBeAnswered()
+            }
+            this.testObject.grade = Math.round((100 / test.questions) * test.right)
+            this.testObject.status = "complete"
+        }
+
+    }
+
+    private checkQuestion(answers: any, accumulator: { right: number, questions: number, protegeСhoices: number, isRight: number }) {
+        accumulator.questions++
+        let protegeСhoices = 0
+        let isRight = 0
+        let right = 0
+        for (let answer of answers ?? []) {
+            if (answer?.protegeСhoice) {
+                protegeСhoices++
+            }
+            if (answer?.isRight) {
+                isRight++
+            }
+            if (answer?.isRight !== undefined && answer.isRight === answer?.protegeСhoice) {
+                right++
+            }
+        }
+        if (isRight) {
+            accumulator.isRight += isRight
+        } else {
+            throw this.createErr.mentoringRequiredAtLeastOneCorrectAnswer()
+        }
+        if(isRight > 1) {
+            right /= isRight
+        }
+        accumulator.right = right
+        accumulator.protegeСhoices = protegeСhoices
+        return accumulator
+    }
+
 
     async checkFiles() {
         if (this.testObject?.img) {
@@ -88,6 +112,23 @@ export default class MentoringTest {
         })
         const allFileArrRaw = _.concat(questionImg, answerImg)
         return _.compact(allFileArrRaw)
+    }
+
+    getProtege() {
+        const test = this.getWithFilePath()
+        if (test.status === "complete") {
+            test?.questions?.forEach?.((question: { isRight?: number, protegeСhoices? : number }) => {
+                if(question.isRight && !question.protegeСhoices) {
+                    delete(question.isRight)
+                }
+            })
+        } else {
+            test?.questions?.forEach?.((question: { isRight?: number, protegeСhoices? : number }) => {
+                if(question.isRight) {
+                    delete(question.isRight)
+                }
+            })
+        }
     }
 }
 
