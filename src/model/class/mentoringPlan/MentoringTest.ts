@@ -1,5 +1,4 @@
 import _ from "lodash"
-import { delete } from "../../../routes/devices"
 import createErr from "../createErr"
 import MentoringFile from "./MentoringFile"
 
@@ -65,7 +64,7 @@ export default class MentoringTest {
         } else {
             throw this.createErr.mentoringRequiredAtLeastOneCorrectAnswer()
         }
-        if(isRight > 1) {
+        if (isRight > 1) {
             right /= isRight
         }
         accumulator.right = right
@@ -116,19 +115,13 @@ export default class MentoringTest {
 
     getProtege() {
         const test = this.getWithFilePath()
-        if (test.status === "complete") {
-            test?.questions?.forEach?.((question: { isRight?: number, protegeСhoices? : number }) => {
-                if(question.isRight && !question.protegeСhoices) {
-                    delete(question.isRight)
-                }
-            })
-        } else {
-            test?.questions?.forEach?.((question: { isRight?: number, protegeСhoices? : number }) => {
-                if(question.isRight) {
-                    delete(question.isRight)
-                }
-            })
-        }
+        test?.questions?.forEach?.((question: { isRight?: number, protegeСhoices?: number }) => {
+            if (question.isRight && (test.status !== "complete" || !question.protegeСhoices)) {
+                delete (question.isRight)
+            }
+        })
+
+        return test
     }
 }
 
