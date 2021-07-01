@@ -28,6 +28,13 @@ export default class MentoringPlan {
         this.mentoringFile = new MentoringFile(mentoringId)
     }
 
+    getDataFromMethod(fn: Function) {
+        if (this.planObject === null) {
+            return null
+        }
+        return _.mapValues(this.planObjClasses, value => value.get())
+    }
+
     get() {
         if (this.planObject === null) {
             return null
@@ -40,6 +47,13 @@ export default class MentoringPlan {
             return null
         }
         return _.mapValues(this.planObjClasses, value => value?.getWithFilePath?.() || value.get())
+    }
+
+    getProtege() {
+        if (this.planObject === null) {
+            return null
+        }
+        return _.mapValues(this.planObjClasses, value => this?.getProtege?.() || value?.getWithFilePath?.() || value.get())
     }
 
     getAllFileName() {
