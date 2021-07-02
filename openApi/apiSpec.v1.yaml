@@ -2686,6 +2686,8 @@ paths:
                           test:
                             type: object
                             properties:
+                              setStartTest:
+                                type: integer
                               questions:
                                 type: array
                                 items:
@@ -2713,6 +2715,8 @@ paths:
                     test:
                       type: object
                       properties:
+                        setStartTest:
+                          type: integer
                         questions:
                           type: array
                           items:
