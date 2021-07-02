@@ -28,32 +28,46 @@ export default class MentoringPlan {
         this.mentoringFile = new MentoringFile(mentoringId)
     }
 
-    getDataFromMethod(fn: Function) {
+    private getDataFromMethod(fn: Function) {
         if (this.planObject === null) {
             return null
         }
-        return _.mapValues(this.planObjClasses, value => value.get())
+        return _.mapValues(this.planObjClasses, fn)
+    }
+
+    update(newPlan: any) {
+        this.planObjClasses = _.mapValues(newPlan, (value, key) => {
+            if(this.planObjClasses?.[key]) {
+                this.planObjClasses[key]?.update?.(value) ||
+            }
+            if (key === "blocks") {
+                if(this.planObjClasses?.[key]) {
+                    this.planObjClasses?.[key]
+                }
+                return new MentoringBlocks(value, mentoringId)
+            } else if (key === "test") {
+                return new MentoringTest(value, mentoringId)
+            } else if (key == "task") {
+                return new MentoringTask(value, mentoringId)
+            }
+        })
+        this.getDataFromMethod((value: any) => value?.update())
+    }
+
+    replace(newPlan: any) {
+
     }
 
     get() {
-        if (this.planObject === null) {
-            return null
-        }
-        return _.mapValues(this.planObjClasses, value => value.get())
+        return this.getDataFromMethod((value: any) => value.get())
     }
 
     getWithFilePath() {
-        if (this.planObject === null) {
-            return null
-        }
-        return _.mapValues(this.planObjClasses, value => value?.getWithFilePath?.() || value.get())
+        return this.getDataFromMethod((value: any) => value?.getWithFilePath?.() || value.get())
     }
 
     getProtege() {
-        if (this.planObject === null) {
-            return null
-        }
-        return _.mapValues(this.planObjClasses, value => this?.getProtege?.() || value?.getWithFilePath?.() || value.get())
+        return this.getDataFromMethod((value: any) => value?.getProtege?.() || value?.getWithFilePath?.() || value.get())
     }
 
     getAllFileName() {

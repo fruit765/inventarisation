@@ -1,3 +1,4 @@
+import dayjs from "dayjs"
 import _ from "lodash"
 import createErr from "../createErr"
 import MentoringFile from "./MentoringFile"
@@ -41,6 +42,28 @@ export default class MentoringTest {
             this.testObject.status = "complete"
         }
 
+    }
+
+    testPassingProcessing() {
+        if(this.testObject.duration && this.testObject.setStartTest && !this.testObject.startTime) {
+            this.testObject.startTime = dayjs().valueOf()
+        }
+        if(this.testObject.setStartTest) {
+            delete(this.testObject.setStartTest)
+        }
+
+        if(this.testObject.startTime && this.testObject.status === "incomplete") {
+            this.testObject.leftTime = this.testObject.duration * 60000 - (dayjs().valueOf() - this.testObject.startTime)
+        }
+
+        if (this.testObject.status === "incomplete") {
+            if(this.testObject.leftTime <= 0) {
+                this.testObject.leftTime = 0
+                this.testObject.status = "complete"
+            } else if (this.isAllAnswered()) {
+                this.testObject.status = "complete"
+            }
+        }
     }
 
     private checkQuestion(answers: any, accumulator: { right: number, questions: number, protegeСhoices: number, isRight: number }) {
