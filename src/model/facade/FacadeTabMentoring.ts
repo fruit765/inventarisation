@@ -37,10 +37,11 @@ export default class FacadeTabMentoring extends FacadeTable {
         }
         // this.delete
         const planCreatedStatusId = await knex("status").where("status", "plancreated").first().then((x: { id: number }) => x.id)
-        const Plan = new MentoringPlan(data?.plan, data.id)
-        await Plan.checkFiles()
-        await Plan.deleteUnusedFiles()
-        return super.patchAndFetch({ plan: Plan.get(), id: data.id, status_id: planCreatedStatusId }, trxOpt)
+        const plan = new MentoringPlan(currentMentoring[0]?.plan, data.id)
+        plan.replace(data?.plan)
+        await plan.checkFiles()
+        await plan.deleteUnusedFiles()
+        return super.patchAndFetch({ plan: plan.get(), id: data.id, status_id: planCreatedStatusId }, trxOpt)
     }
 
     /**Используется для ответов на тесты и задания и отценки их фактически редактирует подтвержденный план*/
@@ -52,10 +53,11 @@ export default class FacadeTabMentoring extends FacadeTable {
         if (currentMentoring[0]?.status != "planconfirmed" ) {
             throw this.handleErr.statusMustBePlanconfirmed()
         }
-        const Plan = new MentoringPlan(_.merge(currentMentoring[0]?.plan, data?.plan), data.id)
-        await Plan.checkFiles()
-        await Plan.deleteUnusedFiles()
-        return super.patchAndFetch({ plan: Plan.get(), id: data.id }, trxOpt)
+        const plan = new MentoringPlan(currentMentoring[0]?.plan, data.id)
+        plan.update(data?.plan)
+        await plan.checkFiles()
+        await plan.deleteUnusedFiles()
+        return super.patchAndFetch({ plan: plan.get(), id: data.id }, trxOpt)
     }
 
     /**Подтверждаем план*/
