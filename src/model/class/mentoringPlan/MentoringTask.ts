@@ -17,8 +17,8 @@ export default class MentoringTask extends MentoringBase {
         
     }
 
-    protected init(dataObject: any) {
-        super.init(dataObject)
+    protected initObject(dataObject: any) {
+        super.initObject(dataObject)
         if (this.dataObject) {
             if (!this.dataObject.status) {
                 this.dataObject.status = "incomplete"

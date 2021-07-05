@@ -17,8 +17,8 @@ export default class MentoringTest extends MentoringBase {
 
     }
 
-    protected init(dataObject: any) {
-        super.init(dataObject)
+    protected initObject(dataObject: any) {
+        super.initObject(dataObject)
 
         if (this.dataObject && !this.dataObject.status) {
             this.dataObject.status = "incomplete"
@@ -42,11 +42,15 @@ export default class MentoringTest extends MentoringBase {
         }
 
         if (this.dataObject.status === "complete" && !this.dataObject.grade) {
-            this.dataObject.grade = this.gradeTest()
+            this.dataObject.grade = this.grade()
         }
     }
 
-    private gradeTest() {
+    // replace(newData: any) {
+
+    // }
+
+    private grade() {
         const test = this.checkAnswer()
         this.dataObject.grade = Math.round((100 / test.questions) * test.right)
     }

@@ -45,4 +45,15 @@ function stringifySubJSON(data: any) {
     return fillteredData
 }
 
-export { delUndefined, stringifySubJSON, delUndefinedDeep, uniqObjToBoolObj }
+function mapArrayOrObject(object: Record<any, any>, fn: (value: any, key: string) => any) {
+    if (!_.isObject(object)) {
+        return object
+    }
+    const result = new (<any>object).__proto__.constructor()
+    for (let key in object) {
+        result[key] = fn((<any>object)[key], key)
+    }
+    return result
+}
+
+export { delUndefined, stringifySubJSON, delUndefinedDeep, uniqObjToBoolObj, mapArrayOrObject }

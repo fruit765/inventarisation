@@ -1,3 +1,4 @@
+import _ from "lodash"
 import CreateErr from "../createErr"
 
 export default class MentoringBase {
@@ -8,19 +9,26 @@ export default class MentoringBase {
     constructor(dataObject: any, mentoringId: number) {
         this.mentoringId = mentoringId
         this.createErr = new CreateErr()
-        this.init(dataObject)
+        this.initObject(dataObject)
     }
 
-    protected init(dataObject: any) {
+    protected initObject(dataObject: any) {
         this.dataObject = dataObject
     }
 
+    get() {
+        return this.dataObject
+    }
+
     replace(data: any) {
-        this.init(data)
+        this.initObject(data)
     }
 
     update(data: any) {
-        this.replace(data)
+        const newObject = _.merge({},this.dataObject, data)
+        this.replace(newObject)
     }
+
+    
     
 }
