@@ -1,69 +1,86 @@
 import dayjs from "dayjs"
 import _ from "lodash"
-import createErr from "../createErr"
+import MentoringBase from "./MentoringBase"
 import MentoringFile from "./MentoringFile"
 
 /**
  * Класс отвечает за тест в системе наставнечества
  * @class
  */
-export default class MentoringTest {
+export default class MentoringTest extends MentoringBase {
 
-    private testObject
-    private mentoringId: number
-    private mentoringFile
-    private createErr
+    private mentoringFile: any
 
-    constructor(testObject: any, mentoringId: number) {
-        this.mentoringId = mentoringId
-        this.testObject = testObject
-        this.createErr = new createErr()
-        this.mentoringFile = new MentoringFile(mentoringId)
-        if (this.testObject) {
-            if (this.testObject.status == "incomplete") {
-                this.checkAnswer()
+    constructor(dataObject: any, mentoringId: number) {
+        super(dataObject, mentoringId)
+        this.mentoringFile = new MentoringFile(this.mentoringId)
+
+    }
+
+    protected init(dataObject: any) {
+        super.init(dataObject)
+
+        if (this.dataObject && !this.dataObject.status) {
+            this.dataObject.status = "incomplete"
+        }
+
+    }
+
+    update(newData: any) {
+        if (this.dataObject.duration && this.dataObject.status === "incomplete") {
+            this.timeLeftStamp()
+        }
+        if (this.dataObject.setStartTest) {
+            delete (this.dataObject.setStartTest)
+        }
+
+        if (this.dataObject.status === "incomplete") {
+            _.merge(this.dataObject, newData)
+            if(this.isAllAnswered()) {
+                this.dataObject.status = "complete"
             }
-            if (!this.testObject.status) {
-                this.testObject.status = "incomplete"
-            }
+        }
+
+        if (this.dataObject.status === "complete" && !this.dataObject.grade) {
+            this.dataObject.grade = this.gradeTest()
+        }
+    }
+
+    private gradeTest() {
+        const test = this.checkAnswer()
+        this.dataObject.grade = Math.round((100 / test.questions) * test.right)
+    }
+
+    private isAllAnswered() {
+        const test = this.checkAnswer()
+        if (test.questions === test.protegeСhoices) {
+            return true
+        } else {
+            return false
         }
     }
 
     private checkAnswer() {
-        const test = _.reduce(this.testObject?.questions, (accumulator, question) => {
+        return _.reduce(this.dataObject?.questions, (accumulator, question) => {
             return this.checkQuestion(question?.answers, accumulator)
         }, { right: 0, questions: 0, protegeСhoices: 0, isRight: 0 })
-
-        if (test.protegeСhoices) {
-            if (test.protegeСhoices !== test.questions) {
-                throw this.createErr.mentoringAllQuestionsNeedToBeAnswered()
-            }
-            this.testObject.grade = Math.round((100 / test.questions) * test.right)
-            this.testObject.status = "complete"
-        }
-
     }
 
-    testPassingProcessing() {
-        if(this.testObject.duration && this.testObject.setStartTest && !this.testObject.startTime) {
-            this.testObject.startTime = dayjs().valueOf()
-        }
-        if(this.testObject.setStartTest) {
-            delete(this.testObject.setStartTest)
+    timeLeftStamp() {
+        if (this.dataObject.setStartTest && !this.dataObject.startTime) {
+            this.dataObject.startTime = dayjs().valueOf()
         }
 
-        if(this.testObject.startTime && this.testObject.status === "incomplete") {
-            this.testObject.leftTime = this.testObject.duration * 60000 - (dayjs().valueOf() - this.testObject.startTime)
+        if (!this.dataObject.setStartTest && !this.dataObject.startTime) {
+            throw this.createErr.mentoringNeedStartTest()
         }
 
-        if (this.testObject.status === "incomplete") {
-            if(this.testObject.leftTime <= 0) {
-                this.testObject.leftTime = 0
-                this.testObject.status = "complete"
-            } else if (this.isAllAnswered()) {
-                this.testObject.status = "complete"
-            }
+        this.dataObject.leftTime = this.dataObject.duration * 60000 - (dayjs().valueOf() - this.dataObject.startTime)
+        if (this.dataObject.leftTime <= 0) {
+            this.dataObject.leftTime = 0
+            this.dataObject.status = "complete"
         }
+
     }
 
     private checkQuestion(answers: any, accumulator: { right: number, questions: number, protegeСhoices: number, isRight: number }) {
@@ -97,12 +114,12 @@ export default class MentoringTest {
 
 
     async checkFiles() {
-        if (this.testObject?.img) {
-            this.testObject.img = await this.mentoringFile.checkFile(this.testObject.img)
-            await this.mentoringFile.checkForImgExt(this.testObject.img)
+        if (this.dataObject?.img) {
+            this.dataObject.img = await this.mentoringFile.checkFile(this.dataObject.img)
+            await this.mentoringFile.checkForImgExt(this.dataObject.img)
         }
 
-        for (let value of this.testObject?.questions ?? []) {
+        for (let value of this.dataObject?.questions ?? []) {
             if (value?.img) {
                 value.img = await this.mentoringFile.checkFile(value.img)
                 await this.mentoringFile.checkForImgExt(value.img)
@@ -111,25 +128,25 @@ export default class MentoringTest {
     }
 
     get() {
-        return this.testObject
+        return this.dataObject
     }
 
     getWithFilePath() {
-        const testObject = _.cloneDeep(this.testObject)
-        if (testObject?.img) {
-            testObject.img = this.mentoringFile.path(testObject.img)
+        const dataObject = _.cloneDeep(this.dataObject)
+        if (dataObject?.img) {
+            dataObject.img = this.mentoringFile.path(dataObject.img)
         }
-        _.forEach(testObject?.questions, value => {
+        _.forEach(dataObject?.questions, value => {
             if (value?.img) {
                 value.img = this.mentoringFile.path(value.img)
             }
         })
-        return testObject
+        return dataObject
     }
 
     getAllFileName() {
-        const questionImg = [this.testObject?.img]
-        const answerImg = this.testObject?.questions?.map((question: { img: string }) => {
+        const questionImg = [this.dataObject?.img]
+        const answerImg = this.dataObject?.questions?.map((question: { img: string }) => {
             return question?.img
         })
         const allFileArrRaw = _.concat(questionImg, answerImg)

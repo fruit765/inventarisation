@@ -13,19 +13,23 @@ export default class MentoringPlan {
     private planObject
     private planObjClasses: any
     private mentoringFile
+    private mentoringId: number
 
     constructor(planObject: any, mentoringId: number) {
+        this.mentoringId = mentoringId
         this.planObject = planObject
-        this.planObjClasses = _.mapValues(planObject, (value, key) => {
-            if (key === "blocks") {
-                return new MentoringBlocks(value, mentoringId)
-            } else if (key === "test") {
-                return new MentoringTest(value, mentoringId)
-            } else if (key == "task") {
-                return new MentoringTask(value, mentoringId)
-            }
-        })
+        this.planObjClasses = _.mapValues(planObject, (value, key) => this.createClassFromKey(value, key))
         this.mentoringFile = new MentoringFile(mentoringId)
+    }
+
+    private createClassFromKey(value: any, key: string) {
+        if (key === "blocks") {
+            return new MentoringBlocks(value, this.mentoringId)
+        } else if (key === "test") {
+            return new MentoringTest(value, this.mentoringId)
+        } else if (key == "task") {
+            return new MentoringTask(value, this.mentoringId)
+        }
     }
 
     private getDataFromMethod(fn: Function) {
@@ -36,26 +40,23 @@ export default class MentoringPlan {
     }
 
     update(newPlan: any) {
-        this.planObjClasses = _.mapValues(newPlan, (value, key) => {
-            if(this.planObjClasses?.[key]) {
-                this.planObjClasses[key]?.update?.(value) ||
+        const additionalClass = _.mapValues(newPlan, (value, key) => {
+            if (this.planObjClasses?.[key]) {
+                return this.planObjClasses[key]?.update(value)
             }
-            if (key === "blocks") {
-                if(this.planObjClasses?.[key]) {
-                    this.planObjClasses?.[key]
-                }
-                return new MentoringBlocks(value, mentoringId)
-            } else if (key === "test") {
-                return new MentoringTest(value, mentoringId)
-            } else if (key == "task") {
-                return new MentoringTask(value, mentoringId)
-            }
+            return this.createClassFromKey(undefined, key)?.update(value)
         })
-        this.getDataFromMethod((value: any) => value?.update())
+        Object.assign(this.planObjClasses, additionalClass)
     }
 
     replace(newPlan: any) {
-
+        const additionalClass = _.mapValues(newPlan, (value, key) => {
+            if (this.planObjClasses?.[key]) {
+                return this.planObjClasses[key]?.replace(value)
+            }
+            return this.createClassFromKey(undefined, key)?.replace(value)
+        })
+        Object.assign(this.planObjClasses, additionalClass)
     }
 
     get() {

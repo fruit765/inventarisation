@@ -1,79 +1,79 @@
 import _ from "lodash"
-import createErr from "../createErr"
+import MentoringBase from "./MentoringBase"
 import MentoringFile from "./MentoringFile"
 
 /**
  * Класс отвечает за задания в системе наставнечества
  * @class
  */
-export default class MentoringTask {
+export default class MentoringTask extends MentoringBase {
 
-    private taskObject
-    private mentoringId: number
     private mentoringFile
-    private createErr
 
 
-    constructor(taskObject: any, mentoringId: number) {
+    constructor(dataObject: any, mentoringId: number) {
+        super(dataObject, mentoringId)
         this.mentoringFile = new MentoringFile(mentoringId)
-        this.mentoringId = mentoringId
-        this.taskObject = taskObject
-        this.createErr = new createErr()
-        if (this.taskObject) {
-            if (!this.taskObject.status) {
-                this.taskObject.status = "incomplete"
+        
+    }
+
+    protected init(dataObject: any) {
+        super.init(dataObject)
+        if (this.dataObject) {
+            if (!this.dataObject.status) {
+                this.dataObject.status = "incomplete"
             }
-            if (this.taskObject?.grade) {
+            if (this.dataObject?.grade) {
                 this.grade()
             }
-            if (this.taskObject?.checking && this.taskObject?.status === "incomplete") {
-                this.taskObject.status = "checking"
+            if (this.dataObject?.checking && this.dataObject?.status === "incomplete") {
+                this.dataObject.status = "checking"
             } else {
-                delete (this.taskObject.checking)
+                delete (this.dataObject.checking)
             }
         }
     }
 
     private grade() {
-        if (this.taskObject.grade > 100 && this.taskObject.grade < 0) {
+        if (this.dataObject.grade > 100 && this.dataObject.grade < 0) {
             throw this.createErr.mentoringGradeRange()
         }
-        if (this.taskObject.status === "checking") {
-            this.taskObject.status = "complete"
+        if (this.dataObject.status === "checking") {
+            this.dataObject.status = "complete"
         } else {
-            delete (this.taskObject.grade)
+            delete (this.dataObject.grade)
         } 
     }
 
     async checkFiles() {
-        if (this.taskObject?.file) {
-            this.taskObject.file = await this.mentoringFile.checkFile(this.taskObject.file)
+        if (this.dataObject?.file) {
+            this.dataObject.file = await this.mentoringFile.checkFile(this.dataObject.file)
         }
 
-        if (this.taskObject?.answer?.file) {
-            this.taskObject.answer.file = await this.mentoringFile.checkFile(this.taskObject.answer.file)
+        if (this.dataObject?.answer?.file) {
+            this.dataObject.answer.file = await this.mentoringFile.checkFile(this.dataObject.answer.file)
         }
     }
 
     get() {
-        return this.taskObject
+        return this.dataObject
     }
 
     getWithFilePath() {
-        const taskObject = _.cloneDeep(this.taskObject)
-        if (taskObject?.file) {
-            taskObject.file = this.mentoringFile.path(taskObject.file)
+        const dataObject = _.cloneDeep(this.dataObject)
+        if (dataObject?.file) {
+            dataObject.file = this.mentoringFile.path(dataObject.file)
         }
 
-        if (taskObject?.answer?.file) {
-            taskObject.answer.file = this.mentoringFile.path(taskObject.answer.file)
+        if (dataObject?.answer?.file) {
+            dataObject.answer.file = this.mentoringFile.path(dataObject.answer.file)
         }
 
-        return taskObject
+        return dataObject
     }
 
     getAllFileName() {
-        const allFile = [this.taskObject?.answer?.file, this.taskObject?.file]
+        const allFile = [this.dataObject?.answer?.file, this.dataObject?.file]
         return _.compact(allFile)
     }
 }

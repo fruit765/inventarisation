@@ -1,4 +1,5 @@
 import _ from "lodash"
+import MentoringBase from "./MentoringBase"
 import MentoringFile from "./MentoringFile"
 import MentoringTask from "./MentoringTask"
 import MentoringTest from "./MentoringTest"
@@ -6,20 +7,19 @@ import MentoringTest from "./MentoringTest"
  * Класс отвечает за один блок в плане в системе наставнечества
  * @class
  */
-export default class MentoringBlock {
+export default class MentoringBlock extends MentoringBase {
 
-    private blockObject
     private blockObjClasses: any
 
-    constructor(blockObject: any, mentoringId: number) {
-        this.blockObject = blockObject
-        this.blockObjClasses = _.mapValues(blockObject, (value, key) => {
+    protected init(dataObject: any) {
+        super.init(dataObject)
+        this.blockObjClasses = _.mapValues(dataObject, (value, key) => {
             if (key === "sections" || key === "title") {
                 return { get: () => value }
             } else if (key === "test") {
-                return new MentoringTest(value, mentoringId)
+                return new MentoringTest(value, this.mentoringId)
             } else if (key == "task") {
-                return new MentoringTask(value, mentoringId)
+                return new MentoringTask(value, this.mentoringId)
             }
         })
     }

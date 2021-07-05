@@ -137,4 +137,8 @@ export default class CreateErr {
     mentoringGradeRange() {
         return this.createException(400, "grade must be in the range from 0 to 100", "plan")
     }
+
+    mentoringNeedStartTest() {
+        return this.createException(400, "you need to run the test first", "plan")
+    }
 }
