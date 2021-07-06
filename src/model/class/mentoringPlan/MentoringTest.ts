@@ -25,10 +25,10 @@ export default class MentoringTest extends MentoringBase {
     }
 
     update(newData: any) {
-
+        
         if (newData.setStartTest) {
-            if (!newData.startTime) {
-                newData.startTime = dayjs().valueOf()
+            if (!this.dataObject.startTime) {
+                this.dataObject.startTime = dayjs().valueOf()
             }
             delete (newData.setStartTest)
         }
