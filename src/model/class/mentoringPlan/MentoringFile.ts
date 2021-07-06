@@ -27,19 +27,9 @@ export default class MentoringFile {
         return `uploaded/mentoring/${this.mentoringId}/`
     }
 
-    async checkFile(path: string) {
-        const pathOnly = path.replace(/[^/]*$/gi, "").replace(/^\//gi, "")
-        if (pathOnly !== this.getPrefixPath()) {
-            throw this.createErr.mentoringIncorrectPath(pathOnly)
-        }
-        const fileName = path.match(/[^/]*$/gi)?.[0]
-        if (!fileName) {
-            throw this.createErr.mentoringIncorrectFileName()
-        }
-
-        await promises.stat(pathOnly + fileName).catch(() => Promise.reject(this.createErr.mentoringFileNotFound(pathOnly + fileName)))
-
-        return fileName
+    async checkFile(filename: string) {
+        const fullName = this.getPrefixPath() + filename
+        await promises.stat(fullName).catch(() => Promise.reject(this.createErr.mentoringFileNotFound(fullName)))
     }
 
     cutPath(fullName: string) {
@@ -70,6 +60,11 @@ export default class MentoringFile {
         }
     }
 
-
+    checkPath(fullName: string) {
+        const pathOnly = fullName.replace(/[^/]*$/gi, "").replace(/^\//gi, "")
+        if (pathOnly !== this.getPrefixPath()) {
+            throw this.createErr.mentoringIncorrectPath(pathOnly)
+        }
+    }
 
 }

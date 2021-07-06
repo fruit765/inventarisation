@@ -20,11 +20,19 @@ export default class MentoringTest extends MentoringBase {
     protected initObject(dataObject: any) {
         super.initObject(dataObject)
 
-        
+
 
     }
 
     update(newData: any) {
+
+        if (this.dataObject.setStartTest) {
+            if(!this.dataObject.startTime) {
+                this.dataObject.startTime = dayjs().valueOf()
+            }
+            delete (this.dataObject.setStartTest)
+        }
+
         if (this.dataObject.duration && this.dataObject.status === "incomplete") {
             this.timeLeftStamp()
         }
@@ -34,7 +42,7 @@ export default class MentoringTest extends MentoringBase {
 
         if (this.dataObject.status === "incomplete") {
             _.merge(this.dataObject, newData)
-            if(this.isAllAnswered()) {
+            if (this.isAllAnswered()) {
                 this.dataObject.status = "complete"
             }
         }
@@ -48,22 +56,24 @@ export default class MentoringTest extends MentoringBase {
         if (newData && !newData.status) {
             newData.status = "incomplete"
         }
-        this.cutPathImgTest(newData)
 
+        this.mapImg(newData, (img: any) => {
+            this.mentoringFile.checkForImgExt(img) 
+            this.mentoringFile.checkPath(img)
+            return this.mentoringFile.cutPath(img)
+        })
 
-        this.dataObject = newData
+        this.initObject(newData)
     }
 
-    private cutPathImgTest (testObject: any) {
+    private mapImg(testObject: any, fn: Function) {
         if (testObject?.img) {
-            testObject.img = this.mentoringFile.cutPath(testObject.img)
-            this.mentoringFile.checkForImgExt(testObject.img)
+            testObject.img = fn(testObject.img)
         }
 
         for (let value of testObject?.questions ?? []) {
             if (value?.img) {
-                value.img = this.mentoringFile.cutPath(value.img)
-                this.mentoringFile.checkForImgExt(value.img)
+                value.img = fn(value.img)
             }
         }
         return testObject
@@ -90,10 +100,6 @@ export default class MentoringTest extends MentoringBase {
     }
 
     timeLeftStamp() {
-        if (this.dataObject.setStartTest && !this.dataObject.startTime) {
-            this.dataObject.startTime = dayjs().valueOf()
-        }
-
         if (!this.dataObject.setStartTest && !this.dataObject.startTime) {
             throw this.createErr.mentoringNeedStartTest()
         }
@@ -137,34 +143,22 @@ export default class MentoringTest extends MentoringBase {
 
 
     async checkFiles() {
-        // if (this.dataObject?.img) {
-        //     this.dataObject.img = await this.mentoringFile.checkFile(this.dataObject.img)
-        //     await this.mentoringFile.checkForImgExt(this.dataObject.img)
-        // }
+        if (this.dataObject?.img) {
+            this.dataObject.img = await this.mentoringFile.checkFile(this.dataObject.img)
+        }
 
-        // for (let value of this.dataObject?.questions ?? []) {
-        //     if (value?.img) {
-        //         value.img = await this.mentoringFile.checkFile(value.img)
-        //         await this.mentoringFile.checkForImgExt(value.img)
-        //     }
-        // }
-    }
-
-    get() {
-        return this.dataObject
+        for (let value of this.dataObject?.questions ?? []) {
+            if (value?.img) {
+                value.img = await this.mentoringFile.checkFile(value.img)
+            }
+        }
     }
 
     getWithFilePath() {
         const dataObject = _.cloneDeep(this.dataObject)
-        if (dataObject?.img) {
-            dataObject.img = this.mentoringFile.path(dataObject.img)
-        }
-        _.forEach(dataObject?.questions, value => {
-            if (value?.img) {
-                value.img = this.mentoringFile.path(value.img)
-            }
+        return this.mapImg(dataObject, (img: string) => {
+            return this.mentoringFile.path(img)
         })
-        return dataObject
     }
 
     getAllFileName() {
@@ -178,6 +172,9 @@ export default class MentoringTest extends MentoringBase {
 
     getProtege() {
         const test = this.getWithFilePath()
+        if (test.status === "incomplete" && !test.startTime) {
+            delete (test.question)
+        }
         test?.questions?.forEach?.((question: { isRight?: number, protegeСhoices?: number }) => {
             if (question.isRight && (test.status !== "complete" || !question.protegeСhoices)) {
                 delete (question.isRight)

@@ -104,11 +104,15 @@ export default class FacadeTabMentoring extends FacadeTable {
     }
 
     async getUnconfirm(...x: any) {
-        const unconfirmRaw = await super.getUnconfirm(...x)
-        return unconfirmRaw.map( value => {
-            value.plan = new MentoringPlan(value.plan, value.id).getWithFilePath()
-            return value
-        })
+        const unconfirm = await super.getUnconfirm(...x)
+        for(let value of unconfirm) {
+            if(value.protege_id === this.actorId) {
+                value.plan = new MentoringPlan(value.plan, value.id).getProtege()
+            } else {
+                value.plan = new MentoringPlan(value.plan, value.id).get()
+            }
+        }
+        return unconfirm
     }
 
     /**Возвращает записи с неподтверденными данными как они есть, т. е. ссылки на файлы без путей*/

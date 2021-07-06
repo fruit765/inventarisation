@@ -34,6 +34,10 @@ export default class MentoringTask extends MentoringBase {
         }
     }
 
+    private mapFiles(taskObj: any, fn: Function) {
+
+    }
+
     private grade() {
         if (this.dataObject.grade > 100 && this.dataObject.grade < 0) {
             throw this.createErr.mentoringGradeRange()

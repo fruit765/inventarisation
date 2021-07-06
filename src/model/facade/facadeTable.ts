@@ -12,7 +12,7 @@ import CreateErr from './../class/createErr'
 /**@classdesc Класс фасад, для работы с таблицами */
 export class FacadeTable {
     protected tableName: string
-    private actorId: number
+    protected actorId: number
     private isSaveHistory?: boolean
     private initAttr?: Promise<boolean>
     protected handleErr: CreateErr
