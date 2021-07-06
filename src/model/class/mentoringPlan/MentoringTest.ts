@@ -177,10 +177,13 @@ export default class MentoringTest extends MentoringBase {
         if (test.status === "incomplete" && !test.startTime) {
             delete (test.questions)
         }
-        test?.questions?.forEach?.((question: { isRight?: number, protegeСhoices?: number }) => {
-            if (question.isRight && (test.status !== "complete" || !question.protegeСhoices)) {
-                delete (question.isRight)
-            }
+
+        test?.questions?.forEach?.((question: any) => {
+            question?.answers?.forEach?.((answer: any) => {
+                if (answer.isRight != null && (test.status !== "complete" || answer.protegeСhoices == null)) {
+                    delete (answer.isRight)
+                }
+            })
         })
 
         return test
