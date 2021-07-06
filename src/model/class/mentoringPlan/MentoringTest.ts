@@ -173,7 +173,7 @@ export default class MentoringTest extends MentoringBase {
     getProtege() {
         const test = this.getWithFilePath()
         if (test.status === "incomplete" && !test.startTime) {
-            delete (test.question)
+            delete (test.questions)
         }
         test?.questions?.forEach?.((question: { isRight?: number, protegeСhoices?: number }) => {
             if (question.isRight && (test.status !== "complete" || !question.protegeСhoices)) {
