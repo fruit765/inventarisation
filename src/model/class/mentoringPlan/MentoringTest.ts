@@ -26,15 +26,15 @@ export default class MentoringTest extends MentoringBase {
 
     update(newData: any) {
 
-        if (this.dataObject.setStartTest) {
-            if (!this.dataObject.startTime) {
-                this.dataObject.startTime = dayjs().valueOf()
+        if (newData.setStartTest) {
+            if (!newData.startTime) {
+                newData.startTime = dayjs().valueOf()
             }
-            delete (this.dataObject.setStartTest)
+            delete (newData.setStartTest)
         }
 
         this.timeLeftStamp()
-        console.log(this.dataObject)
+
         if (this.dataObject.status === "incomplete") {
             _.merge(this.dataObject, newData)
             if (this.isAllAnswered()) {
