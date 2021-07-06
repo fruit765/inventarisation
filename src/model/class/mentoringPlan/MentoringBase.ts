@@ -9,10 +9,10 @@ export default class MentoringBase {
     constructor(dataObject: any, mentoringId: number) {
         this.mentoringId = mentoringId
         this.createErr = new CreateErr()
-        this.initObject(dataObject)
+        this.replaceDataObject(dataObject)
     }
 
-    protected initObject(dataObject: any) {
+    protected replaceDataObject(dataObject: any) {
         this.dataObject = dataObject
     }
 
@@ -21,7 +21,7 @@ export default class MentoringBase {
     }
 
     replace(data: any) {
-        this.initObject(data)
+        this.replaceDataObject(data)
     }
 
     update(data: any) {

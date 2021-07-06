@@ -17,8 +17,8 @@ export default class MentoringTest extends MentoringBase {
 
     }
 
-    protected initObject(dataObject: any) {
-        super.initObject(dataObject)
+    protected replaceDataObject(dataObject: any) {
+        super.replaceDataObject(dataObject)
 
 
 
@@ -63,7 +63,7 @@ export default class MentoringTest extends MentoringBase {
             return this.mentoringFile.cutPath(img)
         })
 
-        this.initObject(newData)
+        this.replaceDataObject(newData)
     }
 
     private mapImg(testObject: any, fn: Function) {

@@ -14,28 +14,57 @@ export default class MentoringTask extends MentoringBase {
     constructor(dataObject: any, mentoringId: number) {
         super(dataObject, mentoringId)
         this.mentoringFile = new MentoringFile(mentoringId)
-        
+
     }
 
-    protected initObject(dataObject: any) {
-        super.initObject(dataObject)
-        if (this.dataObject) {
-            if (!this.dataObject.status) {
-                this.dataObject.status = "incomplete"
-            }
-            if (this.dataObject?.grade) {
-                this.grade()
-            }
-            if (this.dataObject?.checking && this.dataObject?.status === "incomplete") {
-                this.dataObject.status = "checking"
-            } else {
-                delete (this.dataObject.checking)
-            }
+    protected replaceDataObject(dataObject: any) {
+        super.replaceDataObject(dataObject)
+    }
+
+    replace(newData: any) {
+        if (newData && !newData.status) {
+            newData.status = "incomplete"
+        }
+
+        this.mapFiles(newData, (img: any) => {
+            this.mentoringFile.checkPath(img)
+            return this.mentoringFile.cutPath(img)
+        })
+
+        this.replaceDataObject(newData)
+
+
+    }
+
+    update(newData: any) {
+
+        this.mapFiles(newData, (img: any) => {
+            this.mentoringFile.checkPath(img)
+            return this.mentoringFile.cutPath(img)
+        })
+
+        this.replaceDataObject(newData)
+
+        if (this.dataObject?.checking && this.dataObject?.status === "incomplete") {
+            this.dataObject.status = "checking"
+        } 
+        if (this.dataObject?.checking) {
+            delete (this.dataObject.checking)
+        }
+
+        if (this.dataObject?.grade) {
+            this.grade()
         }
     }
 
     private mapFiles(taskObj: any, fn: Function) {
+        if (taskObj?.file) {
+            taskObj.file = fn(taskObj.file)
+        }
 
+        if (taskObj?.answer?.file) {
+            taskObj.answer.file = fn(taskObj.answer.file)
+        }
     }
 
     private grade() {
@@ -46,7 +75,7 @@ export default class MentoringTask extends MentoringBase {
             this.dataObject.status = "complete"
         } else {
             delete (this.dataObject.grade)
-        } 
+        }
     }
 
     async checkFiles() {
@@ -59,21 +88,11 @@ export default class MentoringTask extends MentoringBase {
         }
     }
 
-    get() {
-        return this.dataObject
-    }
-
     getWithFilePath() {
         const dataObject = _.cloneDeep(this.dataObject)
-        if (dataObject?.file) {
-            dataObject.file = this.mentoringFile.path(dataObject.file)
-        }
-
-        if (dataObject?.answer?.file) {
-            dataObject.answer.file = this.mentoringFile.path(dataObject.answer.file)
-        }
-
-        return dataObject
+        return this.mapFiles(dataObject, (file: string) => {
+            return this.mentoringFile.path(file)
+        })
     }
 
     getAllFileName() {
