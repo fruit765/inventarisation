@@ -27,12 +27,14 @@ export default class MentoringTest extends MentoringBase {
     update(newData: any) {
 
         if (this.dataObject.setStartTest) {
-            if(!this.dataObject.startTime) {
+            if (!this.dataObject.startTime) {
                 this.dataObject.startTime = dayjs().valueOf()
             }
             delete (this.dataObject.setStartTest)
         }
-
+        if (!this.dataObject.setStartTest && !this.dataObject.startTime) {
+            throw this.createErr.mentoringNeedStartTest()
+        }
         if (this.dataObject.duration && this.dataObject.status === "incomplete") {
             this.timeLeftStamp()
         }
@@ -58,7 +60,7 @@ export default class MentoringTest extends MentoringBase {
         }
 
         this.mapImg(newData, (img: any) => {
-            this.mentoringFile.checkForImgExt(img) 
+            this.mentoringFile.checkForImgExt(img)
             this.mentoringFile.checkPath(img)
             return this.mentoringFile.cutPath(img)
         })
@@ -99,16 +101,14 @@ export default class MentoringTest extends MentoringBase {
         }, { right: 0, questions: 0, protegeСhoices: 0, isRight: 0 })
     }
 
-    timeLeftStamp() {
-        if (!this.dataObject.setStartTest && !this.dataObject.startTime) {
-            throw this.createErr.mentoringNeedStartTest()
-        }
-
+    private timeLeftStamp() {
         this.dataObject.leftTime = this.dataObject.duration * 60000 - (dayjs().valueOf() - this.dataObject.startTime)
         if (this.dataObject.leftTime <= 0) {
             this.dataObject.leftTime = 0
             this.dataObject.status = "complete"
+            return true
         }
+        return false
 
     }
 
@@ -141,6 +141,9 @@ export default class MentoringTest extends MentoringBase {
         return accumulator
     }
 
+    isNeedWriteDB() {
+        return this.timeLeftStamp()
+    }
 
     async checkFiles() {
         if (this.dataObject?.img) {
@@ -155,7 +158,7 @@ export default class MentoringTest extends MentoringBase {
     }
 
     getWithFilePath() {
-        const dataObject = _.cloneDeep(this.dataObject)
+        const dataObject = _.cloneDeep(this.get())
         return this.mapImg(dataObject, (img: string) => {
             return this.mentoringFile.path(img)
         })

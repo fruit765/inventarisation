@@ -40,6 +40,15 @@ export default class MentoringBaseIteration {
         return this.getDataFromMethod((value: any) => value?.getProtege?.() || value?.getWithFilePath?.() || value.get())
     }
 
+    isNeedWriteDB() {
+        for(let key in this?.objectClasses ?? []) {
+            if(this?.objectClasses?.[key]?.isNeedWriteDB?.()) {
+                return true
+            }
+        }
+        return false
+    }
+
 
     protected createClassFromKey(value: any, key: string): any {
         return new MentoringBase(value, this.mentoringId)

@@ -41,7 +41,7 @@ export default class FacadeTabMentoring extends FacadeTable {
         plan.replace(data?.plan)
         await plan.checkFiles()
         await plan.deleteUnusedFiles()
-        return super.patchAndFetch({ plan: plan.get(), id: data.id, status_id: planCreatedStatusId }, trxOpt)
+        return this.patchAndFetch({ plan: plan.get(), id: data.id, status_id: planCreatedStatusId }, trxOpt)
     }
 
     /**Используется для ответов на тесты и задания и отценки их фактически редактирует подтвержденный план*/
@@ -57,7 +57,7 @@ export default class FacadeTabMentoring extends FacadeTable {
         plan.update(data?.plan)
         await plan.checkFiles()
         await plan.deleteUnusedFiles()
-        return super.patchAndFetch({ plan: plan.get(), id: data.id }, trxOpt)
+        return this.patchAndFetch({ plan: plan.get(), id: data.id }, trxOpt)
     }
 
     /**Подтверждаем план*/
@@ -70,7 +70,7 @@ export default class FacadeTabMentoring extends FacadeTable {
             throw this.handleErr.statusMustBePlancreated()
         }
         const planCreatedStatusId = await knex("status").where("status", "planconfirmed").first().then((x: { id: number }) => x.id)
-        return super.patchAndFetch({ ...data, status_id: planCreatedStatusId }, trxOpt)
+        return this.patchAndFetch({ ...data, status_id: planCreatedStatusId }, trxOpt)
     }
 
     /**Загрузка файлов которые будут использоваться в наставничистве */
@@ -103,13 +103,17 @@ export default class FacadeTabMentoring extends FacadeTable {
         sendP(next)(res)(req.files)
     }
 
-    async getUnconfirm(...x: any) {
-        const unconfirm = await super.getUnconfirm(...x)
+    async getUnconfirm(id?: number | number[], trxOpt?: Transaction<any, any>) {
+        const unconfirm = await super.getUnconfirm(id, trxOpt)
         for(let value of unconfirm) {
+            const planClass = new MentoringPlan(value.plan, value.id)
+            if(planClass.isNeedWriteDB()) {
+                await this.patch({ plan: planClass.get(), id: value.id }, trxOpt)
+            }
             if(value.protege_id === this.actorId) {
-                value.plan = new MentoringPlan(value.plan, value.id).getProtege()
+                value.plan = planClass.getProtege()
             } else {
-                value.plan = new MentoringPlan(value.plan, value.id).get()
+                value.plan = planClass.get()
             }
         }
         return unconfirm
