@@ -4,7 +4,7 @@ import CreateErr from "../createErr"
 import MentoringBase from "./MentoringBase"
 import MentoringFile from "./MentoringFile"
 
-export default class MentoringBaseIteration  {
+export default class MentoringBaseIteration {
 
     protected dataObject: any
     protected mentoringId: number
@@ -48,25 +48,43 @@ export default class MentoringBaseIteration  {
     update(newPlan: any) {
         const additionalClass = mapArrayOrObject(newPlan, (value, key) => {
             if (this.objectClasses?.[key]) {
-                return this.dataObject[key]?.update(value)
+                const existingClass = this.objectClasses[key]
+                existingClass?.replace?.(value)
+                return existingClass
             } else {
-                return this.createClassFromKey(undefined, key)?.update(value)
+                const newClass = this.createClassFromKey(undefined, key)
+                newClass?.replace?.(value)
+                return newClass
             }
         })
 
-        Object.assign(this.objectClasses, additionalClass)
+        if(_.isObject(this.objectClasses)) {
+            this.objectClasses = _.assign(this.objectClasses, additionalClass)
+        } else {
+            this.objectClasses = additionalClass
+        }
+        this.dataObject = _.merge(this.dataObject, newPlan)
     }
 
     replace(newPlan: any) {
         const additionalClass = mapArrayOrObject(newPlan, (value, key) => {
             if (this.objectClasses?.[key]) {
-                return this.dataObject[key]?.replace(value)
+                const existingClass = this.objectClasses[key]
+                existingClass?.replace?.(value)
+                return existingClass
             } else {
-                return this.createClassFromKey(undefined, key)?.replace(value)
+                const newClass = this.createClassFromKey(undefined, key)
+                newClass?.replace?.(value)
+                return newClass
             }
         })
 
-        Object.assign(this.objectClasses, additionalClass)
+        if(_.isObject(this.objectClasses)) {
+            this.objectClasses = _.assign(this.objectClasses, additionalClass)
+        } else {
+            this.objectClasses = additionalClass
+        }
+        this.dataObject = newPlan
     }
 
     async checkFiles() {
@@ -75,7 +93,7 @@ export default class MentoringBaseIteration  {
 
     getAllFileName() {
         const fileArrayRaw = _.reduce(this.objectClasses, (result: any, value) => {
-            return _.concat(result, value.getAllFileName() ?? [])
+            return _.concat(result, value?.getAllFileName?.() ?? [])
         }, [])
         return <string[]><any>_.compact(_.uniq(fileArrayRaw))
     }

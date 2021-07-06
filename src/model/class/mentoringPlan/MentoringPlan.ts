@@ -5,6 +5,7 @@ import MentoringFile from "./MentoringFile"
 import MentoringBaseIteration from "./MentoringBaseIteration"
 import MentoringBase from "./MentoringBase"
 import MentoringBlocks from "./MentoringBlocks"
+import { mapArrayOrObject } from "../../libs/objectOp"
 
 /**
  * Класс отвечает за план в системе наставнечества
@@ -14,8 +15,8 @@ export default class MentoringPlan extends MentoringBaseIteration {
 
     private mentoringFile
 
-    constructor(planObject: any, mentoringId: number) {
-        super(planObject, mentoringId)
+    constructor(dataObject: any, mentoringId: number) {
+        super(dataObject, mentoringId)
         this.mentoringFile = new MentoringFile(mentoringId)
     }
 
@@ -34,4 +35,5 @@ export default class MentoringPlan extends MentoringBaseIteration {
     async deleteUnusedFiles() {
         this.mentoringFile.deleteExcept(this.getAllFileName())
     }
+
 }

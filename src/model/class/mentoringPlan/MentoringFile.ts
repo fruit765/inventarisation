@@ -62,7 +62,7 @@ export default class MentoringFile {
         }
     }
 
-    async checkForImgExt(filename: string) {
+    checkForImgExt(filename: string) {
         const allowFormat = [".gif", ".jpg", ".jpeg", ".jfif", ".pjpeg", ".pjp", ".png", ".svg", ".webp"]
         const extension = filename.match(/\.[0-9a-z]+$/gi)?.[0]?.toLocaleLowerCase() ?? ""
         if (!allowFormat.includes(extension)) {

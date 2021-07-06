@@ -57,13 +57,13 @@ export default class MentoringTest extends MentoringBase {
     private cutPathImgTest (testObject: any) {
         if (testObject?.img) {
             testObject.img = this.mentoringFile.cutPath(testObject.img)
-            //await this.mentoringFile.checkForImgExt(this.dataObject.img)
+            this.mentoringFile.checkForImgExt(testObject.img)
         }
 
         for (let value of testObject?.questions ?? []) {
             if (value?.img) {
                 value.img = this.mentoringFile.cutPath(value.img)
-                //await this.mentoringFile.checkForImgExt(value.img)
+                this.mentoringFile.checkForImgExt(value.img)
             }
         }
         return testObject
@@ -137,17 +137,17 @@ export default class MentoringTest extends MentoringBase {
 
 
     async checkFiles() {
-        if (this.dataObject?.img) {
-            this.dataObject.img = await this.mentoringFile.checkFile(this.dataObject.img)
-            await this.mentoringFile.checkForImgExt(this.dataObject.img)
-        }
+        // if (this.dataObject?.img) {
+        //     this.dataObject.img = await this.mentoringFile.checkFile(this.dataObject.img)
+        //     await this.mentoringFile.checkForImgExt(this.dataObject.img)
+        // }
 
-        for (let value of this.dataObject?.questions ?? []) {
-            if (value?.img) {
-                value.img = await this.mentoringFile.checkFile(value.img)
-                await this.mentoringFile.checkForImgExt(value.img)
-            }
-        }
+        // for (let value of this.dataObject?.questions ?? []) {
+        //     if (value?.img) {
+        //         value.img = await this.mentoringFile.checkFile(value.img)
+        //         await this.mentoringFile.checkForImgExt(value.img)
+        //     }
+        // }
     }
 
     get() {
