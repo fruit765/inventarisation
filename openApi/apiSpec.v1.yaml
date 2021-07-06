@@ -2518,6 +2518,8 @@ paths:
                                             type: integer
                                     img:
                                       type: string
+                              duration:
+                                type: integer
                           task:
                             type: object
                             properties:
@@ -2566,6 +2568,8 @@ paths:
                                       type: integer
                               img:
                                 type: string
+                        duration:
+                          type: integer
                     task:
                       type: object
                       properties:

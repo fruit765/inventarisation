@@ -42,6 +42,14 @@ export default class MentoringFile {
         return fileName
     }
 
+    cutPath(fullName: string) {
+        const fileName = fullName.match(/[^/]*$/gi)?.[0]
+        if (!fileName) {
+            throw this.createErr.mentoringIncorrectFileName()
+        }
+        return fileName
+    }
+
     path(filename: string) {
         return this.getPrefixPath() + filename
     }
@@ -57,11 +65,11 @@ export default class MentoringFile {
     async checkForImgExt(filename: string) {
         const allowFormat = [".gif", ".jpg", ".jpeg", ".jfif", ".pjpeg", ".pjp", ".png", ".svg", ".webp"]
         const extension = filename.match(/\.[0-9a-z]+$/gi)?.[0]?.toLocaleLowerCase() ?? ""
-        if(!allowFormat.includes(extension)) {
+        if (!allowFormat.includes(extension)) {
             throw this.createErr.mentoringAwaitingImage(filename)
         }
     }
 
-    
+
 
 }

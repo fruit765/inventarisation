@@ -9,7 +9,7 @@ import MentoringFile from "./MentoringFile"
  */
 export default class MentoringTest extends MentoringBase {
 
-    private mentoringFile: any
+    private mentoringFile
 
     constructor(dataObject: any, mentoringId: number) {
         super(dataObject, mentoringId)
@@ -20,9 +20,7 @@ export default class MentoringTest extends MentoringBase {
     protected initObject(dataObject: any) {
         super.initObject(dataObject)
 
-        if (this.dataObject && !this.dataObject.status) {
-            this.dataObject.status = "incomplete"
-        }
+        
 
     }
 
@@ -46,9 +44,30 @@ export default class MentoringTest extends MentoringBase {
         }
     }
 
-    // replace(newData: any) {
+    replace(newData: any) {
+        if (newData && !newData.status) {
+            newData.status = "incomplete"
+        }
+        this.cutPathImgTest(newData)
 
-    // }
+
+        this.dataObject = newData
+    }
+
+    private cutPathImgTest (testObject: any) {
+        if (testObject?.img) {
+            testObject.img = this.mentoringFile.cutPath(testObject.img)
+            //await this.mentoringFile.checkForImgExt(this.dataObject.img)
+        }
+
+        for (let value of testObject?.questions ?? []) {
+            if (value?.img) {
+                value.img = this.mentoringFile.cutPath(value.img)
+                //await this.mentoringFile.checkForImgExt(value.img)
+            }
+        }
+        return testObject
+    }
 
     private grade() {
         const test = this.checkAnswer()
