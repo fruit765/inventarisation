@@ -25,10 +25,10 @@ export default class MentoringTest extends MentoringBase {
     }
 
     update(newData: any) {
-        
+
         if (newData.setStartTest) {
             if (!this.dataObject.startTime) {
-                this.dataObject.startTime = (dayjs().unix() + 1) * 1000
+                this.dataObject.startTime = dayjs().valueOf() + 50
             }
             delete (newData.setStartTest)
         }
@@ -46,7 +46,7 @@ export default class MentoringTest extends MentoringBase {
             this.dataObject.grade = this.grade()
         }
     }
-    
+
 
 
     replace(newData: any) {
@@ -98,7 +98,9 @@ export default class MentoringTest extends MentoringBase {
 
     private timeLeftStamp() {
         if (this.dataObject.duration && this.dataObject.status === "incomplete" && this.dataObject.startTime) {
-            this.dataObject.leftTime = (this.dataObject.duration * 60 - (dayjs().unix() - this.dataObject.startTime/1000))*1000
+            const leftTimeRawMilisecond = this.dataObject.duration * 60000 - (dayjs().valueOf() - this.dataObject.startTime)
+            const leftTimeSecond = Math.ceil(leftTimeRawMilisecond / 1000)
+            this.dataObject.leftTime = leftTimeSecond * 1000
             if (this.dataObject.leftTime <= 0) {
                 this.dataObject.leftTime = 0
                 this.dataObject.status = "complete"
