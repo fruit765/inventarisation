@@ -32,16 +32,9 @@ export default class MentoringTest extends MentoringBase {
             }
             delete (this.dataObject.setStartTest)
         }
-        if (!this.dataObject.setStartTest && !this.dataObject.startTime) {
-            throw this.createErr.mentoringNeedStartTest()
-        }
-        if (this.dataObject.duration && this.dataObject.status === "incomplete") {
-            this.timeLeftStamp()
-        }
-        if (this.dataObject.setStartTest) {
-            delete (this.dataObject.setStartTest)
-        }
 
+        this.timeLeftStamp()
+        console.log(this.dataObject)
         if (this.dataObject.status === "incomplete") {
             _.merge(this.dataObject, newData)
             if (this.isAllAnswered()) {
@@ -53,6 +46,8 @@ export default class MentoringTest extends MentoringBase {
             this.dataObject.grade = this.grade()
         }
     }
+    
+
 
     replace(newData: any) {
         if (newData && !newData.status) {
@@ -102,11 +97,13 @@ export default class MentoringTest extends MentoringBase {
     }
 
     private timeLeftStamp() {
-        this.dataObject.leftTime = this.dataObject.duration * 60000 - (dayjs().valueOf() - this.dataObject.startTime)
-        if (this.dataObject.leftTime <= 0) {
-            this.dataObject.leftTime = 0
-            this.dataObject.status = "complete"
-            return true
+        if (this.dataObject.duration && this.dataObject.status === "incomplete" && this.dataObject.startTime) {
+            this.dataObject.leftTime = this.dataObject.duration * 60000 - (dayjs().valueOf() - this.dataObject.startTime)
+            if (this.dataObject.leftTime <= 0) {
+                this.dataObject.leftTime = 0
+                this.dataObject.status = "complete"
+                return true
+            }
         }
         return false
 

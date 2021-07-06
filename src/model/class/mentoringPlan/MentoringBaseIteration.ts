@@ -58,11 +58,11 @@ export default class MentoringBaseIteration {
         const additionalClass = mapArrayOrObject(newPlan, (value, key) => {
             if (this.objectClasses?.[key]) {
                 const existingClass = this.objectClasses[key]
-                existingClass?.replace?.(value)
+                existingClass?.update?.(value)
                 return existingClass
             } else {
                 const newClass = this.createClassFromKey(undefined, key)
-                newClass?.replace?.(value)
+                newClass?.update?.(value)
                 return newClass
             }
         })

@@ -54,7 +54,9 @@ export default class FacadeTabMentoring extends FacadeTable {
             throw this.handleErr.statusMustBePlanconfirmed()
         }
         const plan = new MentoringPlan(currentMentoring[0]?.plan, data.id)
+        console.log(1)
         plan.update(data?.plan)
+        console.log(2)
         await plan.checkFiles()
         await plan.deleteUnusedFiles()
         return this.patchAndFetch({ plan: plan.get(), id: data.id }, trxOpt)
