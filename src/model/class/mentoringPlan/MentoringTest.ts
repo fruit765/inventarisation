@@ -17,36 +17,6 @@ export default class MentoringTest extends MentoringBase {
 
     }
 
-    protected replaceDataObject(dataObject: any) {
-        super.replaceDataObject(dataObject)
-
-
-
-    }
-
-    private startTimer() {
-        if (!this.dataObject.startTime) {
-            this.dataObject.startTime = dayjs().valueOf()
-        }
-    }
-
-    private updateIncomplete(newData: any) {
-        this.timeLeftStamp()
-
-        if (this.dataObject.status === "incomplete") {
-            _.merge(this.dataObject, newData)
-            if (this.isAllAnswered()) {
-                this.dataObject.status = "complete"
-            }
-        }
-    }
-
-    private updateComplete(newData: any) {
-        if (!this.dataObject.grade) {
-            this.grade()
-        }
-    }
-
     update(newData: any) {
 
         if (newData.setStartTest) {
@@ -63,13 +33,11 @@ export default class MentoringTest extends MentoringBase {
         }
     }
 
-
-
     replace(newData: any) {
         if (newData && !newData.status) {
             newData.status = "incomplete"
         }
-
+        
         this.mapImg(newData, (img: any) => {
             this.mentoringFile.checkForImgExt(img)
             this.mentoringFile.checkPath(img)
@@ -77,6 +45,31 @@ export default class MentoringTest extends MentoringBase {
         })
 
         this.replaceDataObject(newData)
+    }
+
+    private startTimer() {
+        if (!this.dataObject.startTime) {
+            this.dataObject.startTime = dayjs().valueOf()
+        }
+    }
+
+    private updateIncomplete(newData: any) {
+        if (this.timeLeftStamp()) {
+            return void 0
+        }
+
+        this.replaceDataObject(_.merge({}, this.dataObject, newData))
+
+        if (this.isAllAnswered()) {
+            this.dataObject.status = "complete"
+        }
+
+    }
+
+    private updateComplete(newData: any) {
+        if (!this.dataObject.grade) {
+            this.grade()
+        }
     }
 
     private mapImg(testObject: any, fn: Function) {
