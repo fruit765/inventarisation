@@ -30,13 +30,7 @@ export default class MentoringTest extends MentoringBase {
         }
     }
 
-    update(newData: any) {
-
-        if (newData.setStartTest) {
-            this.startTimer()
-            delete (newData.setStartTest)
-        }
-
+    private updateIncomplete(newData: any) {
         this.timeLeftStamp()
 
         if (this.dataObject.status === "incomplete") {
@@ -45,8 +39,27 @@ export default class MentoringTest extends MentoringBase {
                 this.dataObject.status = "complete"
             }
         }
-        if (this.dataObject.status === "complete" && !this.dataObject.grade) {
+    }
+
+    private updateComplete(newData: any) {
+        if (!this.dataObject.grade) {
             this.grade()
+        }
+    }
+
+    update(newData: any) {
+
+        if (newData.setStartTest) {
+            this.startTimer()
+            delete (newData.setStartTest)
+        }
+
+        if (this.dataObject.status === "incomplete") {
+            this.updateIncomplete(newData)
+        }
+
+        if (this.dataObject.status === "complete") {
+            this.updateComplete(newData)
         }
     }
 
@@ -184,7 +197,7 @@ export default class MentoringTest extends MentoringBase {
 
         test?.questions?.forEach?.((question: any) => {
             question?.answers?.forEach?.((answer: any) => {
-                if (answer.isRight != null && (test.status !== "complete" || answer.isPicks == null)) {
+                if (answer.isRight != null && (test.status !== "complete" || !answer.isPicks)) {
                     delete (answer.isRight)
                 }
             })
