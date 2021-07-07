@@ -41,9 +41,8 @@ export default class MentoringTest extends MentoringBase {
                 this.dataObject.status = "complete"
             }
         }
-
         if (this.dataObject.status === "complete" && !this.dataObject.grade) {
-            this.dataObject.grade = this.grade()
+            this.grade()
         }
     }
 
@@ -135,8 +134,8 @@ export default class MentoringTest extends MentoringBase {
         if (isRight > 1) {
             right /= isRight
         }
-        accumulator.right = right
-        accumulator.isPicks = isPicks
+        accumulator.right += right
+        accumulator.isPicks += isPicks
         return accumulator
     }
 

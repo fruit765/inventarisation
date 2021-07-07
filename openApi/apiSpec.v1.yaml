@@ -2514,8 +2514,6 @@ paths:
                                             enum:
                                               - 0
                                               - 1
-                                          protegeСhoice:
-                                            type: integer
                                     img:
                                       type: string
                               duration:
@@ -2564,8 +2562,6 @@ paths:
                                       enum:
                                         - 0
                                         - 1
-                                    protegeСhoice:
-                                      type: integer
                               img:
                                 type: string
                         duration:
