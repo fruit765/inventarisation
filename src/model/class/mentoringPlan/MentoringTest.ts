@@ -83,7 +83,7 @@ export default class MentoringTest extends MentoringBase {
 
     private isAllAnswered() {
         const test = this.checkAnswer()
-        if (test.questions === test.protegeСhoices) {
+        if (test.questions === test.isPicks) {
             return true
         } else {
             return false
@@ -93,7 +93,7 @@ export default class MentoringTest extends MentoringBase {
     private checkAnswer() {
         return _.reduce(this.dataObject?.questions, (accumulator, question) => {
             return this.checkQuestion(question?.answers, accumulator)
-        }, { right: 0, questions: 0, protegeСhoices: 0, isRight: 0 })
+        }, { right: 0, questions: 0, isPicks: 0, isRight: 0 })
     }
 
     private timeLeftStamp() {
@@ -111,19 +111,19 @@ export default class MentoringTest extends MentoringBase {
 
     }
 
-    private checkQuestion(answers: any, accumulator: { right: number, questions: number, protegeСhoices: number, isRight: number }) {
+    private checkQuestion(answers: any, accumulator: { right: number, questions: number, isPicks: number, isRight: number }) {
         accumulator.questions++
-        let protegeСhoices = 0
+        let isPicks = 0
         let isRight = 0
         let right = 0
         for (let answer of answers ?? []) {
-            if (answer?.protegeСhoice) {
-                protegeСhoices++
+            if (answer?.isPick) {
+                isPicks++
             }
             if (answer?.isRight) {
                 isRight++
             }
-            if (answer?.isRight !== undefined && answer.isRight === answer?.protegeСhoice) {
+            if (answer?.isRight !== undefined && answer.isRight === answer?.isPick) {
                 right++
             }
         }
@@ -136,7 +136,7 @@ export default class MentoringTest extends MentoringBase {
             right /= isRight
         }
         accumulator.right = right
-        accumulator.protegeСhoices = protegeСhoices
+        accumulator.isPicks = isPicks
         return accumulator
     }
 
@@ -180,7 +180,7 @@ export default class MentoringTest extends MentoringBase {
 
         test?.questions?.forEach?.((question: any) => {
             question?.answers?.forEach?.((answer: any) => {
-                if (answer.isRight != null && (test.status !== "complete" || answer.protegeСhoices == null)) {
+                if (answer.isRight != null && (test.status !== "complete" || answer.isPicks == null)) {
                     delete (answer.isRight)
                 }
             })
