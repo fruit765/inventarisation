@@ -197,7 +197,7 @@ export default class MentoringTest extends MentoringBase {
 
         test?.questions?.forEach?.((question: any) => {
             question?.answers?.forEach?.((answer: any) => {
-                if (answer.isRight != null && (test.status !== "complete" || !answer.isPicks)) {
+                if (answer.isRight != null && !(test.status === "complete" && answer.isPick)) {
                     delete (answer.isRight)
                 }
             })
