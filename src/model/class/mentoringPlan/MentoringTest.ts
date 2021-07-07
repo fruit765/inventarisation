@@ -24,12 +24,16 @@ export default class MentoringTest extends MentoringBase {
 
     }
 
+    private startTimer() {
+        if (!this.dataObject.startTime) {
+            this.dataObject.startTime = dayjs().valueOf()
+        }
+    }
+
     update(newData: any) {
 
         if (newData.setStartTest) {
-            if (!this.dataObject.startTime) {
-                this.dataObject.startTime = dayjs().valueOf()
-            }
+            this.startTimer()
             delete (newData.setStartTest)
         }
 
@@ -77,6 +81,7 @@ export default class MentoringTest extends MentoringBase {
 
     private grade() {
         const test = this.checkAnswer()
+        console.log(test)
         this.dataObject.grade = Math.round((100 / test.questions) * test.right)
     }
 
@@ -122,7 +127,7 @@ export default class MentoringTest extends MentoringBase {
             if (answer?.isRight) {
                 isRight++
             }
-            if (answer?.isRight !== undefined && answer.isRight === answer?.isPick) {
+            if (answer?.isRight && answer.isRight === answer?.isPick) {
                 right++
             }
         }
