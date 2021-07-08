@@ -2773,11 +2773,21 @@ paths:
                             properties:
                               grade:
                                 type: integer
+                          test:
+                            type: object
+                            properties:
+                              reset:
+                                type: integer
                     task:
                       type: object
                       properties:
                         grade:
                           type: integer
+                    test:
+                      type: object
+                      properties:
+                        reset:
+                          type: number
 components:
   schemas: {}
   securitySchemes: {}

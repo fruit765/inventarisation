@@ -19,6 +19,15 @@ export default class MentoringTest extends MentoringBase {
 
     update(newData: any) {
 
+        if (newData.reset) {
+            if(this.dataObject.status === "complete") {
+                this.reset()
+                return void 0
+            } else {
+                delete newData.reset
+            }
+        }
+
         if (newData.setStartTest) {
             this.startTimer()
             delete (newData.setStartTest)
@@ -31,6 +40,7 @@ export default class MentoringTest extends MentoringBase {
         if (this.dataObject.status === "complete") {
             this.updateComplete(newData)
         }
+
     }
 
     replace(newData: any) {
@@ -45,6 +55,19 @@ export default class MentoringTest extends MentoringBase {
         })
 
         this.replaceDataObject(newData)
+    }
+
+    private reset() {
+        delete this.dataObject.startTime
+        delete this.dataObject.timeLeft
+        delete this.dataObject.grade
+        this.dataObject?.questions?.forEach?.((question: any) => {
+            question?.answers?.forEach?.((answer: any) => {
+                delete(answer?.isPick)
+            })
+        })
+        this.dataObject.status = "incomplete"
+
     }
 
     private startTimer() {

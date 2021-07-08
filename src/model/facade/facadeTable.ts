@@ -100,4 +100,6 @@ export class FacadeTable {
     async get(id?: number) {
         return knex(this.tableName).where(delUndefined({ id }))
     }
+
+    
 }
