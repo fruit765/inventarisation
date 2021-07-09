@@ -58,7 +58,7 @@ export default class MentoringTest extends MentoringBase {
 
     private reset() {
         delete this.dataObject.startTime
-        delete this.dataObject.timeLeft
+        delete this.dataObject.leftTime
         delete this.dataObject.grade
         this.dataObject?.questions?.forEach?.((question: any) => {
             question?.answers?.forEach?.((answer: any) => {
