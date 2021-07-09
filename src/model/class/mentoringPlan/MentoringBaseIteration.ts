@@ -54,35 +54,50 @@ export default class MentoringBaseIteration {
         return new MentoringBase(value, this.mentoringId)
     }
 
-    update(newPlan: any) {
-        const additionalClass = mapArrayOrObject(newPlan, (value, key) => {
-            if (this.objectClasses?.[key]) {
-                const existingClass = this.objectClasses[key]
-                existingClass?.update?.(value)
-                return existingClass
-            } else {
-                const newClass = this.createClassFromKey(undefined, key)
-                newClass?.update?.(value)
-                return newClass
+    private createAdditionalClass(newPlan: any) {
+        return mapArrayOrObject(newPlan, (value, key) => {
+            if(!this.objectClasses?.[key]) {
+                if(!this.dataObject) {
+                    this.dataObject = {}
+                }
+                return this.createClassFromKey(this.dataObject[key], key)
             }
         })
+    }
+
+    update(newPlan: any) {
+        const additionalClass = this.createAdditionalClass(newPlan)
 
         if(_.isObject(this.objectClasses)) {
             this.objectClasses = _.assign(this.objectClasses, additionalClass)
         } else {
             this.objectClasses = additionalClass
         }
-        this.dataObject = _.merge(this.dataObject, newPlan)
+
+        this.getDataFromMethod((value: any, key: string) => {
+            if(newPlan?.[key]) {
+                value?.update(newPlan[key])
+            }
+        })
     }
 
     replace(newPlan: any) {
+        // const additionalClass = this.createAdditionalClass(newPlan)
+
+        // mapArrayOrObject(newPlan, (value: any, key: string) => {
+
+        // })
+
         const additionalClass = mapArrayOrObject(newPlan, (value, key) => {
             if (this.objectClasses?.[key]) {
                 const existingClass = this.objectClasses[key]
                 existingClass?.replace?.(value)
                 return existingClass
             } else {
-                const newClass = this.createClassFromKey(undefined, key)
+                if(!this.dataObject) {
+                    this.dataObject = {}
+                }
+                const newClass = this.createClassFromKey(this.dataObject[key], key)
                 newClass?.replace?.(value)
                 return newClass
             }
@@ -93,7 +108,6 @@ export default class MentoringBaseIteration {
         } else {
             this.objectClasses = additionalClass
         }
-        this.dataObject = newPlan
     }
 
     async checkFiles() {
