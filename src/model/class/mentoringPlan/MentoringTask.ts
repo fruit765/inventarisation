@@ -78,6 +78,10 @@ export default class MentoringTask extends MentoringBase {
         }
     }
 
+    isComplete() {
+        return this.dataObject.status === "complete"
+    }
+
     async checkFiles() {
         if (this.dataObject?.file) {
             this.dataObject.file = await this.mentoringFile.checkFile(this.dataObject.file)

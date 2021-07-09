@@ -100,6 +100,15 @@ export default class MentoringBaseIteration {
         await MentoringFile.checkFiles(this.objectClasses)
     }
 
+    isComplete() {
+        for(let key in this.objectClasses) {
+            if(this.objectClasses[key]?.isComplete && !this.objectClasses[key].isComplete()) {
+                return false
+            }
+        }
+        return true
+    }
+
     getAllFileName() {
         const fileArrayRaw = _.reduce(this.objectClasses, (result: any, value) => {
             return _.concat(result, value?.getAllFileName?.() ?? [])

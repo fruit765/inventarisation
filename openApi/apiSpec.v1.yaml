@@ -2788,6 +2788,23 @@ paths:
                       properties:
                         reset:
                           type: number
+    post:
+      summary: Перевод плана в статус complete
+      operationId: post-mentoringMentor
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+      description: Перевод плана в статус complete
+      tags:
+        - HR
 components:
   schemas: {}
   securitySchemes: {}

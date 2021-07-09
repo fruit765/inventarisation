@@ -84,6 +84,11 @@ export default class CreateErr {
         return this.createException(400, "wrong software category", "software_category_id")
     }
 
+    /**Название статуса не найдено*/
+    statusNameNotFound() {
+        return this.createException(400, "status name not found", "status")
+    }
+
     /**Статус должен быть noplan или plancreated */
     statusMustBeNoplanOrPlancreated() {
         return this.createException(400, "status must be noplan or plancreated", "id")
@@ -134,6 +139,10 @@ export default class CreateErr {
         return this.createException(400, "at least one correct answer in a test question is required", "plan")
     }
 
+    mentoringPlanCannotBeCompleted() {
+        return this.createException(400, "the plan cannot be completed", "plan")
+    }
+
     mentoringGradeRange() {
         return this.createException(400, "grade must be in the range from 0 to 100", "plan")
     }
@@ -141,4 +150,5 @@ export default class CreateErr {
     mentoringNeedStartTest() {
         return this.createException(400, "you need to run the test first", "plan")
     }
+
 }

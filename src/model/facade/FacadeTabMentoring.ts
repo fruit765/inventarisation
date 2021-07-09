@@ -19,9 +19,17 @@ export default class FacadeTabMentoring extends FacadeTable {
         super("mentoring", actorId, options)
     }
 
+    private async getStatusIdByName(status: string) {
+        const statusId = knex("status").where("status", status).first().then((x: { id: number }) => x.id)
+        if (!statusId) {
+            this.handleErr.statusNameNotFound()
+        }
+        return statusId
+    }
+
     /**Добовляет данные в таблицу возвражает id записи */
     async insert(data: any, trxOpt?: Transaction<any, any>) {
-        const noplanStatusId = await knex("status").where("status", "noplan").first().then((x: { id: number }) => x.id)
+        const noplanStatusId = await this.getStatusIdByName("noplan")
         return super.insert({ ...data, status_id: noplanStatusId, plan: null }, trxOpt)
     }
 
@@ -36,7 +44,7 @@ export default class FacadeTabMentoring extends FacadeTable {
             throw this.handleErr.statusMustBeNoplanOrPlancreated()
         }
         // this.delete
-        const planCreatedStatusId = await knex("status").where("status", "plancreated").first().then((x: { id: number }) => x.id)
+        const planCreatedStatusId = await this.getStatusIdByName("plancreated")
         const plan = new MentoringPlan(currentMentoring[0]?.plan, data.id)
         plan.replace(data?.plan)
         await plan.checkFiles()
@@ -50,16 +58,32 @@ export default class FacadeTabMentoring extends FacadeTable {
         if (!currentMentoring[0]) {
             throw this.handleErr.mentoringIdNotFound()
         }
-        if (currentMentoring[0]?.status != "planconfirmed" ) {
+        if (currentMentoring[0]?.status != "planconfirmed") {
             throw this.handleErr.statusMustBePlanconfirmed()
         }
         const plan = new MentoringPlan(currentMentoring[0]?.plan, data.id)
-        console.log(1)
         plan.update(data?.plan)
-        console.log(2)
         await plan.checkFiles()
         await plan.deleteUnusedFiles()
         return this.patchAndFetch({ plan: plan.get(), id: data.id }, trxOpt)
+    }
+
+    async setCompleteStatus(data: any, trxOpt?: Transaction<any, any>) {
+        const currentMentoring = await this.getUnconfirmWithoutPath(data.id, trxOpt)
+        if (!currentMentoring[0]) {
+            throw this.handleErr.mentoringIdNotFound()
+        }
+
+        if (currentMentoring[0]?.status != "planconfirmed") {
+            throw this.handleErr.statusMustBePlanconfirmed()
+        }
+        const plan = new MentoringPlan(currentMentoring[0]?.plan, data.id)
+        if (plan.isComplete()) {
+            const statusComplete = await this.getStatusIdByName("complete")
+            this.patch({ id: data.id, status_id: statusComplete })
+        } else {
+            throw this.handleErr.mentoringPlanCannotBeCompleted()
+        }
     }
 
     /**Подтверждаем план*/
@@ -71,7 +95,7 @@ export default class FacadeTabMentoring extends FacadeTable {
         if (currentMentoring[0]?.status != "plancreated") {
             throw this.handleErr.statusMustBePlancreated()
         }
-        const planCreatedStatusId = await knex("status").where("status", "planconfirmed").first().then((x: { id: number }) => x.id)
+        const planCreatedStatusId = await this.getStatusIdByName("planconfirmed")
         return this.patchAndFetch({ ...data, status_id: planCreatedStatusId }, trxOpt)
     }
 
@@ -107,12 +131,12 @@ export default class FacadeTabMentoring extends FacadeTable {
 
     async getUnconfirm(id?: number | number[], trxOpt?: Transaction<any, any>) {
         const unconfirm = await super.getUnconfirm(id, trxOpt)
-        for(let value of unconfirm) {
+        for (let value of unconfirm) {
             const planClass = new MentoringPlan(value.plan, value.id)
-            if(planClass.isNeedWriteDB()) {
+            if (planClass.isNeedWriteDB()) {
                 await this.patch({ plan: planClass.get(), id: value.id }, trxOpt)
             }
-            if(value.protege_id === this.actorId) {
+            if (value.protege_id === this.actorId) {
                 value.plan = planClass.getProtege()
             } else {
                 value.plan = planClass.get()

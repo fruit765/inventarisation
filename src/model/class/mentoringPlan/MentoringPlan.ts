@@ -35,5 +35,4 @@ export default class MentoringPlan extends MentoringBaseIteration {
     async deleteUnusedFiles() {
         this.mentoringFile.deleteExcept(this.getAllFileName())
     }
-
 }

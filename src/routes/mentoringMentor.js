@@ -10,8 +10,11 @@ router.route('/mentoringMentor')
         req.myObj = new FacadeTabMentoring(req.user.id)
         next()
     })
-    .patch(async (req, res, next) => {
+    .post(async (req, res, next) => {
         sendP(next)(res)(req.myObj.patchConfirmPlan(req.body))
+    })
+    .patch(async (req, res, next) => {
+        sendP(next)(res)(req.myObj.setCompleteStatus(req.body))
     })
 
 module.exports = router
