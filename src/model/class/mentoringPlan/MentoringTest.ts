@@ -18,7 +18,6 @@ export default class MentoringTest extends MentoringBase {
     }
 
     update(newData: any) {
-
         if (newData.reset) {
             if(this.dataObject.status === "complete") {
                 this.reset()
@@ -175,6 +174,10 @@ export default class MentoringTest extends MentoringBase {
 
     isNeedWriteDB() {
         return this.timeLeftStamp()
+    }
+
+    isComplete() {
+        return this.dataObject.status === "complete"
     }
 
     async checkFiles() {
