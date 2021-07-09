@@ -18,20 +18,14 @@ export default class MentoringTest extends MentoringBase {
     }
 
     update(newData: any) {
-        console.log(newData)
         if (newData.reset) {
-            console.log(this.dataObject)
             if(this.dataObject.status === "complete") {
-                console.log(23232)
                 this.reset()
-                console.log(this.dataObject)
                 return void 0
             } else {
                 delete newData.reset
             }
-            console.log("afterreset", newData)
         }
-        console.log(newData)
 
         if (newData.setStartTest) {
             this.startTimer()
@@ -115,7 +109,6 @@ export default class MentoringTest extends MentoringBase {
 
     private grade() {
         const test = this.checkAnswer()
-        console.log(test)
         this.dataObject.grade = Math.round((100 / test.questions) * test.right)
     }
 
@@ -196,11 +189,6 @@ export default class MentoringTest extends MentoringBase {
                 value.img = await this.mentoringFile.checkFile(value.img)
             }
         }
-    }
-
-    get() {
-        console.log("get", this.dataObject)
-        super.get()
     }
 
     getWithFilePath() {
