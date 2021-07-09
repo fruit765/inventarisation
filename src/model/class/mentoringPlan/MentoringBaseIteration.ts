@@ -29,15 +29,15 @@ export default class MentoringBaseIteration {
     }
 
     get() {
-        return this.getDataFromMethod((value: any) => value.get())
+        return this.getDataFromMethod((value: any) => value?.get())
     }
 
     getWithFilePath() {
-        return this.getDataFromMethod((value: any) => value?.getWithFilePath?.() || value.get())
+        return this.getDataFromMethod((value: any) => value?.getWithFilePath?.() || value?.get())
     }
 
     getProtege() {
-        return this.getDataFromMethod((value: any) => value?.getProtege?.() || value?.getWithFilePath?.() || value.get())
+        return this.getDataFromMethod((value: any) => value?.getProtege?.() || value?.getWithFilePath?.() || value?.get())
     }
 
     isNeedWriteDB() {
@@ -61,13 +61,15 @@ export default class MentoringBaseIteration {
                     this.dataObject = {}
                 }
                 return this.createClassFromKey(this.dataObject[key], key)
+            } else {
+                return this.objectClasses[key]
             }
         })
     }
 
     update(newPlan: any) {
         const additionalClass = this.createAdditionalClass(newPlan)
-
+        console.log(additionalClass)
         if(_.isObject(this.objectClasses)) {
             this.objectClasses = _.assign(this.objectClasses, additionalClass)
         } else {
