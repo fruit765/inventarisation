@@ -1,6 +1,7 @@
 import CreateErr from "../createErr"
 import { promises } from "fs"
 import _ from "lodash"
+import { stat } from "fs"
 /**
  * Класс для работы с файлами в плане
  * @class
@@ -29,7 +30,10 @@ export default class MentoringFile {
 
     async checkFile(filename: string) {
         const fullName = this.getPrefixPath() + filename
+        console.log(fullName)
+        stat
         await promises.stat(fullName).catch(() => Promise.reject(this.createErr.mentoringFileNotFound(fullName)))
+        console.log(222)
     }
 
     cutPath(fullName: string) {
