@@ -45,13 +45,16 @@ function stringifySubJSON(data: any) {
     return fillteredData
 }
 
-function mapArrayOrObject(object: Record<any, any>, fn: (value: any, key: string) => any) {
+function mapArrayOrObject(object: Record<any, any>, fn: (value: any, key: string) => any, condition : (result?: any) => boolean = () => true) {
     if (!_.isObject(object)) {
         return object
     }
     const result = new (<any>object).__proto__.constructor()
     for (let key in object) {
-        result[key] = fn((<any>object)[key], key)
+        const resultFn = fn((<any>object)[key], key)
+        if (condition(resultFn)) {
+            result[key] = resultFn
+        }
     }
     return result
 }

@@ -89,7 +89,7 @@ export default class MentoringTest extends MentoringBase {
     }
 
     private updateComplete(newData: any) {
-        if (!this.dataObject.grade) {
+        if (this.dataObject.grade == undefined) {
             this.grade()
         }
     }
@@ -172,7 +172,9 @@ export default class MentoringTest extends MentoringBase {
     }
 
     isNeedWriteDB() {
-        return this.timeLeftStamp()
+        const res = this.timeLeftStamp()
+        this.updateComplete({})
+        return res
     }
 
     isComplete() {

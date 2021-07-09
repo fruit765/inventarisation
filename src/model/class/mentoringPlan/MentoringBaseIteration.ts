@@ -61,15 +61,12 @@ export default class MentoringBaseIteration {
                     this.dataObject = {}
                 }
                 return this.createClassFromKey(this.dataObject[key], key)
-            } else {
-                return this.objectClasses[key]
             }
-        })
+        }, (x) => Boolean(x))
     }
 
     update(newPlan: any) {
         const additionalClass = this.createAdditionalClass(newPlan)
-        console.log(additionalClass)
         if(_.isObject(this.objectClasses)) {
             this.objectClasses = _.assign(this.objectClasses, additionalClass)
         } else {
