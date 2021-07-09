@@ -62,12 +62,15 @@ export default class FacadeTabMentoring extends FacadeTable {
             throw this.handleErr.statusMustBePlanconfirmed()
         }
         const plan = new MentoringPlan(currentMentoring[0]?.plan, data.id)
-        plan.update(data?.plan)
+        console.log(data.plan)
+        plan.update(data.plan)
         await plan.checkFiles()
         await plan.deleteUnusedFiles()
+        console.log(plan)
         return this.patchAndFetch({ plan: plan.get(), id: data.id }, trxOpt)
     }
 
+    
     async setCompleteStatus(data: any, trxOpt?: Transaction<any, any>) {
         const currentMentoring = await this.getUnconfirmWithoutPath(data.id, trxOpt)
         if (!currentMentoring[0]) {
@@ -80,7 +83,7 @@ export default class FacadeTabMentoring extends FacadeTable {
         const plan = new MentoringPlan(currentMentoring[0]?.plan, data.id)
         if (plan.isComplete()) {
             const statusComplete = await this.getStatusIdByName("complete")
-            this.patch({ id: data.id, status_id: statusComplete })
+            return this.patchAndFetch({ id: data.id, status_id: statusComplete })
         } else {
             throw this.handleErr.mentoringPlanCannotBeCompleted()
         }
