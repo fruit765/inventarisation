@@ -20,6 +20,12 @@ const dayjs = require("dayjs")
 const jsonDelFlag = "deleteV1StGXR8"
 
 /**
+ * Этим флагом помечаются массивы
+ * @type {string}
+ */
+const jsonArrayFlag = "array544su7Aq"
+
+/**
  * Возвращает объект с информацией об изменении строки таблицы
  * Возвращает различия между старой записью и новой
  * deleteFlag в обьекте нулевого уровня отсудствует
@@ -44,12 +50,15 @@ function packJson(newData, oldData) {
     } else if (oldData instanceof Date) {
         return dataCompare(newData, oldData)
     } else if (_.isObject(newData)) {
-        
-        const res = new /**@type {any}*/(newData).__proto__.constructor()
+        /**@type {any}*/
+        const res = {}
+        if (_.isArray(newData)) {
+            res[jsonArrayFlag] = 1
+        }
         const allKeys = _.union(_.keys(newData), _.keys(oldData))
-        for(let key of allKeys) {
+        for (let key of allKeys) {
             const y = packJson(/**@type {any}*/(newData)[key], oldData?.[key])
-            if(y !== undefined) {
+            if (y !== undefined) {
                 res[key] = y
             }
         }
@@ -103,6 +112,7 @@ async function unpack(diff, getOldDataFn) {
  * @param {*} oldData 
  */
 function unpackOneJson(newData, oldData) {
+    const newDataWithArray = newData ddd
     const unionData = _.merge(oldData, newData)
     const res = delJsonDelFlag(unionData)
     return res
@@ -118,7 +128,7 @@ function delJsonDelFlag(data) {
         const resObj = new /**@type {any}*/(data).__proto__.constructor()
         for (let key in data) {
             const res = delJsonDelFlag(/**@type {any}*/(data)[key])
-            if(res !== undefined) {
+            if (res !== undefined) {
                 resObj[key] = res
             }
         }
