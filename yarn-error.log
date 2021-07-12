@@ -1,5 +1,5 @@
 Arguments: 
-  /usr/bin/node /usr/bin/yarn add @types/promise-callbacks
+  /usr/bin/node /usr/bin/yarn add --dev @types/promise-callbacks
 
 PATH: 
   /home/nikita/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/var/lib/snapd/snap/bin:/opt/sonar-scanner/bin
@@ -8,7 +8,7 @@ Yarn version:
   1.22.10
 
 Node version: 
-  15.8.0
+  16.3.0
 
 Platform: 
   linux x64
@@ -17,14 +17,14 @@ Trace:
   Error: https://registry.yarnpkg.com/@types%2fpromise-callbacks: Not found
       at Request.params.callback [as _callback] (/usr/lib/node_modules/yarn/lib/cli.js:66988:18)
       at Request.self.callback (/usr/lib/node_modules/yarn/lib/cli.js:140749:22)
-      at Request.emit (node:events:378:20)
+      at Request.emit (node:events:394:28)
       at Request.<anonymous> (/usr/lib/node_modules/yarn/lib/cli.js:141721:10)
-      at Request.emit (node:events:378:20)
+      at Request.emit (node:events:394:28)
       at IncomingMessage.<anonymous> (/usr/lib/node_modules/yarn/lib/cli.js:141643:12)
-      at Object.onceWrapper (node:events:484:28)
-      at IncomingMessage.emit (node:events:390:22)
-      at endReadableNT (node:internal/streams/readable:1307:12)
-      at processTicksAndRejections (node:internal/process/task_queues:81:21)
+      at Object.onceWrapper (node:events:513:28)
+      at IncomingMessage.emit (node:events:406:35)
+      at endReadableNT (node:internal/streams/readable:1329:12)
+      at processTicksAndRejections (node:internal/process/task_queues:83:21)
 
 npm manifest: 
   {
@@ -40,6 +40,7 @@ npm manifest:
     },
     "dependencies": {
       "@apidevtools/swagger-parser": "^10.0.2",
+      "@types/multer": "^1.4.6",
       "ajv": "6",
       "body-parser": "^1.19.0",
       "connect-session-knex": "^2.0.0",
@@ -711,6 +712,13 @@ Lockfile:
     version "3.0.3"
     resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-3.0.3.tgz#3dca0e3f33b200fc7d1139c0cd96c1268cadfd9d"
     integrity sha512-tHq6qdbT9U1IRSGf14CL0pUlULksvY9OZ+5eEgl1N7t+OA3tGvNpxJCzuKQlsNgCVwbAs670L1vcVQi8j9HjnA==
+  
+  "@types/multer@^1.4.6":
+    version "1.4.6"
+    resolved "https://registry.yarnpkg.com/@types/multer/-/multer-1.4.6.tgz#411950b7a99ba0de6ee8f6e3713f4628980cdc73"
+    integrity sha512-F4EZ+KRrzdiSm3jSFj1GVUlw3zWXus5nXYBbrQW/0MGIUv9YHw1dM0cJOxq++v2+Gl4IBdSDvQ3YCORLdyCU+Q==
+    dependencies:
+      "@types/express" "*"
   
   "@types/node@*", "@types/node@^14.14.32":
     version "14.14.34"

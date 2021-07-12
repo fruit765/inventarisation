@@ -26,7 +26,7 @@ export default class MentoringTask extends MentoringBase {
             newData.status = "incomplete"
         }
 
-        this.mapFiles(newData, (img: any) => {
+        this.mapFileMutate(newData, (img: any) => {
             this.mentoringFile.checkPath(img)
             return this.mentoringFile.cutPath(img)
         })
@@ -38,7 +38,7 @@ export default class MentoringTask extends MentoringBase {
 
     update(newData: any) {
 
-        this.mapFiles(newData, (img: any) => {
+        this.mapFileMutate(newData, (img: any) => {
             this.mentoringFile.checkPath(img)
             return this.mentoringFile.cutPath(img)
         })
@@ -57,7 +57,7 @@ export default class MentoringTask extends MentoringBase {
         }
     }
 
-    private mapFiles(taskObj: any, fn: Function) {
+    private mapFileMutate(taskObj: any, fn: Function) {
         if (taskObj?.file) {
             taskObj.file = fn(taskObj.file)
         }
@@ -65,6 +65,7 @@ export default class MentoringTask extends MentoringBase {
         if (taskObj?.answer?.file) {
             taskObj.answer.file = fn(taskObj.answer.file)
         }
+        return taskObj
     }
 
     private grade() {
@@ -84,17 +85,17 @@ export default class MentoringTask extends MentoringBase {
 
     async checkFiles() {
         if (this.dataObject?.file) {
-            this.dataObject.file = await this.mentoringFile.checkFile(this.dataObject.file)
+            await this.mentoringFile.checkFile(this.dataObject.file)
         }
 
         if (this.dataObject?.answer?.file) {
-            this.dataObject.answer.file = await this.mentoringFile.checkFile(this.dataObject.answer.file)
+            await this.mentoringFile.checkFile(this.dataObject.answer.file)
         }
     }
 
     getWithFilePath() {
         const dataObject = _.cloneDeep(this.dataObject)
-        return this.mapFiles(dataObject, (file: string) => {
+        return this.mapFileMutate(dataObject, (file: string) => {
             return this.mentoringFile.path(file)
         })
     }

@@ -47,7 +47,7 @@ export default class MentoringTest extends MentoringBase {
             newData.status = "incomplete"
         }
         
-        this.mapImg(newData, (img: any) => {
+        this.mapImgMutate(newData, (img: any) => {
             this.mentoringFile.checkForImgExt(img)
             this.mentoringFile.checkPath(img)
             return this.mentoringFile.cutPath(img)
@@ -94,7 +94,7 @@ export default class MentoringTest extends MentoringBase {
         }
     }
 
-    private mapImg(testObject: any, fn: Function) {
+    private mapImgMutate(testObject: any, fn: Function) {
         if (testObject?.img) {
             testObject.img = fn(testObject.img)
         }
@@ -195,7 +195,7 @@ export default class MentoringTest extends MentoringBase {
 
     getWithFilePath() {
         const dataObject = _.cloneDeep(this.get())
-        return this.mapImg(dataObject, (img: string) => {
+        return this.mapImgMutate(dataObject, (img: string) => {
             return this.mentoringFile.path(img)
         })
     }

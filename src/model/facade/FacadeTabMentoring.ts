@@ -140,7 +140,7 @@ export default class FacadeTabMentoring extends FacadeTable {
             if (value.protege_id === this.actorId) {
                 value.plan = planClass.getProtege()
             } else {
-                value.plan = planClass.get()
+                value.plan = planClass.getWithFilePath()
             }
         }
         return unconfirm
