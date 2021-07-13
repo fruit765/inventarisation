@@ -25,6 +25,8 @@ const jsonDelFlag = "deleteV1StGXR8"
  */
 const jsonArrayFlag = "array544su7Aq"
 
+//============================================================================
+//pack
 /**
  * Возвращает объект с информацией об изменении строки таблицы
  * Возвращает различия между старой записью и новой
@@ -34,8 +36,7 @@ const jsonArrayFlag = "array544su7Aq"
  */
 function pack(newData, oldData) {
     const diffJson = packJson(newData, oldData)
-    const res = _.omitBy(diffJson, (/** @type {string} */ x) => x === jsonDelFlag)
-    return res
+    return _.omitBy(diffJson, (/** @type {string} */ x) => x === jsonDelFlag)
 }
 
 /**
@@ -84,6 +85,8 @@ function dataCompare(newData, oldData) {
     }
 }
 
+//============================================================================
+//unpack
 /**
  * Распоковывает данные из diff используя текущий обькт и разницу,
  * возвращает объект
@@ -106,17 +109,96 @@ async function unpack(diff, getOldDataFn) {
 
 
 /**
+ * Распоковывает данные из diff используя текущий обькт и разницу,
+ * возвращает объект
+ * @param {*} diff 
+ * @param {Function} getOldDataFn 
+ */
+async function unpack(diff, getOldDataFn) {
+    let res
+    /**@type {*}*/
+    const diffJsonOnly = {}
+    const jsonKeys = _.keys(_.pickBy(diff, _.isObject))
+    if (jsonKeys.length) {
+        let actual = await getOldDataFn()
+        actual = _.isObject(actual) ? actual : {}
+        for (let key of jsonKeys) {
+            diffJsonOnly[key] = unpackJson(diff[key], actual[key])
+        }
+    }
+    return { ...diff, ...diffJsonOnly }
+}
+
+/**
+ * Распоковывает данные из diff используя текущий обькт и разницу,
+ * возвращает объект
+ * @param {*} diff 
+ * @param {Function} getOldDataFn 
+ */
+ async function unpack(diff, getOldDataFn) {
+    let actual = {}
+    const jsonKeys = _.keys(_.pickBy(diff, _.isObject))
+    if(jsonKeys.length) {
+        actual = await getOldDataFn()
+        actual = _.isObject(actual) ? actual : {}
+    }
+    return unpackJson(diff, actual)
+}
+
+function unpackJson(newData, oldData) {
+    const newDataUnpackArray = unpackArray(newData)
+    /**@type {*}*/
+    const actual = _.isObject(oldData) ? oldData : {}
+    const jsonKeys = _.keys(_.pickBy(newDataUnpackArray, _.isObject))
+    if (jsonKeys.length) {
+        for (let key of jsonKeys) {
+            newDataUnpackArray[key] = unpackJson(newDataUnpackArray[key], actual[key])
+        }
+    } else {
+        for(let key in actual) {
+            if(newDataUnpackArray[key] === undefined) {
+                newDataUnpackArray[key] = actual[key]
+            }
+        }
+        for(let key in newDataUnpackArray) {
+            if(newDataUnpackArray[key] === jsonDelFlag) {
+                delete(newDataUnpackArray[key])
+            }
+        }
+    }
+
+    return newDataUnpackArray
+}
+
+
+/**
  * Возвращает объект полученный наложением diff
  * для json полей
  * @param {*} newData 
  * @param {*} oldData 
  */
 function unpackOneJson(newData, oldData) {
-    const newDataWithArray = newData ddd
-    const unionData = _.merge(oldData, newData)
-    const res = delJsonDelFlag(unionData)
-    return res
+    const newDataWithArray = unpackArray(newData)
+    const unionData = _.merge(oldData, newDataWithArray)
+    return delJsonDelFlag(unionData)
+}
 
+/**
+ * Если в обьекте содержится флаг jsonArrayFlag преобразует объект в массив
+ * @param {*} obj 
+ */
+function unpackArray(obj) {
+    if (obj[jsonArrayFlag]) {
+        /** @type {any[]} */
+        const res = []
+        for (let key in obj) {
+            if (Number.isInteger(Number(key))) {
+                res[Number(key)] = obj[key]
+            }
+        }
+        return res
+    }
+    return obj
 }
 
 /**
